@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"uask-chain/types"
 )
 
 type LocalStore struct {
@@ -18,13 +19,13 @@ func NewLocalStore(dir string) (*LocalStore, error) {
 	return &LocalStore{dir: dir}, err
 }
 
-func (l *LocalStore) Put(key string, file []byte) (string, error) {
+func (l *LocalStore) Put(key string, file *types.StoreInfo) (string, error) {
 	f, err := os.Open(filepath.Join(l.dir, key))
 	if err != nil {
 		return "", err
 	}
 	defer f.Close()
-	_, err = f.Write(file)
+	_, err = f.Write(file.Content)
 	return key, err
 }
 
@@ -35,4 +36,10 @@ func (l *LocalStore) Get(key string) ([]byte, error) {
 	}
 	defer f.Close()
 	return ioutil.ReadAll(f)
+}
+
+func (l *LocalStore) Exist(key string) bool {
+	path := filepath.Join(l.dir, key)
+	_, err := os.Stat(path)
+	return !os.IsNotExist(err)
 }

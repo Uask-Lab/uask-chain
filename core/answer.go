@@ -3,10 +3,12 @@ package core
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/pkg/errors"
 	"github.com/yu-org/yu/core/context"
 	"github.com/yu-org/yu/core/tripod"
-	"uask-chain/core/types"
+	ytypes "github.com/yu-org/yu/core/types"
 	"uask-chain/filestore"
+	"uask-chain/types"
 )
 
 type Answer struct {
@@ -18,18 +20,30 @@ func NewAnswer(fileStore filestore.FileStore) *Answer {
 	tri := tripod.NewTripod("answer")
 	a := &Answer{Tripod: tri, fileStore: fileStore}
 	a.SetExec(a.AddAnswer).SetExec(a.UpdateAnswer)
+	a.SetTxnChecker(a)
 	return a
+}
+
+func (a *Answer) CheckTxn(txn *ytypes.SignedTxn) error {
+	req := &types.AnswerAddRequest{}
+	err := txn.BindJsonParams(req)
+	if err != nil {
+		return err
+	}
+	if req.Content.OnchainStore {
+		return nil
+	}
+	if a.fileStore.Exist(req.Content.Hash) {
+		return nil
+	}
+	return errors.New("file not found")
 }
 
 func (a *Answer) AddAnswer(ctx *context.Context) error {
 	ctx.SetLei(50)
 
 	answerer := ctx.Caller
-	req := &types.AnswerAddRequest{}
-	err := ctx.BindJson(req)
-	if err != nil {
-		return err
-	}
+	req := ctx.ParamsValue.(*types.AnswerAddRequest)
 
 	// check if question exists
 	q := a.GetTripod("question").(*Question)
@@ -64,11 +78,7 @@ func (a *Answer) UpdateAnswer(ctx *context.Context) error {
 	ctx.SetLei(50)
 
 	answerer := ctx.Caller
-	req := &types.AnswerUpdateRequest{}
-	err := ctx.BindJson(req)
-	if err != nil {
-		return err
-	}
+	req := ctx.ParamsValue.(*types.AnswerUpdateRequest)
 
 	if !a.existAnswer(req.ID) {
 		return ErrAnswerNotFound
@@ -102,7 +112,6 @@ func (a *Answer) UpdateAnswer(ctx *context.Context) error {
 	a.State.Set(a, []byte(req.ID), byt)
 	ctx.EmitEvent(fmt.Sprintf("update answer(%s) successfully!", req.ID))
 	return nil
-
 }
 
 func (a *Answer) getAnswer(id string) (*types.AnswerScheme, error) {

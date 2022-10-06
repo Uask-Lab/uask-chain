@@ -13,7 +13,7 @@ type QuestionInfo struct {
 
 type QuestionAddRequest struct {
 	Title       string         `json:"title"`
-	Content     []byte         `json:"content"`
+	Content     *StoreInfo     `json:"content"`
 	Tags        []string       `json:"tags"`
 	Reward      *big.Int       `json:"reward"`
 	Timestamp   string         `json:"timestamp"`

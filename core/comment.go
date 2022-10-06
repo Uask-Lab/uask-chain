@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/yu-org/yu/core/context"
 	"github.com/yu-org/yu/core/tripod"
-	"uask-chain/core/types"
 	"uask-chain/filestore"
+	"uask-chain/types"
 )
 
 type Comment struct {
@@ -25,13 +25,9 @@ func (c *Comment) AddComment(ctx *context.Context) error {
 	ctx.SetLei(10)
 
 	commenter := ctx.Caller
-	req := &types.CommentAddRequest{}
-	err := ctx.BindJson(req)
-	if err != nil {
-		return err
-	}
+	req := ctx.ParamsValue.(*types.CommentAddRequest)
 
-	err = c.ifReplyExist(req.AID, req.CID)
+	err := c.ifReplyExist(req.AID, req.CID)
 	if err != nil {
 		return err
 	}
@@ -63,11 +59,7 @@ func (c *Comment) UpdateComment(ctx *context.Context) error {
 	ctx.SetLei(10)
 
 	commenter := ctx.Caller
-	req := &types.CommentUpdateRequest{}
-	err := ctx.BindJson(req)
-	if err != nil {
-		return err
-	}
+	req := ctx.ParamsValue.(*types.CommentUpdateRequest)
 
 	comment, err := c.getComment(req.ID)
 	if err != nil {

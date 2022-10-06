@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/yu-org/yu/core/context"
 	"github.com/yu-org/yu/core/tripod"
-	"uask-chain/core/types"
 	"uask-chain/filestore"
+	"uask-chain/types"
 )
 
 type Question struct {
@@ -25,11 +25,7 @@ func (q *Question) AddQuestion(ctx *context.Context) error {
 	ctx.SetLei(10)
 
 	asker := ctx.Caller
-	req := &types.QuestionAddRequest{}
-	err := ctx.BindJson(req)
-	if err != nil {
-		return err
-	}
+	req := ctx.ParamsValue.(*types.QuestionAddRequest)
 
 	// TODO: Lock the amount of balance for reward.
 
@@ -62,11 +58,7 @@ func (q *Question) UpdateQuestion(ctx *context.Context) error {
 	ctx.SetLei(10)
 
 	asker := ctx.Caller
-	req := &types.QuestionUpdateRequest{}
-	err := ctx.BindJson(req)
-	if err != nil {
-		return err
-	}
+	req := ctx.ParamsValue.(*types.QuestionUpdateRequest)
 
 	question, err := q.getQuestion(req.ID)
 	if err != nil {
