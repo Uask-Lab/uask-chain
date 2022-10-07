@@ -1248,6 +1248,8 @@ github.com/xuperchain/xupercore v0.0.0-20210727025644-b21e3796e679/go.mod h1:dhj
 github.com/xuperchain/xvm v0.0.0-20210126142521-68fd016c56d7/go.mod h1:XTaJSLDGYlcAPFb5vWH4vVALckO3V5+wa4zl1mpKMjg=
 github.com/yu-org/yu v0.0.0-20221007054316-74752ff7a350 h1:mWLaAxsFYHT8DmT6Fowgm2fm//9jyp8DG6mP5F9d66E=
 github.com/yu-org/yu v0.0.0-20221007054316-74752ff7a350/go.mod h1:LB4qE3zDHlCZWz0z5fppIdUsuL5kj3ObEVDCJGieozc=
+github.com/yu-org/yu v0.0.0-20221007054933-c505f22592e5 h1:mOU2kzpNO3P79ar9Nsf7wDAAin4fZXsz90tHzpQl6Bo=
+github.com/yu-org/yu v0.0.0-20221007054933-c505f22592e5/go.mod h1:mXLTPsAs6c2G8xcANEgGkGX/tyfdT2ya2SmYXYQIbdA=
 github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/zenazn/goji v0.9.0/go.mod h1:7S9M489iMyHBNxwZnk9/EHS098H4/F6TATF2mIxtB1Q=
 gitlab.com/NebulousLabs/errors v0.0.0-20171229012116-7ead97ef90b8/go.mod h1:ZkMZ0dpQyWwlENaeZVBiQRjhMEZvk6VTXquzl3FOFP8=
