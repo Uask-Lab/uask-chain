@@ -1250,6 +1250,14 @@ github.com/yu-org/yu v0.0.0-20221007054316-74752ff7a350 h1:mWLaAxsFYHT8DmT6Fowgm
 github.com/yu-org/yu v0.0.0-20221007054316-74752ff7a350/go.mod h1:LB4qE3zDHlCZWz0z5fppIdUsuL5kj3ObEVDCJGieozc=
 github.com/yu-org/yu v0.0.0-20221007054933-c505f22592e5 h1:mOU2kzpNO3P79ar9Nsf7wDAAin4fZXsz90tHzpQl6Bo=
 github.com/yu-org/yu v0.0.0-20221007054933-c505f22592e5/go.mod h1:mXLTPsAs6c2G8xcANEgGkGX/tyfdT2ya2SmYXYQIbdA=
+github.com/yu-org/yu v0.0.0-20221007150116-f059f4c63c53 h1:uFTaCdZ7aXWhFU9TsCN+u7pv+hHnkiWaXOQirjVQA+8=
+github.com/yu-org/yu v0.0.0-20221007150116-f059f4c63c53/go.mod h1:mXLTPsAs6c2G8xcANEgGkGX/tyfdT2ya2SmYXYQIbdA=
+github.com/yu-org/yu v0.0.0-20221007152519-10945f99c613 h1:kGkq4r6kL9DOwQdxDcBsfeOQCzbHQnc16phV0+eN9wE=
+github.com/yu-org/yu v0.0.0-20221007152519-10945f99c613/go.mod h1:mXLTPsAs6c2G8xcANEgGkGX/tyfdT2ya2SmYXYQIbdA=
+github.com/yu-org/yu v0.0.0-20221007161112-a48aeeba950b h1:4TJ19NDHXQeZJ1x7wLrQVuuPw2aaw1XH045IUFE+YZ8=
+github.com/yu-org/yu v0.0.0-20221007161112-a48aeeba950b/go.mod h1:mXLTPsAs6c2G8xcANEgGkGX/tyfdT2ya2SmYXYQIbdA=
+github.com/yu-org/yu v0.0.0-20221007163812-500d493a6071 h1:jQVKaghpLJYglhVwrQYxzWq6+abw2h84AS0CZ8TI2pk=
+github.com/yu-org/yu v0.0.0-20221007163812-500d493a6071/go.mod h1:mXLTPsAs6c2G8xcANEgGkGX/tyfdT2ya2SmYXYQIbdA=
 github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/zenazn/goji v0.9.0/go.mod h1:7S9M489iMyHBNxwZnk9/EHS098H4/F6TATF2mIxtB1Q=
 gitlab.com/NebulousLabs/errors v0.0.0-20171229012116-7ead97ef90b8/go.mod h1:ZkMZ0dpQyWwlENaeZVBiQRjhMEZvk6VTXquzl3FOFP8=

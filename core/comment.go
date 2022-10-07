@@ -12,6 +12,7 @@ import (
 type Comment struct {
 	*tripod.Tripod
 	fileStore filestore.FileStore
+	Answer    *Answer `tripod:"answer"`
 }
 
 func NewComment(fileStore filestore.FileStore) *Comment {
@@ -116,8 +117,7 @@ func (c *Comment) getComment(id string) (*types.CommentScheme, error) {
 
 func (c *Comment) ifReplyExist(answerID, commentID string) error {
 	if answerID != "" {
-		a := c.GetTripod("answer").(*Answer)
-		if !a.existAnswer(answerID) {
+		if !c.Answer.existAnswer(answerID) {
 			return ErrAnswerNotFound
 		}
 	}

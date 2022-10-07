@@ -12,6 +12,7 @@ import (
 type Question struct {
 	*tripod.Tripod
 	fileStore filestore.FileStore
+	reward    *Reward `tripod:"reward"`
 }
 
 func NewQuestion(fileStore filestore.FileStore) *Question {
@@ -68,7 +69,10 @@ func (q *Question) UpdateQuestion(ctx *context.Context) error {
 		return ErrNoPermission
 	}
 
-	// TODO: Lock the amount of balance for reward.
+	err = q.reward.LockForReward(asker, req.Reward)
+	if err != nil {
+		return err
+	}
 
 	stub, err := q.fileStore.Put(req.ID, req.Content)
 	if err != nil {

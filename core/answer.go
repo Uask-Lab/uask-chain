@@ -14,6 +14,7 @@ import (
 type Answer struct {
 	*tripod.Tripod
 	fileStore filestore.FileStore
+	Question  *Question `tripod:"question"`
 }
 
 func NewAnswer(fileStore filestore.FileStore) *Answer {
@@ -46,8 +47,7 @@ func (a *Answer) AddAnswer(ctx *context.Context) error {
 	req := ctx.ParamsValue.(*types.AnswerAddRequest)
 
 	// check if question exists
-	q := a.GetTripod("question").(*Question)
-	if !q.existQuestion(req.QID) {
+	if !a.Question.existQuestion(req.QID) {
 		return ErrQuestionNotFound
 	}
 
