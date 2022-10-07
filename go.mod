@@ -4,11 +4,10 @@ go 1.17
 
 require (
 	github.com/pkg/errors v0.9.1
-	github.com/yu-org/yu v0.0.0-20220929054037-5cbe8a22f0a1
+	github.com/yu-org/yu v0.0.0-20221007054316-74752ff7a350
 )
 
 require (
-	github.com/AndreasBriese/bbloom v0.0.0-20190825152654-46b345b51c96 // indirect
 	github.com/BurntSushi/toml v0.3.1 // indirect
 	github.com/ChainSafe/go-schnorrkel v0.0.0-20200626160457-b38283118816 // indirect
 	github.com/HyperService-Consortium/go-hexutil v1.0.1 // indirect
@@ -16,13 +15,9 @@ require (
 	github.com/StackExchange/wmi v0.0.0-20180116203802-5d049714c4a6 // indirect
 	github.com/VictoriaMetrics/fastcache v1.6.0 // indirect
 	github.com/btcsuite/btcd v0.21.0-beta // indirect
-	github.com/cespare/xxhash v1.1.0 // indirect
 	github.com/cespare/xxhash/v2 v2.1.1 // indirect
 	github.com/cosmos/go-bip39 v0.0.0-20180819234021-555e2067c45d // indirect
 	github.com/davidlazar/go-crypto v0.0.0-20170701192655-dcfb0a7ac018 // indirect
-	github.com/dgraph-io/badger v1.6.2 // indirect
-	github.com/dgraph-io/ristretto v0.0.3-0.20200630154024-f66de99634de // indirect
-	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/ethereum/go-ethereum v1.10.8 // indirect
 	github.com/flynn/noise v0.0.0-20180327030543-2492fe189ae6 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
