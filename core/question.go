@@ -1,6 +1,7 @@
 package core
 
 import (
+	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"github.com/pkg/errors"
@@ -189,8 +190,14 @@ func checkOffchainStore(info *types.StoreInfo, store filestore.FileStore) error 
 	if info.OnchainStore {
 		return nil
 	}
-	if store.Exist(info.Hash) {
+	byt, err := store.Get(info.Hash)
+	if err != nil {
+		return err
+	}
+	storedFileHashByt := sha256.Sum256(byt)
+	storedFileHash := string(storedFileHashByt[:])
+	if storedFileHash == info.Hash {
 		return nil
 	}
-	return ErrFileNotFound
+	return ErrFileNotMatchHash
 }
