@@ -47,13 +47,11 @@ func (c *Comment) AddComment(ctx *context.Context) error {
 		ContentStub: stub,
 		Timestamp:   req.Timestamp,
 	}
-	byt, err := json.Marshal(scheme)
+	err = c.setComment(scheme)
 	if err != nil {
 		return err
 	}
-	c.State.Set(c, []byte(id), byt)
-	ctx.EmitEvent(fmt.Sprintf("add comment(%s) successfully by commenter(%s)", scheme.ID, commenter.String()))
-	return nil
+	return ctx.EmitEvent(fmt.Sprintf("add comment(%s) successfully by commenter(%s)", scheme.ID, commenter.String()))
 }
 
 func (c *Comment) UpdateComment(ctx *context.Context) error {
@@ -88,13 +86,20 @@ func (c *Comment) UpdateComment(ctx *context.Context) error {
 		ContentStub: stub,
 		Timestamp:   req.Timestamp,
 	}
+	err = c.setComment(scheme)
+	if err != nil {
+		return err
+	}
+	return ctx.EmitEvent(fmt.Sprintf("update comment(%s) successfully!", req.ID))
+}
+
+func (c *Comment) setComment(scheme *types.CommentScheme) error {
 	byt, err := json.Marshal(scheme)
 	if err != nil {
 		return err
 	}
 
-	c.State.Set(c, []byte(req.ID), byt)
-	ctx.EmitEvent(fmt.Sprintf("update comment(%s) successfully!", req.ID))
+	c.State.Set(c, []byte(scheme.ID), byt)
 	return nil
 }
 
@@ -107,6 +112,7 @@ func (c *Comment) getComment(id string) (*types.CommentScheme, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	scheme := &types.CommentScheme{}
 	err = json.Unmarshal(byt, scheme)
 	if err != nil {

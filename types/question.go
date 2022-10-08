@@ -12,12 +12,12 @@ type QuestionInfo struct {
 }
 
 type QuestionAddRequest struct {
-	Title       string         `json:"title"`
-	Content     *StoreInfo     `json:"content"`
-	Tags        []string       `json:"tags"`
-	Reward      *big.Int       `json:"reward"`
-	Timestamp   string         `json:"timestamp"`
-	Recommender common.Address `json:"recommender"`
+	Title        string         `json:"title"`
+	Content      *StoreInfo     `json:"content"`
+	Tags         []string       `json:"tags"`
+	TotalRewards *big.Int       `json:"total_rewards"`
+	Timestamp    string         `json:"timestamp"`
+	Recommender  common.Address `json:"recommender"`
 }
 
 type QuestionUpdateRequest struct {
@@ -26,12 +26,12 @@ type QuestionUpdateRequest struct {
 }
 
 type QuestionScheme struct {
-	ID          string         `json:"id"`
-	Title       string         `json:"title"`
-	Asker       common.Address `json:"asker"`
-	ContentStub string         `json:"content_stub"`
-	Tags        []string       `json:"tags"`
-	Reward      *big.Int       `json:"reward"`
-	Timestamp   string         `json:"timestamp"`
-	Recommender common.Address `json:"recommender"`
+	ID           string         `json:"id"`
+	Title        string         `json:"title"`
+	Asker        common.Address `json:"asker"`
+	ContentStub  string         `json:"content_stub"`
+	Tags         []string       `json:"tags"`
+	TotalRewards *big.Int       `json:"total_rewards"`
+	Timestamp    string         `json:"timestamp"`
+	Recommender  common.Address `json:"recommender"`
 }

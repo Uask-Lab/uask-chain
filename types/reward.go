@@ -1,10 +1,12 @@
 package types
 
+import "math/big"
+
 type RewardRequest struct {
 	// question id
 	QID string `json:"qid"`
 	// answer id -> reward
-	Rewards map[string]uint64 `json:"rewards"`
+	Rewards map[string]*big.Int `json:"rewards"`
 }
 
 type RewardScheme struct {
@@ -13,5 +15,5 @@ type RewardScheme struct {
 	// answer id
 	AID string `json:"aid"`
 
-	Reward uint64
+	Reward *big.Int
 }

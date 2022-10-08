@@ -65,13 +65,11 @@ func (a *Answer) AddAnswer(ctx *context.Context) error {
 		Timestamp:   req.Timestamp,
 		Recommender: req.Recommender,
 	}
-	byt, err := json.Marshal(scheme)
+	err = a.setAnswer(scheme)
 	if err != nil {
 		return err
 	}
-	a.State.Set(a, []byte(id), byt)
-	ctx.EmitEvent(fmt.Sprintf("add answer(%s) to question(%s) successfully by answerer(%s)!", scheme.ID, scheme.QID, answerer.String()))
-	return nil
+	return ctx.EmitEvent(fmt.Sprintf("add answer(%s) to question(%s) successfully by answerer(%s)!", scheme.ID, scheme.QID, answerer.String()))
 }
 
 func (a *Answer) UpdateAnswer(ctx *context.Context) error {
@@ -104,13 +102,20 @@ func (a *Answer) UpdateAnswer(ctx *context.Context) error {
 		Timestamp:   req.Timestamp,
 		Recommender: req.Recommender,
 	}
+	err = a.setAnswer(scheme)
+	if err != nil {
+		return err
+	}
+	return ctx.EmitEvent(fmt.Sprintf("update answer(%s) successfully!", req.ID))
+}
+
+func (a *Answer) setAnswer(scheme *types.AnswerScheme) error {
 	byt, err := json.Marshal(scheme)
 	if err != nil {
 		return err
 	}
 
-	a.State.Set(a, []byte(req.ID), byt)
-	ctx.EmitEvent(fmt.Sprintf("update answer(%s) successfully!", req.ID))
+	a.State.Set(a, []byte(scheme.ID), byt)
 	return nil
 }
 
