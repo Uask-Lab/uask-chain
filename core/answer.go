@@ -41,7 +41,7 @@ func (a *Answer) AddAnswer(ctx *context.Context) error {
 
 	// check if question exists
 	if !a.Question.existQuestion(req.QID) {
-		return ErrQuestionNotFound
+		return types.ErrQuestionNotFound
 	}
 
 	id := fmt.Sprintf("%s%s%s", answerer.String(), req.QID, req.Timestamp)
@@ -72,7 +72,7 @@ func (a *Answer) UpdateAnswer(ctx *context.Context) error {
 	req := ctx.ParamsValue.(*types.AnswerUpdateRequest)
 
 	if !a.existAnswer(req.ID) {
-		return ErrAnswerNotFound
+		return types.ErrAnswerNotFound
 	}
 
 	answer, err := a.getAnswer(req.ID)
@@ -80,7 +80,7 @@ func (a *Answer) UpdateAnswer(ctx *context.Context) error {
 		return err
 	}
 	if answer.Answerer != answerer {
-		return ErrNoPermission
+		return types.ErrNoPermission
 	}
 
 	stub, err := a.fileStore.Put(req.ID, req.Content)

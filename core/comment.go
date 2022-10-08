@@ -76,7 +76,7 @@ func (c *Comment) UpdateComment(ctx *context.Context) error {
 		return err
 	}
 	if comment.Commenter != commenter {
-		return ErrNoPermission
+		return types.ErrNoPermission
 	}
 
 	err = c.ifReplyExist(req.AID, req.CID)
@@ -135,12 +135,12 @@ func (c *Comment) getComment(id string) (*types.CommentScheme, error) {
 func (c *Comment) ifReplyExist(answerID, commentID string) error {
 	if answerID != "" {
 		if !c.Answer.existAnswer(answerID) {
-			return ErrAnswerNotFound
+			return types.ErrAnswerNotFound
 		}
 	}
 	if commentID != "" {
 		if !c.existComment(commentID) {
-			return ErrCommentNotFound
+			return types.ErrCommentNotFound
 		}
 	}
 	return nil

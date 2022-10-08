@@ -84,7 +84,7 @@ func (q *Question) UpdateQuestion(ctx *context.Context) error {
 		return err
 	}
 	if question.Asker != asker {
-		return ErrNoPermission
+		return types.ErrNoPermission
 	}
 
 	err = q.unlockForReward(asker, question.TotalRewards)
@@ -132,7 +132,7 @@ func (q *Question) Reward(ctx *context.Context) error {
 			return err
 		}
 		if reward.Cmp(question.TotalRewards) > 0 {
-			return ErrRewardNotEnough
+			return types.ErrRewardNotEnough
 		}
 		err = q.asset.AddBalance(answer.Answerer, reward)
 		if err != nil {
@@ -173,7 +173,7 @@ func (q *Question) existQuestion(id string) bool {
 
 func (q *Question) lockForReward(addr common.Address, amount *big.Int) error {
 	if amount.Sign() <= 0 {
-		return ErrRewardIllegal
+		return types.ErrRewardIllegal
 	}
 	balance := q.asset.GetBalance(addr)
 	if balance.Cmp(amount) < 0 {
@@ -199,5 +199,5 @@ func checkOffchainStore(info *types.StoreInfo, store filestore.FileStore) error 
 	if storedFileHash == info.Hash {
 		return nil
 	}
-	return ErrFileNotMatchHash
+	return types.ErrFileNotMatchHash
 }
