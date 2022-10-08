@@ -3,7 +3,6 @@ package core
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/pkg/errors"
 	"github.com/yu-org/yu/core/context"
 	"github.com/yu-org/yu/core/tripod"
 	ytypes "github.com/yu-org/yu/core/types"
@@ -31,13 +30,7 @@ func (a *Answer) CheckTxn(txn *ytypes.SignedTxn) error {
 	if err != nil {
 		return err
 	}
-	if req.Content.OnchainStore {
-		return nil
-	}
-	if a.fileStore.Exist(req.Content.Hash) {
-		return nil
-	}
-	return errors.New("file not found")
+	return checkOffchainStore(req.Content, a.fileStore)
 }
 
 func (a *Answer) AddAnswer(ctx *context.Context) error {

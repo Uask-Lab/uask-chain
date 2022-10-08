@@ -8,6 +8,7 @@ import (
 	"github.com/yu-org/yu/common"
 	"github.com/yu-org/yu/core/context"
 	"github.com/yu-org/yu/core/tripod"
+	ytypes "github.com/yu-org/yu/core/types"
 	"math/big"
 	"uask-chain/filestore"
 	"uask-chain/types"
@@ -24,7 +25,17 @@ func NewQuestion(fileStore filestore.FileStore) *Question {
 	tri := tripod.NewTripod("question")
 	q := &Question{Tripod: tri, fileStore: fileStore}
 	q.SetExec(q.AddQuestion).SetExec(q.UpdateQuestion).SetExec(q.Reward)
+	q.SetTxnChecker(q)
 	return q
+}
+
+func (q *Question) CheckTxn(txn *ytypes.SignedTxn) error {
+	req := &types.QuestionAddRequest{}
+	err := txn.BindJsonParams(req)
+	if err != nil {
+		return err
+	}
+	return checkOffchainStore(req.Content, q.fileStore)
 }
 
 func (q *Question) AddQuestion(ctx *context.Context) error {
@@ -172,4 +183,14 @@ func (q *Question) lockForReward(addr common.Address, amount *big.Int) error {
 
 func (q *Question) unlockForReward(addr common.Address, amount *big.Int) error {
 	return q.asset.AddBalance(addr, amount)
+}
+
+func checkOffchainStore(info *types.StoreInfo, store filestore.FileStore) error {
+	if info.OnchainStore {
+		return nil
+	}
+	if store.Exist(info.Hash) {
+		return nil
+	}
+	return ErrFileNotFound
 }

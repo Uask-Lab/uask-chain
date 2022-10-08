@@ -11,4 +11,6 @@ var (
 
 	ErrRewardNotEnough = errors.New("reward not enough")
 	ErrRewardIllegal   = errors.New("reward is illegal")
+
+	ErrFileNotFound = errors.New("file not found")
 )

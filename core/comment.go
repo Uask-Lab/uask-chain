@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/yu-org/yu/core/context"
 	"github.com/yu-org/yu/core/tripod"
+	ytypes "github.com/yu-org/yu/core/types"
 	"uask-chain/filestore"
 	"uask-chain/types"
 )
@@ -19,7 +20,17 @@ func NewComment(fileStore filestore.FileStore) *Comment {
 	tri := tripod.NewTripod("comment")
 	c := &Comment{Tripod: tri, fileStore: fileStore}
 	c.SetExec(c.AddComment).SetExec(c.UpdateComment)
+	c.SetTxnChecker(c)
 	return c
+}
+
+func (c *Comment) CheckTxn(txn *ytypes.SignedTxn) error {
+	req := &types.CommentAddRequest{}
+	err := txn.BindJsonParams(req)
+	if err != nil {
+		return err
+	}
+	return checkOffchainStore(req.Content, c.fileStore)
 }
 
 func (c *Comment) AddComment(ctx *context.Context) error {
