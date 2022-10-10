@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/pkg/errors v0.9.1
-	github.com/yu-org/yu v0.0.0-20221009170416-8a488d107c6e
+	github.com/yu-org/yu v0.0.0-20221010021618-d403858fb879
 )
 
 require (
