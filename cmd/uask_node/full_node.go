@@ -19,6 +19,7 @@ func main() {
 	poaCfg := &poa.PoaConfig{}
 	config.LoadTomlConf("./poa.toml", poaCfg)
 
+	startup.InitLog("debug", "")
 	startup.StartUpFullNode(
 		poa.NewPoa(poaCfg),
 		asset.NewAsset("uask"),

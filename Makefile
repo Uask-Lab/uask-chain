@@ -1,4 +1,4 @@
-.PHONY: build clean
+.PHONY: build clean reset
 
 build:
 	GOBIN=$(PWD)/build/bin go install ./cmd/uask_node
@@ -8,3 +8,6 @@ run:
 
 clean:
 	@rm -rf build/bin
+
+reset:
+	@rm -f chain.db yu.db
