@@ -11,15 +11,15 @@ import (
 )
 
 func main() {
-	localStore, err := filestore.NewLocalStore("./uask-files")
+	localStore, err := filestore.NewLocalStore("uask-files")
 	if err != nil {
 		logrus.Fatal(err)
 	}
 
 	poaCfg := &poa.PoaConfig{}
-	config.LoadTomlConf("./poa.toml", poaCfg)
+	config.LoadTomlConf("poa.toml", poaCfg)
 
-	startup.InitLog("debug", "")
+	startup.InitConfigFromPath("yu.toml")
 	startup.StartUpFullNode(
 		poa.NewPoa(poaCfg),
 		asset.NewAsset("uask"),
