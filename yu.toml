@@ -8,7 +8,7 @@ timeout = 60
 
 [p2p]
 p2p_listen_addrs = ["/ip4/127.0.0.1/tcp/8887"]
-protocol_id = "yu"
+protocol_id = "uask"
 node_key_type = 1
 node_key_rand_seed = 1
 
@@ -20,20 +20,7 @@ path = "./yu.db"
 sql_db_type = "sqlite"
 dsn = "chain.db"
 
-
-[tx_db.base_db]
-sql_db_type = "sqlite"
-dsn = "yudb.db"
-
 [txpool]
 pool_size = 20000
 txn_max_size = 1024000
-
-[state.kv.index_db]
-kv_type = "bolt"
-path = "./state_index.db"
-
-[state.kv.node_base]
-kv_type = "bolt"
-path = "./state_base.db"
 
