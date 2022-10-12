@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/common-nighthawk/go-figure"
 	"github.com/sirupsen/logrus"
 	"github.com/yu-org/yu/apps/asset"
 	"github.com/yu-org/yu/apps/poa"
@@ -18,6 +19,8 @@ func main() {
 
 	poaCfg := &poa.PoaConfig{}
 	config.LoadTomlConf("poa.toml", poaCfg)
+
+	figure.NewColorFigure("Uask", "big", "green", false).Print()
 
 	startup.InitConfigFromPath("yu.toml")
 	startup.StartUpFullNode(
