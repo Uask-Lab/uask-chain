@@ -37,9 +37,13 @@ func (c *Comment) AddComment(ctx *context.Context) error {
 	ctx.SetLei(10)
 
 	commenter := ctx.Caller
-	req := ctx.ParamsValue.(*types.CommentAddRequest)
+	req := &types.CommentAddRequest{}
+	err := ctx.Bindjson(req)
+	if err != nil {
+		return err
+	}
 
-	err := c.ifReplyExist(req.AID, req.CID)
+	err = c.ifReplyExist(req.AID, req.CID)
 	if err != nil {
 		return err
 	}
@@ -69,7 +73,11 @@ func (c *Comment) UpdateComment(ctx *context.Context) error {
 	ctx.SetLei(10)
 
 	commenter := ctx.Caller
-	req := ctx.ParamsValue.(*types.CommentUpdateRequest)
+	req := &types.CommentUpdateRequest{}
+	err := ctx.Bindjson(req)
+	if err != nil {
+		return err
+	}
 
 	comment, err := c.getComment(req.ID)
 	if err != nil {

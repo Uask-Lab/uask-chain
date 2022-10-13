@@ -37,7 +37,11 @@ func (a *Answer) AddAnswer(ctx *context.Context) error {
 	ctx.SetLei(50)
 
 	answerer := ctx.Caller
-	req := ctx.ParamsValue.(*types.AnswerAddRequest)
+	req := &types.AnswerAddRequest{}
+	err := ctx.Bindjson(req)
+	if err != nil {
+		return err
+	}
 
 	// check if question exists
 	if !a.Question.existQuestion(req.QID) {
@@ -69,7 +73,11 @@ func (a *Answer) UpdateAnswer(ctx *context.Context) error {
 	ctx.SetLei(50)
 
 	answerer := ctx.Caller
-	req := ctx.ParamsValue.(*types.AnswerUpdateRequest)
+	req := &types.AnswerUpdateRequest{}
+	err := ctx.Bindjson(req)
+	if err != nil {
+		return err
+	}
 
 	if !a.existAnswer(req.ID) {
 		return types.ErrAnswerNotFound

@@ -43,9 +43,13 @@ func (q *Question) AddQuestion(ctx *context.Context) error {
 	ctx.SetLei(10)
 
 	asker := ctx.Caller
-	req := ctx.ParamsValue.(*types.QuestionAddRequest)
+	req := &types.QuestionAddRequest{}
+	err := ctx.Bindjson(req)
+	if err != nil {
+		return err
+	}
 
-	err := q.lockForReward(asker, req.TotalRewards)
+	err = q.lockForReward(asker, req.TotalRewards)
 	if err != nil {
 		return err
 	}
@@ -77,7 +81,11 @@ func (q *Question) UpdateQuestion(ctx *context.Context) error {
 	ctx.SetLei(10)
 
 	asker := ctx.Caller
-	req := ctx.ParamsValue.(*types.QuestionUpdateRequest)
+	req := &types.QuestionUpdateRequest{}
+	err := ctx.Bindjson(req)
+	if err != nil {
+		return err
+	}
 
 	question, err := q.getQuestion(req.ID)
 	if err != nil {
@@ -121,7 +129,13 @@ func (q *Question) UpdateQuestion(ctx *context.Context) error {
 
 func (q *Question) Reward(ctx *context.Context) error {
 	ctx.SetLei(10)
-	req := ctx.ParamsValue.(*types.RewardRequest)
+
+	req := &types.RewardRequest{}
+	err := ctx.Bindjson(req)
+	if err != nil {
+		return err
+	}
+
 	question, err := q.getQuestion(req.QID)
 	if err != nil {
 		return err

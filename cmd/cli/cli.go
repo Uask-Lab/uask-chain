@@ -19,6 +19,8 @@ func main() {
 	titleOrId := os.Args[2]
 	content := os.Args[3]
 
+	fmt.Printf("%s %s %s \n", action, titleOrId, content)
+
 	var (
 		tripod string
 		exec   string
