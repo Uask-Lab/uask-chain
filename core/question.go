@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"github.com/yu-org/yu/apps/asset"
 	"github.com/yu-org/yu/common"
 	"github.com/yu-org/yu/core/context"
@@ -27,6 +28,7 @@ func NewQuestion(fileStore filestore.FileStore) *Question {
 	q := &Question{Tripod: tri, fileStore: fileStore}
 	q.SetExec(q.AddQuestion).SetExec(q.UpdateQuestion).SetExec(q.Reward)
 	q.SetTxnChecker(q)
+	q.SetInit(q)
 	return q
 }
 
@@ -37,6 +39,13 @@ func (q *Question) CheckTxn(txn *ytypes.SignedTxn) error {
 		return err
 	}
 	return checkOffchainStore(req.Content, q.fileStore)
+}
+
+func (q *Question) InitChain() {
+	err := q.asset.AddBalance(common.HexToAddress("0x110e2F71F7a94ba18dbeC96234CC399a2cE61E5D"), big.NewInt(100000))
+	if err != nil {
+		logrus.Fatal("set balance error: ", err)
+	}
 }
 
 func (q *Question) AddQuestion(ctx *context.Context) error {
