@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	pub, priv := keypair.GenSrKeyWithSecret([]byte("dayu"))
+	pub, priv := keypair.GenSrKeyWithSecret([]byte("uask-chain"))
 
 	action := os.Args[1]
 	titleOrId := os.Args[2]
