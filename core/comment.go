@@ -19,7 +19,7 @@ type Comment struct {
 func NewComment(fileStore filestore.FileStore) *Comment {
 	tri := tripod.NewTripod("comment")
 	c := &Comment{Tripod: tri, fileStore: fileStore}
-	c.SetExec(c.AddComment).SetExec(c.UpdateComment)
+	c.SetWritings(c.AddComment, c.UpdateComment)
 	c.SetTxnChecker(c)
 	return c
 }
@@ -33,10 +33,10 @@ func (c *Comment) CheckTxn(txn *ytypes.SignedTxn) error {
 	return checkOffchainStore(req.Content, c.fileStore)
 }
 
-func (c *Comment) AddComment(ctx *context.Context) error {
+func (c *Comment) AddComment(ctx *context.WriteContext) error {
 	ctx.SetLei(10)
 
-	commenter := ctx.Caller
+	commenter := ctx.GetCaller()
 	req := &types.CommentAddRequest{}
 	err := ctx.Bindjson(req)
 	if err != nil {
@@ -69,10 +69,10 @@ func (c *Comment) AddComment(ctx *context.Context) error {
 	return ctx.EmitEvent(fmt.Sprintf("add comment(%s) successfully by commenter(%s)", scheme.ID, commenter.String()))
 }
 
-func (c *Comment) UpdateComment(ctx *context.Context) error {
+func (c *Comment) UpdateComment(ctx *context.WriteContext) error {
 	ctx.SetLei(10)
 
-	commenter := ctx.Caller
+	commenter := ctx.GetCaller()
 	req := &types.CommentUpdateRequest{}
 	err := ctx.Bindjson(req)
 	if err != nil {

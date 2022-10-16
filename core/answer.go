@@ -19,7 +19,7 @@ type Answer struct {
 func NewAnswer(fileStore filestore.FileStore) *Answer {
 	tri := tripod.NewTripod("answer")
 	a := &Answer{Tripod: tri, fileStore: fileStore}
-	a.SetExec(a.AddAnswer).SetExec(a.UpdateAnswer)
+	a.SetWritings(a.AddAnswer, a.UpdateAnswer)
 	a.SetTxnChecker(a)
 	return a
 }
@@ -33,10 +33,10 @@ func (a *Answer) CheckTxn(txn *ytypes.SignedTxn) error {
 	return checkOffchainStore(req.Content, a.fileStore)
 }
 
-func (a *Answer) AddAnswer(ctx *context.Context) error {
+func (a *Answer) AddAnswer(ctx *context.WriteContext) error {
 	ctx.SetLei(50)
 
-	answerer := ctx.Caller
+	answerer := ctx.GetCaller()
 	req := &types.AnswerAddRequest{}
 	err := ctx.Bindjson(req)
 	if err != nil {
@@ -69,10 +69,10 @@ func (a *Answer) AddAnswer(ctx *context.Context) error {
 	return ctx.EmitEvent(fmt.Sprintf("add answer(%s) to question(%s) successfully by answerer(%s)!", scheme.ID, scheme.QID, answerer.String()))
 }
 
-func (a *Answer) UpdateAnswer(ctx *context.Context) error {
+func (a *Answer) UpdateAnswer(ctx *context.WriteContext) error {
 	ctx.SetLei(50)
 
-	answerer := ctx.Caller
+	answerer := ctx.GetCaller()
 	req := &types.AnswerUpdateRequest{}
 	err := ctx.Bindjson(req)
 	if err != nil {

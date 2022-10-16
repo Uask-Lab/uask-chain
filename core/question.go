@@ -26,7 +26,7 @@ type Question struct {
 func NewQuestion(fileStore filestore.FileStore) *Question {
 	tri := tripod.NewTripod("question")
 	q := &Question{Tripod: tri, fileStore: fileStore}
-	q.SetExec(q.AddQuestion).SetExec(q.UpdateQuestion).SetExec(q.Reward)
+	q.SetWritings(q.AddQuestion, q.UpdateQuestion, q.Reward)
 	q.SetTxnChecker(q)
 	q.SetInit(q)
 	return q
@@ -48,10 +48,10 @@ func (q *Question) InitChain() {
 	}
 }
 
-func (q *Question) AddQuestion(ctx *context.Context) error {
+func (q *Question) AddQuestion(ctx *context.WriteContext) error {
 	ctx.SetLei(10)
 
-	asker := ctx.Caller
+	asker := ctx.GetCaller()
 	req := &types.QuestionAddRequest{}
 	err := ctx.Bindjson(req)
 	if err != nil {
@@ -64,16 +64,11 @@ func (q *Question) AddQuestion(ctx *context.Context) error {
 	}
 
 	id := fmt.Sprintf("%s%s%s", asker.String(), req.Title, req.Timestamp)
-	stub, err := q.fileStore.Put(id, req.Content)
-	if err != nil {
-		return err
-	}
 
 	scheme := &types.QuestionScheme{
 		ID:           id,
 		Title:        req.Title,
 		Asker:        asker,
-		ContentStub:  stub,
 		Tags:         req.Tags,
 		TotalRewards: req.TotalRewards,
 		Timestamp:    req.Timestamp,
@@ -86,10 +81,10 @@ func (q *Question) AddQuestion(ctx *context.Context) error {
 	return ctx.EmitEvent(fmt.Sprintf("add question(%s) successfully by asker(%s)! question-id=%s", scheme.Title, asker.String(), scheme.ID))
 }
 
-func (q *Question) UpdateQuestion(ctx *context.Context) error {
+func (q *Question) UpdateQuestion(ctx *context.WriteContext) error {
 	ctx.SetLei(10)
 
-	asker := ctx.Caller
+	asker := ctx.GetCaller()
 	req := &types.QuestionUpdateRequest{}
 	err := ctx.Bindjson(req)
 	if err != nil {
@@ -113,16 +108,10 @@ func (q *Question) UpdateQuestion(ctx *context.Context) error {
 		return err
 	}
 
-	stub, err := q.fileStore.Put(req.ID, req.Content)
-	if err != nil {
-		return err
-	}
-
 	scheme := &types.QuestionScheme{
 		ID:           req.ID,
 		Title:        req.Title,
 		Asker:        asker,
-		ContentStub:  stub,
 		Tags:         req.Tags,
 		TotalRewards: req.TotalRewards,
 		Timestamp:    req.Timestamp,
@@ -136,7 +125,7 @@ func (q *Question) UpdateQuestion(ctx *context.Context) error {
 	return ctx.EmitEvent(fmt.Sprintf("update question(%s) successfully!", req.ID))
 }
 
-func (q *Question) Reward(ctx *context.Context) error {
+func (q *Question) Reward(ctx *context.WriteContext) error {
 	ctx.SetLei(10)
 
 	req := &types.RewardRequest{}

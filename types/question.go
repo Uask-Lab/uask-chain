@@ -29,7 +29,6 @@ type QuestionScheme struct {
 	ID           string         `json:"id"`
 	Title        string         `json:"title"`
 	Asker        common.Address `json:"asker"`
-	ContentStub  string         `json:"content_stub"`
 	Tags         []string       `json:"tags"`
 	TotalRewards *big.Int       `json:"total_rewards"`
 	Timestamp    string         `json:"timestamp"`
