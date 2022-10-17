@@ -48,19 +48,12 @@ func (c *Comment) AddComment(ctx *context.WriteContext) error {
 		return err
 	}
 
-	id := fmt.Sprintf("%s%s%s%s", commenter.String(), req.AID, req.CID, req.Timestamp)
-	stub, err := c.fileStore.Put(id, req.Content)
-	if err != nil {
-		return err
-	}
-
 	scheme := &types.CommentScheme{
-		ID:          id,
-		AID:         req.AID,
-		CID:         req.CID,
-		Commenter:   commenter,
-		ContentStub: stub,
-		Timestamp:   req.Timestamp,
+		ID:        ctx.Txn.TxnHash.String(),
+		AID:       req.AID,
+		CID:       req.CID,
+		Commenter: commenter,
+		Timestamp: req.Timestamp,
 	}
 	err = c.setComment(scheme)
 	if err != nil {
@@ -92,18 +85,12 @@ func (c *Comment) UpdateComment(ctx *context.WriteContext) error {
 		return err
 	}
 
-	stub, err := c.fileStore.Put(req.ID, req.Content)
-	if err != nil {
-		return err
-	}
-
 	scheme := &types.CommentScheme{
-		ID:          req.ID,
-		AID:         req.AID,
-		CID:         req.CID,
-		Commenter:   commenter,
-		ContentStub: stub,
-		Timestamp:   req.Timestamp,
+		ID:        req.ID,
+		AID:       req.AID,
+		CID:       req.CID,
+		Commenter: commenter,
+		Timestamp: req.Timestamp,
 	}
 	err = c.setComment(scheme)
 	if err != nil {

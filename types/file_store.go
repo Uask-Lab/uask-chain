@@ -6,6 +6,7 @@ type StoreInfo struct {
 	Content []byte `json:"content"`
 
 	// If OnchainStore is false, these are not nil.
+	// Hash is ipfs hash
 	Hash string `json:"hash"`
 	Url  string `json:"url"`
 }

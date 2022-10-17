@@ -63,10 +63,8 @@ func (q *Question) AddQuestion(ctx *context.WriteContext) error {
 		return err
 	}
 
-	id := fmt.Sprintf("%s%s%s", asker.String(), req.Title, req.Timestamp)
-
 	scheme := &types.QuestionScheme{
-		ID:           id,
+		ID:           ctx.Txn.TxnHash.String(),
 		Title:        req.Title,
 		Asker:        asker,
 		Tags:         req.Tags,

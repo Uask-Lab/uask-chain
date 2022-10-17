@@ -25,7 +25,6 @@ type AnswerScheme struct {
 	ID          string         `json:"id"`
 	QID         string         `json:"qid"`
 	Answerer    common.Address `json:"answerer"`
-	ContentStub string         `json:"content_stub"`
 	Timestamp   string         `json:"timestamp"`
 	Recommender common.Address `json:"recommender"`
 }

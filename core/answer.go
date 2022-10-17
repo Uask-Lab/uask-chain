@@ -48,17 +48,10 @@ func (a *Answer) AddAnswer(ctx *context.WriteContext) error {
 		return types.ErrQuestionNotFound
 	}
 
-	id := fmt.Sprintf("%s%s%s", answerer.String(), req.QID, req.Timestamp)
-	stub, err := a.fileStore.Put(id, req.Content)
-	if err != nil {
-		return err
-	}
-
 	scheme := &types.AnswerScheme{
-		ID:          id,
+		ID:          ctx.Txn.TxnHash.String(),
 		QID:         req.QID,
 		Answerer:    answerer,
-		ContentStub: stub,
 		Timestamp:   req.Timestamp,
 		Recommender: req.Recommender,
 	}
@@ -91,15 +84,10 @@ func (a *Answer) UpdateAnswer(ctx *context.WriteContext) error {
 		return types.ErrNoPermission
 	}
 
-	stub, err := a.fileStore.Put(req.ID, req.Content)
-	if err != nil {
-		return err
-	}
 	scheme := &types.AnswerScheme{
 		ID:          req.ID,
 		QID:         req.QID,
 		Answerer:    answerer,
-		ContentStub: stub,
 		Timestamp:   req.Timestamp,
 		Recommender: req.Recommender,
 	}
