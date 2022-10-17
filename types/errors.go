@@ -12,5 +12,5 @@ var (
 	ErrRewardNotEnough = errors.New("reward not enough")
 	ErrRewardIllegal   = errors.New("reward is illegal")
 
-	ErrFileNotMatchHash = errors.New("file-content not match file-hash")
+	ErrFileNotfound = errors.New("file-content not found")
 )

@@ -1,7 +1,6 @@
 package core
 
 import (
-	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"github.com/pkg/errors"
@@ -197,17 +196,12 @@ func (q *Question) unlockForReward(addr common.Address, amount *big.Int) error {
 }
 
 func checkOffchainStore(info *types.StoreInfo, store filestore.FileStore) error {
-	if info.OnchainStore {
-		return nil
-	}
 	byt, err := store.Get(info.Hash)
 	if err != nil {
 		return err
 	}
-	storedFileHashByt := sha256.Sum256(byt)
-	storedFileHash := string(storedFileHashByt[:])
-	if storedFileHash == info.Hash {
-		return nil
+	if byt == nil {
+		return types.ErrFileNotfound
 	}
-	return types.ErrFileNotMatchHash
+	return nil
 }

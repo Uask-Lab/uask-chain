@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	localStore, err := filestore.NewLocalStore("uask-files")
+	localStore, err := filestore.NewIpfsStore("localhost:5001", "uask-files")
 	if err != nil {
 		logrus.Fatal(err)
 	}

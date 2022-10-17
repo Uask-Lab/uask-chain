@@ -1,7 +1,6 @@
 package filestore
 
 import (
-	"bytes"
 	api "github.com/ipfs/go-ipfs-api"
 	"io/ioutil"
 	"os"
@@ -24,7 +23,8 @@ func NewIpfsStore(url, dir string) (*IpfsStore, error) {
 }
 
 func (i *IpfsStore) Put(_ string, content *types.StoreInfo) (string, error) {
-	return i.cli.Add(bytes.NewReader(content.Content))
+	panic("implement me")
+	// return i.cli.Add(bytes.NewReader(content.Content))
 }
 
 func (i *IpfsStore) Get(hash string) ([]byte, error) {

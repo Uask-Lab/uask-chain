@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	api "github.com/ipfs/go-ipfs-api"
 	"github.com/yu-org/yu/common"
 	"github.com/yu-org/yu/core/keypair"
 	"github.com/yu-org/yu/example/client/callchain"
@@ -28,13 +30,20 @@ func main() {
 
 		err error
 	)
+
+	url := "localhost:5001"
+	hash, err := api.NewShell(url).Add(bytes.NewReader([]byte(content)))
+	if err != nil {
+		panic(err)
+	}
+
 	switch action {
 	case "ask":
 		info := &types.QuestionAddRequest{
 			Title: titleOrId,
 			Content: &types.StoreInfo{
-				OnchainStore: true,
-				Content:      []byte(content),
+				Url:  url,
+				Hash: hash,
 			},
 			Tags:         nil,
 			TotalRewards: big.NewInt(100),
@@ -52,8 +61,8 @@ func main() {
 		info := &types.AnswerAddRequest{
 			QID: titleOrId,
 			Content: &types.StoreInfo{
-				OnchainStore: true,
-				Content:      []byte(content),
+				Url:  url,
+				Hash: hash,
 			},
 			Timestamp:   time.Now().String(),
 			Recommender: common.Address{},
@@ -70,8 +79,8 @@ func main() {
 			AID: titleOrId,
 			CID: titleOrId,
 			Content: &types.StoreInfo{
-				OnchainStore: true,
-				Content:      []byte(content),
+				Url:  url,
+				Hash: hash,
 			},
 			Timestamp: time.Now().String(),
 		}
@@ -84,10 +93,10 @@ func main() {
 		exec = "AddComment"
 	}
 
-	callchain.CallChainByExec(callchain.Websocket, priv, pub, &common.Ecall{
-		TripodName: tripod,
-		ExecName:   exec,
-		Params:     string(params),
-		LeiPrice:   0,
+	callchain.CallChainByExec(callchain.Websocket, priv, pub, &common.WrCall{
+		TripodName:  tripod,
+		WritingName: exec,
+		Params:      string(params),
+		LeiPrice:    0,
 	})
 }
