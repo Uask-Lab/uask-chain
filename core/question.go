@@ -37,7 +37,7 @@ func (q *Question) CheckTxn(txn *ytypes.SignedTxn) error {
 	if err != nil {
 		return err
 	}
-	return checkOffchainStore(req.Content, q.fileStore)
+	return checkOffchainOrStoreOnchain(txn.FromP2p(), req.Content, q.fileStore)
 }
 
 func (q *Question) InitChain() {
@@ -195,7 +195,17 @@ func (q *Question) unlockForReward(addr common.Address, amount *big.Int) error {
 	return q.asset.AddBalance(addr, amount)
 }
 
-func checkOffchainStore(info *types.StoreInfo, store filestore.FileStore) error {
+func checkOffchainOrStoreOnchain(fromP2P bool, info *types.StoreInfo, store filestore.FileStore) error {
+	if !fromP2P {
+		hash, err := store.Put("", info)
+		if err != nil {
+			return err
+		}
+		info.Hash = hash
+		info.Url = store.Url()
+		info.Content = nil
+		return nil
+	}
 	byt, err := store.Get(info.Hash)
 	if err != nil {
 		return err

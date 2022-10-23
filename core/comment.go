@@ -30,7 +30,7 @@ func (c *Comment) CheckTxn(txn *ytypes.SignedTxn) error {
 	if err != nil {
 		return err
 	}
-	return checkOffchainStore(req.Content, c.fileStore)
+	return checkOffchainOrStoreOnchain(txn.FromP2p(), req.Content, c.fileStore)
 }
 
 func (c *Comment) AddComment(ctx *context.WriteContext) error {

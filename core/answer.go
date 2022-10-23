@@ -30,7 +30,7 @@ func (a *Answer) CheckTxn(txn *ytypes.SignedTxn) error {
 	if err != nil {
 		return err
 	}
-	return checkOffchainStore(req.Content, a.fileStore)
+	return checkOffchainOrStoreOnchain(txn.FromP2p(), req.Content, a.fileStore)
 }
 
 func (a *Answer) AddAnswer(ctx *context.WriteContext) error {
