@@ -23,7 +23,7 @@ func main() {
 	figure.NewColorFigure("Uask", "big", "green", false).Print()
 
 	startup.InitConfigFromPath("yu.toml")
-	startup.StartUpFullNode(
+	startup.SyncAndStartup(
 		poa.NewPoa(poaCfg),
 		asset.NewAsset("uask"),
 		core.NewQuestion(localStore),
