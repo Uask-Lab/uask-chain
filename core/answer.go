@@ -2,7 +2,6 @@ package core
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/yu-org/yu/core/context"
 	"github.com/yu-org/yu/core/tripod"
 	ytypes "github.com/yu-org/yu/core/types"
@@ -59,7 +58,7 @@ func (a *Answer) AddAnswer(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	return ctx.EmitEvent(fmt.Sprintf("add answer(%s) to question(%s) successfully by answerer(%s)!", scheme.ID, scheme.QID, answerer.String()))
+	return ctx.EmitStringEvent("add answer(%s) to question(%s) successfully by answerer(%s)!", scheme.ID, scheme.QID, answerer.String())
 }
 
 func (a *Answer) UpdateAnswer(ctx *context.WriteContext) error {
@@ -95,7 +94,7 @@ func (a *Answer) UpdateAnswer(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	return ctx.EmitEvent(fmt.Sprintf("update answer(%s) successfully!", req.ID))
+	return ctx.EmitStringEvent("update answer(%s) successfully!", req.ID)
 }
 
 func (a *Answer) setAnswer(scheme *types.AnswerScheme) error {

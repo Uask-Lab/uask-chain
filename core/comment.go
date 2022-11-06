@@ -2,7 +2,6 @@ package core
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/yu-org/yu/core/context"
 	"github.com/yu-org/yu/core/tripod"
 	ytypes "github.com/yu-org/yu/core/types"
@@ -59,7 +58,7 @@ func (c *Comment) AddComment(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	return ctx.EmitEvent(fmt.Sprintf("add comment(%s) successfully by commenter(%s)", scheme.ID, commenter.String()))
+	return ctx.EmitStringEvent("add comment(%s) successfully by commenter(%s)", scheme.ID, commenter.String())
 }
 
 func (c *Comment) UpdateComment(ctx *context.WriteContext) error {
@@ -96,7 +95,7 @@ func (c *Comment) UpdateComment(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	return ctx.EmitEvent(fmt.Sprintf("update comment(%s) successfully!", req.ID))
+	return ctx.EmitStringEvent("update comment(%s) successfully!", req.ID)
 }
 
 func (c *Comment) setComment(scheme *types.CommentScheme) error {

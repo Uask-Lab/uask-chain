@@ -2,7 +2,6 @@ package core
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/yu-org/yu/apps/asset"
@@ -75,7 +74,7 @@ func (q *Question) AddQuestion(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	return ctx.EmitEvent(fmt.Sprintf("add question(%s) successfully by asker(%s)! question-id=%s", scheme.Title, asker.String(), scheme.ID))
+	return ctx.EmitStringEvent("add question(%s) successfully by asker(%s)! question-id=%s", scheme.Title, asker.String(), scheme.ID)
 }
 
 func (q *Question) UpdateQuestion(ctx *context.WriteContext) error {
@@ -119,7 +118,7 @@ func (q *Question) UpdateQuestion(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	return ctx.EmitEvent(fmt.Sprintf("update question(%s) successfully!", req.ID))
+	return ctx.EmitStringEvent("update question(%s) successfully!", req.ID)
 }
 
 func (q *Question) Reward(ctx *context.WriteContext) error {

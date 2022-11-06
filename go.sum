@@ -1300,6 +1300,10 @@ github.com/yu-org/yu v0.0.0-20221023010511-d3efb7808949 h1:iVApOxbvtA4XglL1Ol1QF
 github.com/yu-org/yu v0.0.0-20221023010511-d3efb7808949/go.mod h1:mXLTPsAs6c2G8xcANEgGkGX/tyfdT2ya2SmYXYQIbdA=
 github.com/yu-org/yu v0.0.0-20221102150551-6c607e535675 h1:3Cpcg3oxMD0IeGzL1hDYaqSlzS7uopkfwgZg2Nw3p8E=
 github.com/yu-org/yu v0.0.0-20221102150551-6c607e535675/go.mod h1:mXLTPsAs6c2G8xcANEgGkGX/tyfdT2ya2SmYXYQIbdA=
+github.com/yu-org/yu v0.0.0-20221106054922-7d3ab3d97436 h1:OKuYKHlqyVOgraKq01Nv993pSdCs1CDCf4fBTl70qt0=
+github.com/yu-org/yu v0.0.0-20221106054922-7d3ab3d97436/go.mod h1:PgvQ/mSk4jpsHx5ZmSlw4ix3n0Y46dugQMrIpsTvLIA=
+github.com/yu-org/yu v0.0.0-20221106070155-f23e05a3075a h1:h0sAWVhijDSPeOfAevNdzNbuTdrFgcvVNser5uGXMpI=
+github.com/yu-org/yu v0.0.0-20221106070155-f23e05a3075a/go.mod h1:PgvQ/mSk4jpsHx5ZmSlw4ix3n0Y46dugQMrIpsTvLIA=
 github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/zenazn/goji v0.9.0/go.mod h1:7S9M489iMyHBNxwZnk9/EHS098H4/F6TATF2mIxtB1Q=
 gitlab.com/NebulousLabs/errors v0.0.0-20171229012116-7ead97ef90b8/go.mod h1:ZkMZ0dpQyWwlENaeZVBiQRjhMEZvk6VTXquzl3FOFP8=
