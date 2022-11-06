@@ -58,7 +58,8 @@ func (c *Comment) AddComment(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	return ctx.EmitStringEvent("add comment(%s) successfully by commenter(%s)", scheme.ID, commenter.String())
+	ctx.EmitStringEvent("add comment(%s) successfully by commenter(%s)", scheme.ID, commenter.String())
+	return nil
 }
 
 func (c *Comment) UpdateComment(ctx *context.WriteContext) error {
@@ -95,7 +96,8 @@ func (c *Comment) UpdateComment(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	return ctx.EmitStringEvent("update comment(%s) successfully!", req.ID)
+	ctx.EmitStringEvent("update comment(%s) successfully!", req.ID)
+	return nil
 }
 
 func (c *Comment) setComment(scheme *types.CommentScheme) error {

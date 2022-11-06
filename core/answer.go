@@ -58,7 +58,8 @@ func (a *Answer) AddAnswer(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	return ctx.EmitStringEvent("add answer(%s) to question(%s) successfully by answerer(%s)!", scheme.ID, scheme.QID, answerer.String())
+	ctx.EmitStringEvent("add answer(%s) to question(%s) successfully by answerer(%s)!", scheme.ID, scheme.QID, answerer.String())
+	return nil
 }
 
 func (a *Answer) UpdateAnswer(ctx *context.WriteContext) error {
@@ -94,7 +95,8 @@ func (a *Answer) UpdateAnswer(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	return ctx.EmitStringEvent("update answer(%s) successfully!", req.ID)
+	ctx.EmitStringEvent("update answer(%s) successfully!", req.ID)
+	return nil
 }
 
 func (a *Answer) setAnswer(scheme *types.AnswerScheme) error {

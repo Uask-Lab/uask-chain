@@ -74,7 +74,8 @@ func (q *Question) AddQuestion(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	return ctx.EmitStringEvent("add question(%s) successfully by asker(%s)! question-id=%s", scheme.Title, asker.String(), scheme.ID)
+	ctx.EmitStringEvent("add question(%s) successfully by asker(%s)! question-id=%s", scheme.Title, asker.String(), scheme.ID)
+	return nil
 }
 
 func (q *Question) UpdateQuestion(ctx *context.WriteContext) error {
@@ -118,7 +119,8 @@ func (q *Question) UpdateQuestion(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	return ctx.EmitStringEvent("update question(%s) successfully!", req.ID)
+	ctx.EmitStringEvent("update question(%s) successfully!", req.ID)
+	return nil
 }
 
 func (q *Question) Reward(ctx *context.WriteContext) error {
