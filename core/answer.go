@@ -37,7 +37,7 @@ func (a *Answer) AddAnswer(ctx *context.WriteContext) error {
 
 	answerer := ctx.GetCaller()
 	req := &types.AnswerAddRequest{}
-	err := ctx.Bindjson(req)
+	err := ctx.BindJson(req)
 	if err != nil {
 		return err
 	}
@@ -67,7 +67,7 @@ func (a *Answer) UpdateAnswer(ctx *context.WriteContext) error {
 
 	answerer := ctx.GetCaller()
 	req := &types.AnswerUpdateRequest{}
-	err := ctx.Bindjson(req)
+	err := ctx.BindJson(req)
 	if err != nil {
 		return err
 	}
@@ -105,12 +105,12 @@ func (a *Answer) setAnswer(scheme *types.AnswerScheme) error {
 		return err
 	}
 
-	a.State.Set(a, []byte(scheme.ID), byt)
+	a.Set([]byte(scheme.ID), byt)
 	return nil
 }
 
 func (a *Answer) getAnswer(id string) (*types.AnswerScheme, error) {
-	byt, err := a.State.Get(a, []byte(id))
+	byt, err := a.Get([]byte(id))
 	if err != nil {
 		return nil, err
 	}
@@ -123,5 +123,5 @@ func (a *Answer) getAnswer(id string) (*types.AnswerScheme, error) {
 }
 
 func (a *Answer) existAnswer(id string) bool {
-	return a.State.Exist(a, []byte(id))
+	return a.Exist([]byte(id))
 }

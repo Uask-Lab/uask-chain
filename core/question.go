@@ -51,7 +51,7 @@ func (q *Question) AddQuestion(ctx *context.WriteContext) error {
 
 	asker := ctx.GetCaller()
 	req := &types.QuestionAddRequest{}
-	err := ctx.Bindjson(req)
+	err := ctx.BindJson(req)
 	if err != nil {
 		return err
 	}
@@ -83,7 +83,7 @@ func (q *Question) UpdateQuestion(ctx *context.WriteContext) error {
 
 	asker := ctx.GetCaller()
 	req := &types.QuestionUpdateRequest{}
-	err := ctx.Bindjson(req)
+	err := ctx.BindJson(req)
 	if err != nil {
 		return err
 	}
@@ -127,7 +127,7 @@ func (q *Question) Reward(ctx *context.WriteContext) error {
 	ctx.SetLei(10)
 
 	req := &types.RewardRequest{}
-	err := ctx.Bindjson(req)
+	err := ctx.BindJson(req)
 	if err != nil {
 		return err
 	}
@@ -160,12 +160,12 @@ func (q *Question) setQuestion(scheme *types.QuestionScheme) error {
 		return err
 	}
 
-	q.State.Set(q, []byte(scheme.ID), byt)
+	q.Set([]byte(scheme.ID), byt)
 	return nil
 }
 
 func (q *Question) getQuestion(id string) (*types.QuestionScheme, error) {
-	byt, err := q.State.Get(q, []byte(id))
+	byt, err := q.Get([]byte(id))
 	if err != nil {
 		return nil, err
 	}
@@ -178,7 +178,7 @@ func (q *Question) getQuestion(id string) (*types.QuestionScheme, error) {
 }
 
 func (q *Question) existQuestion(id string) bool {
-	return q.State.Exist(q, []byte(id))
+	return q.Exist([]byte(id))
 }
 
 func (q *Question) lockForReward(addr common.Address, amount *big.Int) error {

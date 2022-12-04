@@ -37,7 +37,7 @@ func (c *Comment) AddComment(ctx *context.WriteContext) error {
 
 	commenter := ctx.GetCaller()
 	req := &types.CommentAddRequest{}
-	err := ctx.Bindjson(req)
+	err := ctx.BindJson(req)
 	if err != nil {
 		return err
 	}
@@ -67,7 +67,7 @@ func (c *Comment) UpdateComment(ctx *context.WriteContext) error {
 
 	commenter := ctx.GetCaller()
 	req := &types.CommentUpdateRequest{}
-	err := ctx.Bindjson(req)
+	err := ctx.BindJson(req)
 	if err != nil {
 		return err
 	}
@@ -106,16 +106,16 @@ func (c *Comment) setComment(scheme *types.CommentScheme) error {
 		return err
 	}
 
-	c.State.Set(c, []byte(scheme.ID), byt)
+	c.Set([]byte(scheme.ID), byt)
 	return nil
 }
 
 func (c *Comment) existComment(id string) bool {
-	return c.State.Exist(c, []byte(id))
+	return c.Exist([]byte(id))
 }
 
 func (c *Comment) getComment(id string) (*types.CommentScheme, error) {
-	byt, err := c.State.Get(c, []byte(id))
+	byt, err := c.Get([]byte(id))
 	if err != nil {
 		return nil, err
 	}
