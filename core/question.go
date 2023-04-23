@@ -198,6 +198,7 @@ func (q *Question) unlockForReward(addr common.Address, amount *big.Int) error {
 
 func checkOffchainOrStoreOnchain(fromP2P bool, info *types.StoreInfo, store filestore.FileStore) error {
 	if !fromP2P {
+		// from RPC, store it into ipfs and clean the content.
 		hash, err := store.Put("", info)
 		if err != nil {
 			return err
@@ -207,6 +208,7 @@ func checkOffchainOrStoreOnchain(fromP2P bool, info *types.StoreInfo, store file
 		info.Content = nil
 		return nil
 	}
+	// check ipfs if file exists
 	byt, err := store.Get(info.Hash)
 	if err != nil {
 		return err
