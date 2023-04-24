@@ -7,7 +7,7 @@ require (
 	github.com/ipfs/go-ipfs-api v0.3.0
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.9.0
-	github.com/yu-org/yu v0.0.0-20230405064703-f8f6c6f3477e
+	github.com/yu-org/yu v0.0.0-20230423152114-9685859e104a
 )
 
 require (

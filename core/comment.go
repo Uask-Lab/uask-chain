@@ -16,7 +16,7 @@ type Comment struct {
 }
 
 func NewComment(fileStore filestore.FileStore) *Comment {
-	tri := tripod.NewTripod("comment")
+	tri := tripod.NewTripod()
 	c := &Comment{Tripod: tri, fileStore: fileStore}
 	c.SetWritings(c.AddComment, c.UpdateComment)
 	c.SetTxnChecker(c)

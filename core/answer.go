@@ -16,7 +16,7 @@ type Answer struct {
 }
 
 func NewAnswer(fileStore filestore.FileStore) *Answer {
-	tri := tripod.NewTripod("answer")
+	tri := tripod.NewTripod()
 	a := &Answer{Tripod: tri, fileStore: fileStore}
 	a.SetWritings(a.AddAnswer, a.UpdateAnswer)
 	a.SetTxnChecker(a)

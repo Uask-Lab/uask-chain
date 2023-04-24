@@ -22,7 +22,7 @@ type Question struct {
 }
 
 func NewQuestion(fileStore filestore.FileStore) *Question {
-	tri := tripod.NewTripod("question")
+	tri := tripod.NewTripod()
 	q := &Question{Tripod: tri, fileStore: fileStore}
 	q.SetWritings(q.AddQuestion, q.UpdateQuestion, q.Reward)
 	q.SetTxnChecker(q)
