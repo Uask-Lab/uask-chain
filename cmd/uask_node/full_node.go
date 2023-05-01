@@ -19,7 +19,7 @@ func main() {
 	}
 	nonSearch := new(search.NonSearch)
 
-	poaCfg := &poa.PoaConfig{}
+	poaCfg := new(poa.PoaConfig)
 	config.LoadTomlConf("poa.toml", poaCfg)
 
 	figure.NewColorFigure("Uask", "big", "green", false).Print()
