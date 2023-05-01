@@ -6,19 +6,23 @@ import (
 	"github.com/yu-org/yu/core/tripod"
 	ytypes "github.com/yu-org/yu/core/types"
 	"uask-chain/filestore"
+	"uask-chain/search"
 	"uask-chain/types"
 )
 
 type Answer struct {
 	*tripod.Tripod
 	fileStore filestore.FileStore
-	Question  *Question `tripod:"question"`
+	sch       search.Search
+
+	Question *Question `tripod:"question"`
 }
 
-func NewAnswer(fileStore filestore.FileStore) *Answer {
+func NewAnswer(fileStore filestore.FileStore, sch search.Search) *Answer {
 	tri := tripod.NewTripod()
-	a := &Answer{Tripod: tri, fileStore: fileStore}
+	a := &Answer{Tripod: tri, fileStore: fileStore, sch: sch}
 	a.SetWritings(a.AddAnswer, a.UpdateAnswer)
+	a.SetReadings(a.GetAnswer)
 	a.SetTxnChecker(a)
 	return a
 }
@@ -50,14 +54,32 @@ func (a *Answer) AddAnswer(ctx *context.WriteContext) error {
 	scheme := &types.AnswerScheme{
 		ID:          ctx.Txn.TxnHash.String(),
 		QID:         req.QID,
+		FileHash:    req.Content.Hash,
 		Answerer:    answerer,
 		Timestamp:   req.Timestamp,
 		Recommender: req.Recommender,
 	}
-	err = a.setAnswer(scheme)
+	err = a.setAnswerScheme(scheme)
 	if err != nil {
 		return err
 	}
+
+	// add content into search
+	contentByt, err := a.fileStore.Get(req.Content.Hash)
+	if err != nil {
+		return err
+	}
+	err = a.sch.AddDoc(&types.Answer{
+		ID:          scheme.ID,
+		Answerer:    scheme.Answerer,
+		FileContent: contentByt,
+		Recommender: scheme.Recommender,
+		Timestamp:   scheme.Timestamp,
+	})
+	if err != nil {
+		return err
+	}
+
 	ctx.EmitStringEvent("add answer(%s) to question(%s) successfully by answerer(%s)!", scheme.ID, scheme.QID, answerer.String())
 	return nil
 }
@@ -76,7 +98,7 @@ func (a *Answer) UpdateAnswer(ctx *context.WriteContext) error {
 		return types.ErrAnswerNotFound
 	}
 
-	answer, err := a.getAnswer(req.ID)
+	answer, err := a.getAnswerScheme(req.ID)
 	if err != nil {
 		return err
 	}
@@ -87,19 +109,52 @@ func (a *Answer) UpdateAnswer(ctx *context.WriteContext) error {
 	scheme := &types.AnswerScheme{
 		ID:          req.ID,
 		QID:         req.QID,
+		FileHash:    req.Content.Hash,
 		Answerer:    answerer,
 		Timestamp:   req.Timestamp,
 		Recommender: req.Recommender,
 	}
-	err = a.setAnswer(scheme)
+	err = a.setAnswerScheme(scheme)
 	if err != nil {
 		return err
 	}
+	// update content into search
+	contentByt, err := a.fileStore.Get(req.Content.Hash)
+	if err != nil {
+		return err
+	}
+	err = a.sch.UpdateDoc(req.ID, &types.Answer{
+		ID:          scheme.ID,
+		Answerer:    scheme.Answerer,
+		FileContent: contentByt,
+		Recommender: scheme.Recommender,
+		Timestamp:   scheme.Timestamp,
+	})
 	ctx.EmitStringEvent("update answer(%s) successfully!", req.ID)
 	return nil
 }
 
-func (a *Answer) setAnswer(scheme *types.AnswerScheme) error {
+func (a *Answer) GetAnswer(ctx *context.ReadContext) error {
+	id := ctx.GetString("id")
+	scheme, err := a.getAnswerScheme(id)
+	if err != nil {
+		return err
+	}
+	fileByt, err := a.fileStore.Get(scheme.FileHash)
+	if err != nil {
+		return err
+	}
+	answer := &types.Answer{
+		ID:          scheme.ID,
+		Answerer:    scheme.Answerer,
+		FileContent: fileByt,
+		Recommender: scheme.Recommender,
+		Timestamp:   scheme.Timestamp,
+	}
+	return ctx.Json(answer)
+}
+
+func (a *Answer) setAnswerScheme(scheme *types.AnswerScheme) error {
 	byt, err := json.Marshal(scheme)
 	if err != nil {
 		return err
@@ -109,7 +164,7 @@ func (a *Answer) setAnswer(scheme *types.AnswerScheme) error {
 	return nil
 }
 
-func (a *Answer) getAnswer(id string) (*types.AnswerScheme, error) {
+func (a *Answer) getAnswerScheme(id string) (*types.AnswerScheme, error) {
 	byt, err := a.Get([]byte(id))
 	if err != nil {
 		return nil, err

@@ -28,6 +28,7 @@ type QuestionUpdateRequest struct {
 type QuestionScheme struct {
 	ID           string         `json:"id"`
 	Title        string         `json:"title"`
+	FileHash     string         `json:"file_hash"`
 	Asker        common.Address `json:"asker"`
 	Tags         []string       `json:"tags"`
 	TotalRewards *big.Int       `json:"total_rewards"`

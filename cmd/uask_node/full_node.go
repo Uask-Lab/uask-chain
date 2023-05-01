@@ -9,6 +9,7 @@ import (
 	"github.com/yu-org/yu/core/startup"
 	"uask-chain/core"
 	"uask-chain/filestore"
+	"uask-chain/search"
 )
 
 func main() {
@@ -16,6 +17,7 @@ func main() {
 	if err != nil {
 		logrus.Fatal(err)
 	}
+	nonSearch := new(search.NonSearch)
 
 	poaCfg := &poa.PoaConfig{}
 	config.LoadTomlConf("poa.toml", poaCfg)
@@ -27,7 +29,7 @@ func main() {
 		poa.NewPoa(poaCfg),
 		asset.NewAsset("uask"),
 		core.NewQuestion(localStore),
-		core.NewAnswer(localStore),
+		core.NewAnswer(localStore, nonSearch),
 		core.NewComment(localStore),
 	)
 }

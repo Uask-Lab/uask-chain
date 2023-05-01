@@ -11,14 +11,17 @@ import (
 	ytypes "github.com/yu-org/yu/core/types"
 	"math/big"
 	"uask-chain/filestore"
+	"uask-chain/search"
 	"uask-chain/types"
 )
 
 type Question struct {
 	*tripod.Tripod
 	fileStore filestore.FileStore
-	asset     *asset.Asset `tripod:"asset"`
-	answer    *Answer      `tripod:"answer"`
+	search    search.Search
+
+	asset  *asset.Asset `tripod:"asset"`
+	answer *Answer      `tripod:"answer"`
 }
 
 func NewQuestion(fileStore filestore.FileStore) *Question {
@@ -70,7 +73,7 @@ func (q *Question) AddQuestion(ctx *context.WriteContext) error {
 		Timestamp:    req.Timestamp,
 		Recommender:  req.Recommender,
 	}
-	err = q.setQuestion(scheme)
+	err = q.setQuestionScheme(scheme)
 	if err != nil {
 		return err
 	}
@@ -88,7 +91,7 @@ func (q *Question) UpdateQuestion(ctx *context.WriteContext) error {
 		return err
 	}
 
-	question, err := q.getQuestion(req.ID)
+	question, err := q.getQuestionScheme(req.ID)
 	if err != nil {
 		return err
 	}
@@ -108,6 +111,7 @@ func (q *Question) UpdateQuestion(ctx *context.WriteContext) error {
 	scheme := &types.QuestionScheme{
 		ID:           req.ID,
 		Title:        req.Title,
+		FileHash:     req.Content.Hash,
 		Asker:        asker,
 		Tags:         req.Tags,
 		TotalRewards: req.TotalRewards,
@@ -115,7 +119,7 @@ func (q *Question) UpdateQuestion(ctx *context.WriteContext) error {
 		Recommender:  req.Recommender,
 	}
 
-	err = q.setQuestion(scheme)
+	err = q.setQuestionScheme(scheme)
 	if err != nil {
 		return err
 	}
@@ -132,12 +136,12 @@ func (q *Question) Reward(ctx *context.WriteContext) error {
 		return err
 	}
 
-	question, err := q.getQuestion(req.QID)
+	question, err := q.getQuestionScheme(req.QID)
 	if err != nil {
 		return err
 	}
 	for answerID, reward := range req.Rewards {
-		answer, err := q.answer.getAnswer(answerID)
+		answer, err := q.answer.getAnswerScheme(answerID)
 		if err != nil {
 			return err
 		}
@@ -151,10 +155,10 @@ func (q *Question) Reward(ctx *context.WriteContext) error {
 		question.TotalRewards = new(big.Int).Sub(question.TotalRewards, reward)
 	}
 
-	return q.setQuestion(question)
+	return q.setQuestionScheme(question)
 }
 
-func (q *Question) setQuestion(scheme *types.QuestionScheme) error {
+func (q *Question) setQuestionScheme(scheme *types.QuestionScheme) error {
 	byt, err := json.Marshal(scheme)
 	if err != nil {
 		return err
@@ -164,7 +168,7 @@ func (q *Question) setQuestion(scheme *types.QuestionScheme) error {
 	return nil
 }
 
-func (q *Question) getQuestion(id string) (*types.QuestionScheme, error) {
+func (q *Question) getQuestionScheme(id string) (*types.QuestionScheme, error) {
 	byt, err := q.Get([]byte(id))
 	if err != nil {
 		return nil, err
@@ -197,6 +201,7 @@ func (q *Question) unlockForReward(addr common.Address, amount *big.Int) error {
 }
 
 func checkOffchainOrStoreOnchain(fromP2P bool, info *types.StoreInfo, store filestore.FileStore) error {
+
 	if !fromP2P {
 		// from RPC, store it into ipfs and clean the content.
 		hash, err := store.Put("", info)

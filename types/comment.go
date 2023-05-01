@@ -27,6 +27,7 @@ type CommentScheme struct {
 	AID string `json:"aid"`
 	// reply comment id
 	CID       string         `json:"cid"`
+	FileHash  string         `json:"file_hash"`
 	Commenter common.Address `json:"commenter"`
 	Timestamp string         `json:"timestamp"`
 }

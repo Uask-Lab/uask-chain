@@ -37,6 +37,11 @@ func (m *Meili) SearchDoc(query string) ([]interface{}, error) {
 	return resp.Hits, nil
 }
 
+func (m *Meili) UpdateDoc(id string, i interface{}) error {
+	_, err := m.idx.UpdateDocuments(i, id)
+	return err
+}
+
 func (m *Meili) DeleteDoc(id string) error {
 	_, err := m.idx.DeleteDocument(id)
 	return err

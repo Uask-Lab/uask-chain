@@ -6,13 +6,16 @@ import (
 	"github.com/yu-org/yu/core/tripod"
 	ytypes "github.com/yu-org/yu/core/types"
 	"uask-chain/filestore"
+	"uask-chain/search"
 	"uask-chain/types"
 )
 
 type Comment struct {
 	*tripod.Tripod
 	fileStore filestore.FileStore
-	Answer    *Answer `tripod:"answer"`
+	search    search.Search
+
+	Answer *Answer `tripod:"answer"`
 }
 
 func NewComment(fileStore filestore.FileStore) *Comment {
@@ -51,10 +54,11 @@ func (c *Comment) AddComment(ctx *context.WriteContext) error {
 		ID:        ctx.Txn.TxnHash.String(),
 		AID:       req.AID,
 		CID:       req.CID,
+		FileHash:  req.Content.Hash,
 		Commenter: commenter,
 		Timestamp: req.Timestamp,
 	}
-	err = c.setComment(scheme)
+	err = c.setCommentScheme(scheme)
 	if err != nil {
 		return err
 	}
@@ -72,7 +76,7 @@ func (c *Comment) UpdateComment(ctx *context.WriteContext) error {
 		return err
 	}
 
-	comment, err := c.getComment(req.ID)
+	comment, err := c.getCommentScheme(req.ID)
 	if err != nil {
 		return err
 	}
@@ -92,7 +96,7 @@ func (c *Comment) UpdateComment(ctx *context.WriteContext) error {
 		Commenter: commenter,
 		Timestamp: req.Timestamp,
 	}
-	err = c.setComment(scheme)
+	err = c.setCommentScheme(scheme)
 	if err != nil {
 		return err
 	}
@@ -100,7 +104,7 @@ func (c *Comment) UpdateComment(ctx *context.WriteContext) error {
 	return nil
 }
 
-func (c *Comment) setComment(scheme *types.CommentScheme) error {
+func (c *Comment) setCommentScheme(scheme *types.CommentScheme) error {
 	byt, err := json.Marshal(scheme)
 	if err != nil {
 		return err
@@ -114,7 +118,7 @@ func (c *Comment) existComment(id string) bool {
 	return c.Exist([]byte(id))
 }
 
-func (c *Comment) getComment(id string) (*types.CommentScheme, error) {
+func (c *Comment) getCommentScheme(id string) (*types.CommentScheme, error) {
 	byt, err := c.Get([]byte(id))
 	if err != nil {
 		return nil, err
