@@ -31,3 +31,11 @@ type CommentScheme struct {
 	Commenter common.Address `json:"commenter"`
 	Timestamp string         `json:"timestamp"`
 }
+
+// Comment stores into search
+type Comment struct {
+	ID          string         `json:"id"`
+	FileContent []byte         `json:"file_content"`
+	Commenter   common.Address `json:"commenter"`
+	Timestamp   string         `json:"timestamp"`
+}

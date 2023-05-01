@@ -13,14 +13,14 @@ import (
 type Comment struct {
 	*tripod.Tripod
 	fileStore filestore.FileStore
-	search    search.Search
+	sch       search.Search
 
 	Answer *Answer `tripod:"answer"`
 }
 
-func NewComment(fileStore filestore.FileStore) *Comment {
+func NewComment(fileStore filestore.FileStore, sch search.Search) *Comment {
 	tri := tripod.NewTripod()
-	c := &Comment{Tripod: tri, fileStore: fileStore}
+	c := &Comment{Tripod: tri, fileStore: fileStore, sch: sch}
 	c.SetWritings(c.AddComment, c.UpdateComment)
 	c.SetTxnChecker(c)
 	return c
@@ -62,6 +62,21 @@ func (c *Comment) AddComment(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
+	// add search
+	contentByt, err := c.fileStore.Get(req.Content.Hash)
+	if err != nil {
+		return err
+	}
+	err = c.sch.AddDoc(&types.Comment{
+		ID:          scheme.ID,
+		FileContent: contentByt,
+		Commenter:   scheme.Commenter,
+		Timestamp:   scheme.Timestamp,
+	})
+	if err != nil {
+		return err
+	}
+
 	ctx.EmitStringEvent("add comment(%s) successfully by commenter(%s)", scheme.ID, commenter.String())
 	return nil
 }
@@ -100,6 +115,21 @@ func (c *Comment) UpdateComment(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
+	// update search
+	contentByt, err := c.fileStore.Get(req.Content.Hash)
+	if err != nil {
+		return err
+	}
+	err = c.sch.UpdateDoc(scheme.ID, &types.Comment{
+		ID:          scheme.ID,
+		FileContent: contentByt,
+		Commenter:   scheme.Commenter,
+		Timestamp:   scheme.Timestamp,
+	})
+	if err != nil {
+		return err
+	}
+
 	ctx.EmitStringEvent("update comment(%s) successfully!", req.ID)
 	return nil
 }

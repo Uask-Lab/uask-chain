@@ -18,15 +18,15 @@ import (
 type Question struct {
 	*tripod.Tripod
 	fileStore filestore.FileStore
-	search    search.Search
+	sch       search.Search
 
 	asset  *asset.Asset `tripod:"asset"`
 	answer *Answer      `tripod:"answer"`
 }
 
-func NewQuestion(fileStore filestore.FileStore) *Question {
+func NewQuestion(fileStore filestore.FileStore, sch search.Search) *Question {
 	tri := tripod.NewTripod()
-	q := &Question{Tripod: tri, fileStore: fileStore}
+	q := &Question{Tripod: tri, fileStore: fileStore, sch: sch}
 	q.SetWritings(q.AddQuestion, q.UpdateQuestion, q.Reward)
 	q.SetTxnChecker(q)
 	q.SetInit(q)
@@ -77,6 +77,25 @@ func (q *Question) AddQuestion(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
+	// add search
+	contentByt, err := q.fileStore.Get(req.Content.Hash)
+	if err != nil {
+		return err
+	}
+	err = q.sch.AddDoc(&types.Question{
+		ID:           scheme.ID,
+		Title:        scheme.Title,
+		FileContent:  contentByt,
+		Asker:        scheme.Asker,
+		Tags:         scheme.Tags,
+		TotalRewards: scheme.TotalRewards,
+		Timestamp:    scheme.Timestamp,
+		Recommender:  scheme.Recommender,
+	})
+	if err != nil {
+		return err
+	}
+
 	ctx.EmitStringEvent("add question(%s) successfully by asker(%s)! question-id=%s", scheme.Title, asker.String(), scheme.ID)
 	return nil
 }
@@ -118,11 +137,29 @@ func (q *Question) UpdateQuestion(ctx *context.WriteContext) error {
 		Timestamp:    req.Timestamp,
 		Recommender:  req.Recommender,
 	}
-
 	err = q.setQuestionScheme(scheme)
 	if err != nil {
 		return err
 	}
+	// update search
+	contentByt, err := q.fileStore.Get(req.Content.Hash)
+	if err != nil {
+		return err
+	}
+	err = q.sch.UpdateDoc(scheme.ID, &types.Question{
+		ID:           scheme.ID,
+		Title:        scheme.Title,
+		FileContent:  contentByt,
+		Asker:        scheme.Asker,
+		Tags:         scheme.Tags,
+		TotalRewards: scheme.TotalRewards,
+		Timestamp:    scheme.Timestamp,
+		Recommender:  scheme.Recommender,
+	})
+	if err != nil {
+		return err
+	}
+
 	ctx.EmitStringEvent("update question(%s) successfully!", req.ID)
 	return nil
 }
@@ -201,7 +238,6 @@ func (q *Question) unlockForReward(addr common.Address, amount *big.Int) error {
 }
 
 func checkOffchainOrStoreOnchain(fromP2P bool, info *types.StoreInfo, store filestore.FileStore) error {
-
 	if !fromP2P {
 		// from RPC, store it into ipfs and clean the content.
 		hash, err := store.Put("", info)

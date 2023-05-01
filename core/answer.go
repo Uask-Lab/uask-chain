@@ -130,6 +130,10 @@ func (a *Answer) UpdateAnswer(ctx *context.WriteContext) error {
 		Recommender: scheme.Recommender,
 		Timestamp:   scheme.Timestamp,
 	})
+	if err != nil {
+		return err
+	}
+
 	ctx.EmitStringEvent("update answer(%s) successfully!", req.ID)
 	return nil
 }

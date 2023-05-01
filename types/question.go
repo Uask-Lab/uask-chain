@@ -35,3 +35,15 @@ type QuestionScheme struct {
 	Timestamp    string         `json:"timestamp"`
 	Recommender  common.Address `json:"recommender"`
 }
+
+// Question stores into search
+type Question struct {
+	ID           string         `json:"id"`
+	Title        string         `json:"title"`
+	FileContent  []byte         `json:"file_content"`
+	Asker        common.Address `json:"asker"`
+	Tags         []string       `json:"tags"`
+	TotalRewards *big.Int       `json:"total_rewards"`
+	Timestamp    string         `json:"timestamp"`
+	Recommender  common.Address `json:"recommender"`
+}
