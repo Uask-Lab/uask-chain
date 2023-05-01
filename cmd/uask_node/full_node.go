@@ -28,8 +28,8 @@ func main() {
 	startup.DefaultStartup(
 		poa.NewPoa(poaCfg),
 		asset.NewAsset("uask"),
-		core.NewQuestion(localStore),
+		core.NewQuestion(localStore, nonSearch),
 		core.NewAnswer(localStore, nonSearch),
-		core.NewComment(localStore),
+		core.NewComment(localStore, nonSearch),
 	)
 }
