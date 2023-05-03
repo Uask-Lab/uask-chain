@@ -27,7 +27,7 @@ type Question struct {
 func NewQuestion(fileStore filestore.FileStore, sch search.Search) *Question {
 	tri := tripod.NewTripod()
 	q := &Question{Tripod: tri, fileStore: fileStore, sch: sch}
-	q.SetWritings(q.AddQuestion, q.UpdateQuestion, q.Reward)
+	q.SetWritings(q.AddQuestion, q.UpdateQuestion, q.DeleteQuestion, q.Reward)
 	q.SetTxnChecker(q)
 	q.SetInit(q)
 	return q
@@ -162,6 +162,21 @@ func (q *Question) UpdateQuestion(ctx *context.WriteContext) error {
 
 	ctx.EmitStringEvent("update question(%s) successfully!", req.ID)
 	return nil
+}
+
+func (q *Question) DeleteQuestion(ctx *context.WriteContext) error {
+	ctx.SetLei(10)
+	id := ctx.GetString("id")
+	asker := ctx.GetCaller()
+	scheme, err := q.getQuestionScheme(id)
+	if err != nil {
+		return err
+	}
+	if asker != scheme.Asker {
+		return types.ErrNoPermission
+	}
+	q.Delete([]byte(id))
+	return q.sch.DeleteDoc(id)
 }
 
 func (q *Question) Reward(ctx *context.WriteContext) error {

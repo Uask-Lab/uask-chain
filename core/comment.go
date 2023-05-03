@@ -21,7 +21,7 @@ type Comment struct {
 func NewComment(fileStore filestore.FileStore, sch search.Search) *Comment {
 	tri := tripod.NewTripod()
 	c := &Comment{Tripod: tri, fileStore: fileStore, sch: sch}
-	c.SetWritings(c.AddComment, c.UpdateComment)
+	c.SetWritings(c.AddComment, c.UpdateComment, c.DeleteComment)
 	c.SetTxnChecker(c)
 	return c
 }
@@ -132,6 +132,21 @@ func (c *Comment) UpdateComment(ctx *context.WriteContext) error {
 
 	ctx.EmitStringEvent("update comment(%s) successfully!", req.ID)
 	return nil
+}
+
+func (c *Comment) DeleteComment(ctx *context.WriteContext) error {
+	ctx.SetLei(10)
+	id := ctx.GetString("id")
+	commenter := ctx.GetCaller()
+	scheme, err := c.getCommentScheme(id)
+	if err != nil {
+		return err
+	}
+	if commenter != scheme.Commenter {
+		return types.ErrNoPermission
+	}
+	c.Delete([]byte(id))
+	return c.sch.DeleteDoc(id)
 }
 
 func (c *Comment) setCommentScheme(scheme *types.CommentScheme) error {

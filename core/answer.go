@@ -21,7 +21,7 @@ type Answer struct {
 func NewAnswer(fileStore filestore.FileStore, sch search.Search) *Answer {
 	tri := tripod.NewTripod()
 	a := &Answer{Tripod: tri, fileStore: fileStore, sch: sch}
-	a.SetWritings(a.AddAnswer, a.UpdateAnswer)
+	a.SetWritings(a.AddAnswer, a.UpdateAnswer, a.DeleteAnswer)
 	a.SetReadings(a.GetAnswer)
 	a.SetTxnChecker(a)
 	return a
@@ -156,6 +156,21 @@ func (a *Answer) GetAnswer(ctx *context.ReadContext) error {
 		Timestamp:   scheme.Timestamp,
 	}
 	return ctx.Json(answer)
+}
+
+func (a *Answer) DeleteAnswer(ctx *context.WriteContext) error {
+	ctx.SetLei(10)
+	id := ctx.GetString("id")
+	answerer := ctx.GetCaller()
+	scheme, err := a.getAnswerScheme(id)
+	if err != nil {
+		return err
+	}
+	if answerer != scheme.Answerer {
+		return types.ErrNoPermission
+	}
+	a.Delete([]byte(id))
+	return a.sch.DeleteDoc(id)
 }
 
 func (a *Answer) setAnswerScheme(scheme *types.AnswerScheme) error {
