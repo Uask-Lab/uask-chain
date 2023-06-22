@@ -2,14 +2,9 @@ package core
 
 import (
 	"encoding/json"
-	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
-	"github.com/yu-org/yu/apps/asset"
-	"github.com/yu-org/yu/common"
 	"github.com/yu-org/yu/core/context"
 	"github.com/yu-org/yu/core/tripod"
 	ytypes "github.com/yu-org/yu/core/types"
-	"math/big"
 	"uask-chain/filestore"
 	"uask-chain/search"
 	"uask-chain/types"
@@ -20,16 +15,14 @@ type Question struct {
 	fileStore filestore.FileStore
 	sch       search.Search
 
-	asset  *asset.Asset `tripod:"asset"`
-	answer *Answer      `tripod:"answer"`
+	answer *Answer `tripod:"answer"`
 }
 
 func NewQuestion(fileStore filestore.FileStore, sch search.Search) *Question {
 	tri := tripod.NewTripod()
 	q := &Question{Tripod: tri, fileStore: fileStore, sch: sch}
-	q.SetWritings(q.AddQuestion, q.UpdateQuestion, q.DeleteQuestion, q.Reward)
+	q.SetWritings(q.AddQuestion, q.UpdateQuestion, q.DeleteQuestion)
 	q.SetTxnChecker(q)
-	q.SetInit(q)
 	return q
 }
 
@@ -42,13 +35,6 @@ func (q *Question) CheckTxn(txn *ytypes.SignedTxn) error {
 	return checkOffchainOrStoreOnchain(txn.FromP2p(), req.Content, q.fileStore)
 }
 
-func (q *Question) InitChain() {
-	err := q.asset.AddBalance(common.HexToAddress("0x110e2F71F7a94ba18dbeC96234CC399a2cE61E5D"), big.NewInt(100000))
-	if err != nil {
-		logrus.Fatal("set balance error: ", err)
-	}
-}
-
 func (q *Question) AddQuestion(ctx *context.WriteContext) error {
 	ctx.SetLei(10)
 
@@ -59,19 +45,13 @@ func (q *Question) AddQuestion(ctx *context.WriteContext) error {
 		return err
 	}
 
-	err = q.lockForReward(asker, req.TotalRewards)
-	if err != nil {
-		return err
-	}
-
 	scheme := &types.QuestionScheme{
-		ID:           ctx.Txn.TxnHash.String(),
-		Title:        req.Title,
-		Asker:        asker,
-		Tags:         req.Tags,
-		TotalRewards: req.TotalRewards,
-		Timestamp:    req.Timestamp,
-		Recommender:  req.Recommender,
+		ID:          ctx.Txn.TxnHash.String(),
+		Title:       req.Title,
+		Asker:       asker,
+		Tags:        req.Tags,
+		Timestamp:   req.Timestamp,
+		Recommender: req.Recommender,
 	}
 	err = q.setQuestionScheme(scheme)
 	if err != nil {
@@ -83,14 +63,13 @@ func (q *Question) AddQuestion(ctx *context.WriteContext) error {
 		return err
 	}
 	err = q.sch.AddDoc(&types.Question{
-		ID:           scheme.ID,
-		Title:        scheme.Title,
-		FileContent:  contentByt,
-		Asker:        scheme.Asker,
-		Tags:         scheme.Tags,
-		TotalRewards: scheme.TotalRewards,
-		Timestamp:    scheme.Timestamp,
-		Recommender:  scheme.Recommender,
+		ID:          scheme.ID,
+		Title:       scheme.Title,
+		FileContent: contentByt,
+		Asker:       scheme.Asker,
+		Tags:        scheme.Tags,
+		Timestamp:   scheme.Timestamp,
+		Recommender: scheme.Recommender,
 	})
 	if err != nil {
 		return err
@@ -118,24 +97,14 @@ func (q *Question) UpdateQuestion(ctx *context.WriteContext) error {
 		return types.ErrNoPermission
 	}
 
-	err = q.unlockForReward(asker, question.TotalRewards)
-	if err != nil {
-		return err
-	}
-	err = q.lockForReward(asker, req.TotalRewards)
-	if err != nil {
-		return err
-	}
-
 	scheme := &types.QuestionScheme{
-		ID:           req.ID,
-		Title:        req.Title,
-		FileHash:     req.Content.Hash,
-		Asker:        asker,
-		Tags:         req.Tags,
-		TotalRewards: req.TotalRewards,
-		Timestamp:    req.Timestamp,
-		Recommender:  req.Recommender,
+		ID:          req.ID,
+		Title:       req.Title,
+		FileHash:    req.Content.Hash,
+		Asker:       asker,
+		Tags:        req.Tags,
+		Timestamp:   req.Timestamp,
+		Recommender: req.Recommender,
 	}
 	err = q.setQuestionScheme(scheme)
 	if err != nil {
@@ -147,14 +116,13 @@ func (q *Question) UpdateQuestion(ctx *context.WriteContext) error {
 		return err
 	}
 	err = q.sch.UpdateDoc(scheme.ID, &types.Question{
-		ID:           scheme.ID,
-		Title:        scheme.Title,
-		FileContent:  contentByt,
-		Asker:        scheme.Asker,
-		Tags:         scheme.Tags,
-		TotalRewards: scheme.TotalRewards,
-		Timestamp:    scheme.Timestamp,
-		Recommender:  scheme.Recommender,
+		ID:          scheme.ID,
+		Title:       scheme.Title,
+		FileContent: contentByt,
+		Asker:       scheme.Asker,
+		Tags:        scheme.Tags,
+		Timestamp:   scheme.Timestamp,
+		Recommender: scheme.Recommender,
 	})
 	if err != nil {
 		return err
@@ -177,37 +145,6 @@ func (q *Question) DeleteQuestion(ctx *context.WriteContext) error {
 	}
 	q.Delete([]byte(id))
 	return q.sch.DeleteDoc(id)
-}
-
-func (q *Question) Reward(ctx *context.WriteContext) error {
-	ctx.SetLei(10)
-
-	req := &types.RewardRequest{}
-	err := ctx.BindJson(req)
-	if err != nil {
-		return err
-	}
-
-	question, err := q.getQuestionScheme(req.QID)
-	if err != nil {
-		return err
-	}
-	for answerID, reward := range req.Rewards {
-		answer, err := q.answer.getAnswerScheme(answerID)
-		if err != nil {
-			return err
-		}
-		if reward.Cmp(question.TotalRewards) > 0 {
-			return types.ErrRewardNotEnough
-		}
-		err = q.asset.AddBalance(answer.Answerer, reward)
-		if err != nil {
-			return err
-		}
-		question.TotalRewards = new(big.Int).Sub(question.TotalRewards, reward)
-	}
-
-	return q.setQuestionScheme(question)
 }
 
 func (q *Question) setQuestionScheme(scheme *types.QuestionScheme) error {
@@ -235,21 +172,6 @@ func (q *Question) getQuestionScheme(id string) (*types.QuestionScheme, error) {
 
 func (q *Question) existQuestion(id string) bool {
 	return q.Exist([]byte(id))
-}
-
-func (q *Question) lockForReward(addr common.Address, amount *big.Int) error {
-	if amount.Sign() <= 0 {
-		return types.ErrRewardIllegal
-	}
-	balance := q.asset.GetBalance(addr)
-	if balance.Cmp(amount) < 0 {
-		return errors.New("not enough balance for rewards")
-	}
-	return q.asset.SubBalance(addr, amount)
-}
-
-func (q *Question) unlockForReward(addr common.Address, amount *big.Int) error {
-	return q.asset.AddBalance(addr, amount)
 }
 
 func checkOffchainOrStoreOnchain(fromP2P bool, info *types.StoreInfo, store filestore.FileStore) error {

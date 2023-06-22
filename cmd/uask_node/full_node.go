@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/common-nighthawk/go-figure"
 	"github.com/sirupsen/logrus"
-	"github.com/yu-org/yu/apps/asset"
 	"github.com/yu-org/yu/apps/poa"
 	"github.com/yu-org/yu/config"
 	"github.com/yu-org/yu/core/startup"
@@ -27,7 +26,6 @@ func main() {
 	startup.InitConfigFromPath("yu.toml")
 	startup.DefaultStartup(
 		poa.NewPoa(poaCfg),
-		asset.NewAsset("uask"),
 		core.NewQuestion(localStore, nonSearch),
 		core.NewAnswer(localStore, nonSearch),
 		core.NewComment(localStore, nonSearch),
