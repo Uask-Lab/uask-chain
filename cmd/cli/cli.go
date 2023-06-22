@@ -8,7 +8,6 @@ import (
 	"github.com/yu-org/yu/common"
 	"github.com/yu-org/yu/core/keypair"
 	"github.com/yu-org/yu/example/client/callchain"
-	"math/big"
 	"os"
 	"time"
 	"uask-chain/types"
@@ -45,10 +44,9 @@ func main() {
 				Url:  url,
 				Hash: hash,
 			},
-			Tags:         nil,
-			TotalRewards: big.NewInt(100),
-			Timestamp:    time.Now().String(),
-			Recommender:  common.Address{},
+			Tags:        nil,
+			Timestamp:   time.Now().String(),
+			Recommender: common.Address{},
 		}
 		params, err = json.Marshal(info)
 		if err != nil {
