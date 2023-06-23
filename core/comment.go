@@ -6,21 +6,20 @@ import (
 	"github.com/yu-org/yu/core/tripod"
 	ytypes "github.com/yu-org/yu/core/types"
 	"uask-chain/filestore"
-	"uask-chain/search"
 	"uask-chain/types"
 )
 
 type Comment struct {
 	*tripod.Tripod
 	fileStore filestore.FileStore
-	sch       search.Search
+	// sch       search.Search
 
 	Answer *Answer `tripod:"answer"`
 }
 
-func NewComment(fileStore filestore.FileStore, sch search.Search) *Comment {
+func NewComment(fileStore filestore.FileStore) *Comment {
 	tri := tripod.NewTripod()
-	c := &Comment{Tripod: tri, fileStore: fileStore, sch: sch}
+	c := &Comment{Tripod: tri, fileStore: fileStore}
 	c.SetWritings(c.AddComment, c.UpdateComment, c.DeleteComment)
 	c.SetTxnChecker(c)
 	return c
@@ -63,19 +62,19 @@ func (c *Comment) AddComment(ctx *context.WriteContext) error {
 		return err
 	}
 	// add search
-	contentByt, err := c.fileStore.Get(req.Content.Hash)
-	if err != nil {
-		return err
-	}
-	err = c.sch.AddDoc(&types.Comment{
-		ID:          scheme.ID,
-		FileContent: contentByt,
-		Commenter:   scheme.Commenter,
-		Timestamp:   scheme.Timestamp,
-	})
-	if err != nil {
-		return err
-	}
+	//contentByt, err := c.fileStore.Get(req.Content.Hash)
+	//if err != nil {
+	//	return err
+	//}
+	//err = c.sch.AddDoc(&types.Comment{
+	//	ID:          scheme.ID,
+	//	FileContent: contentByt,
+	//	Commenter:   scheme.Commenter,
+	//	Timestamp:   scheme.Timestamp,
+	//})
+	//if err != nil {
+	//	return err
+	//}
 
 	ctx.EmitStringEvent("add comment(%s) successfully by commenter(%s)", scheme.ID, commenter.String())
 	return nil
@@ -116,19 +115,19 @@ func (c *Comment) UpdateComment(ctx *context.WriteContext) error {
 		return err
 	}
 	// update search
-	contentByt, err := c.fileStore.Get(req.Content.Hash)
-	if err != nil {
-		return err
-	}
-	err = c.sch.UpdateDoc(scheme.ID, &types.Comment{
-		ID:          scheme.ID,
-		FileContent: contentByt,
-		Commenter:   scheme.Commenter,
-		Timestamp:   scheme.Timestamp,
-	})
-	if err != nil {
-		return err
-	}
+	//contentByt, err := c.fileStore.Get(req.Content.Hash)
+	//if err != nil {
+	//	return err
+	//}
+	//err = c.sch.UpdateDoc(scheme.ID, &types.Comment{
+	//	ID:          scheme.ID,
+	//	FileContent: contentByt,
+	//	Commenter:   scheme.Commenter,
+	//	Timestamp:   scheme.Timestamp,
+	//})
+	//if err != nil {
+	//	return err
+	//}
 
 	ctx.EmitStringEvent("update comment(%s) successfully!", req.ID)
 	return nil
@@ -146,7 +145,8 @@ func (c *Comment) DeleteComment(ctx *context.WriteContext) error {
 		return types.ErrNoPermission
 	}
 	c.Delete([]byte(id))
-	return c.sch.DeleteDoc(id)
+	// return c.sch.DeleteDoc(id)
+	return nil
 }
 
 func (c *Comment) setCommentScheme(scheme *types.CommentScheme) error {
