@@ -10,4 +10,4 @@ clean:
 	@rm -rf build/bin
 
 reset:
-	@rm -f chain.db yu.db
+	@rm -f ./uask/chain.db ./uask/yu.db
