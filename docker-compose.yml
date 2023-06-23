@@ -8,9 +8,9 @@ services:
       - "7999:7999"
       - "8999:8999"
     volumes:
-      - ./uask:./uask
-      - ./yu.toml:./yu.toml:ro
-      - ./poa.toml:./poa.toml:ro
+      - ./uask:/uask
+      - ./yu.toml:/config/yu.toml:ro
+      - ./poa.toml:/config/poa.toml:ro
     depends_on:
       - meili
       - ipfs
@@ -22,7 +22,7 @@ services:
     ports:
       - "7700:7700"
     volumes:
-      - ./meili:./data.ms
+      - ./meili:/data.ms
 
   ipfs:
     image: ipfs/go-ipfs:latest
