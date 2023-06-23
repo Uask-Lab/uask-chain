@@ -11,6 +11,9 @@ services:
       - ./uask:./uask
       - ./yu.toml:./yu.toml:ro
       - ./poa.toml:./poa.toml:ro
+    depends_on:
+      - meili
+      - ipfs
 
   meili:
     image: getmeili/meilisearch:v1.2
