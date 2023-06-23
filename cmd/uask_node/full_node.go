@@ -16,7 +16,14 @@ func main() {
 	if err != nil {
 		logrus.Fatal(err)
 	}
-	nonSearch := new(search.NonSearch)
+	meili, err := search.NewMeili(&search.MeiliCfg{
+		Host:       "http://localhost:7700",
+		Index:      "uask",
+		PrimaryKey: "id",
+	})
+	if err != nil {
+		logrus.Fatal(err)
+	}
 
 	poaCfg := new(poa.PoaConfig)
 	config.LoadTomlConf("poa.toml", poaCfg)
@@ -26,8 +33,8 @@ func main() {
 	startup.InitConfigFromPath("yu.toml")
 	startup.DefaultStartup(
 		poa.NewPoa(poaCfg),
-		core.NewQuestion(localStore, nonSearch),
-		core.NewAnswer(localStore, nonSearch),
-		core.NewComment(localStore, nonSearch),
+		core.NewQuestion(localStore, meili),
+		core.NewAnswer(localStore, meili),
+		core.NewComment(localStore),
 	)
 }
