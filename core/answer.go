@@ -6,21 +6,20 @@ import (
 	"github.com/yu-org/yu/core/tripod"
 	ytypes "github.com/yu-org/yu/core/types"
 	"uask-chain/filestore"
-	"uask-chain/search"
 	"uask-chain/types"
 )
 
 type Answer struct {
 	*tripod.Tripod
 	fileStore filestore.FileStore
-	sch       search.Search
+	// sch       search.Search
 
 	Question *Question `tripod:"question"`
 }
 
-func NewAnswer(fileStore filestore.FileStore, sch search.Search) *Answer {
+func NewAnswer(fileStore filestore.FileStore) *Answer {
 	tri := tripod.NewTripod()
-	a := &Answer{Tripod: tri, fileStore: fileStore, sch: sch}
+	a := &Answer{Tripod: tri, fileStore: fileStore}
 	a.SetWritings(a.AddAnswer, a.UpdateAnswer, a.DeleteAnswer)
 	a.SetReadings(a.GetAnswer)
 	a.SetTxnChecker(a)
@@ -65,20 +64,20 @@ func (a *Answer) AddAnswer(ctx *context.WriteContext) error {
 	}
 
 	// add content into search
-	contentByt, err := a.fileStore.Get(req.Content.Hash)
-	if err != nil {
-		return err
-	}
-	err = a.sch.AddDoc(&types.Answer{
-		ID:          scheme.ID,
-		Answerer:    scheme.Answerer,
-		FileContent: contentByt,
-		Recommender: scheme.Recommender,
-		Timestamp:   scheme.Timestamp,
-	})
-	if err != nil {
-		return err
-	}
+	//contentByt, err := a.fileStore.Get(req.Content.Hash)
+	//if err != nil {
+	//	return err
+	//}
+	//err = a.sch.AddDoc(&types.Answer{
+	//	ID:          scheme.ID,
+	//	Answerer:    scheme.Answerer,
+	//	FileContent: contentByt,
+	//	Recommender: scheme.Recommender,
+	//	Timestamp:   scheme.Timestamp,
+	//})
+	//if err != nil {
+	//	return err
+	//}
 
 	ctx.EmitStringEvent("add answer(%s) to question(%s) successfully by answerer(%s)!", scheme.ID, scheme.QID, answerer.String())
 	return nil
@@ -119,20 +118,20 @@ func (a *Answer) UpdateAnswer(ctx *context.WriteContext) error {
 		return err
 	}
 	// update content into search
-	contentByt, err := a.fileStore.Get(req.Content.Hash)
-	if err != nil {
-		return err
-	}
-	err = a.sch.UpdateDoc(req.ID, &types.Answer{
-		ID:          scheme.ID,
-		Answerer:    scheme.Answerer,
-		FileContent: contentByt,
-		Recommender: scheme.Recommender,
-		Timestamp:   scheme.Timestamp,
-	})
-	if err != nil {
-		return err
-	}
+	//contentByt, err := a.fileStore.Get(req.Content.Hash)
+	//if err != nil {
+	//	return err
+	//}
+	//err = a.sch.UpdateDoc(req.ID, &types.Answer{
+	//	ID:          scheme.ID,
+	//	Answerer:    scheme.Answerer,
+	//	FileContent: contentByt,
+	//	Recommender: scheme.Recommender,
+	//	Timestamp:   scheme.Timestamp,
+	//})
+	//if err != nil {
+	//	return err
+	//}
 
 	ctx.EmitStringEvent("update answer(%s) successfully!", req.ID)
 	return nil
@@ -170,7 +169,8 @@ func (a *Answer) DeleteAnswer(ctx *context.WriteContext) error {
 		return types.ErrNoPermission
 	}
 	a.Delete([]byte(id))
-	return a.sch.DeleteDoc(id)
+	// return a.sch.DeleteDoc(id)
+	return nil
 }
 
 func (a *Answer) setAnswerScheme(scheme *types.AnswerScheme) error {

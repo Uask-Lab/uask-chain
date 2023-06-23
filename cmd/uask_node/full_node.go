@@ -34,7 +34,7 @@ func main() {
 	startup.DefaultStartup(
 		poa.NewPoa(poaCfg),
 		core.NewQuestion(localStore, meili),
-		core.NewAnswer(localStore, meili),
+		core.NewAnswer(localStore),
 		core.NewComment(localStore),
 	)
 }

@@ -22,6 +22,7 @@ func NewQuestion(fileStore filestore.FileStore, sch search.Search) *Question {
 	tri := tripod.NewTripod()
 	q := &Question{Tripod: tri, fileStore: fileStore, sch: sch}
 	q.SetWritings(q.AddQuestion, q.UpdateQuestion, q.DeleteQuestion)
+	q.SetReadings(q.SearchQuestion)
 	q.SetTxnChecker(q)
 	return q
 }
@@ -33,6 +34,15 @@ func (q *Question) CheckTxn(txn *ytypes.SignedTxn) error {
 		return err
 	}
 	return checkOffchainOrStoreOnchain(txn.FromP2p(), req.Content, q.fileStore)
+}
+
+func (q *Question) SearchQuestion(ctx *context.ReadContext) error {
+	phrase := ctx.GetString("phrase")
+	results, err := q.sch.SearchDoc(phrase)
+	if err != nil {
+		return err
+	}
+	return ctx.Json(results)
 }
 
 func (q *Question) AddQuestion(ctx *context.WriteContext) error {
