@@ -1,6 +1,6 @@
 package types
 
-import "github.com/pkg/errors"
+import "errors"
 
 var (
 	ErrQuestionNotFound = errors.New("question not found")
