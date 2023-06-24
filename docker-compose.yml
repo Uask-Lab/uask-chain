@@ -7,6 +7,8 @@ services:
     ports:
       - "7999:7999"
       - "8999:8999"
+    networks:
+      - chain
     volumes:
       - ./uask:/uask
       - ./yu.toml:/config/yu.toml:ro
@@ -21,6 +23,8 @@ services:
     container_name: meili
     ports:
       - "7700:7700"
+    networks:
+      - chain
     volumes:
       - ./meili:/data.ms
 
@@ -35,3 +39,9 @@ services:
       - "4001:4001"
       - "8080:8080"
       - "5001:5001"
+    networks:
+      - chain
+
+networks:
+  chain:
+    driver: bridge
