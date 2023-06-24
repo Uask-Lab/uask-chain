@@ -1,47 +1,51 @@
 version: '3'
 services:
   uask:
-    image: uask:0.1
-    restart: unless-stopped
     container_name: uask
+    image: uask:0.1
+    # entrypoint: sleep 120s
+    restart: unless-stopped
+    volumes:
+      - ./uask:/uask
+      - ./yu.toml:/yu.toml:ro
+      - ./poa.toml:/poa.toml:ro
     ports:
       - "7999:7999"
       - "8999:8999"
-    networks:
-      - chain
-    volumes:
-      - ./uask:/uask
-      - ./yu.toml:/config/yu.toml:ro
-      - ./poa.toml:/config/poa.toml:ro
+    # networks:
+    #   - chain
+    network_mode: "host"
     depends_on:
       - meili
       - ipfs
 
   meili:
+    container_name: meili
     image: getmeili/meilisearch:v1.2
     restart: unless-stopped
-    container_name: meili
-    ports:
-      - "7700:7700"
-    networks:
-      - chain
     volumes:
       - ./meili:/data.ms
+    ports:
+      - "7700:7700"
+    # networks:
+    #   - chain
+    network_mode: "host"
 
   ipfs:
+    container_name: ipfs
     image: ipfs/go-ipfs:latest
     restart: unless-stopped
-    container_name: ipfs
     volumes:
       - ./ipfs/export:/export
       - ./ipfs/data:/data/ipfs
     ports:
       - "4001:4001"
-      - "8080:8080"
       - "5001:5001"
-    networks:
-      - chain
+      - "8080:8080"
+    # networks:
+    #   - chain
+    network_mode: "host"
 
-networks:
-  chain:
-    driver: bridge
+# networks:
+#   chain:
+#     driver: bridge
