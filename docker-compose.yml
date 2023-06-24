@@ -3,7 +3,6 @@ services:
   uask:
     container_name: uask
     image: uask:0.1
-    # entrypoint: sleep 120s
     restart: unless-stopped
     volumes:
       - ./uask:/uask
@@ -12,8 +11,6 @@ services:
     ports:
       - "7999:7999"
       - "8999:8999"
-    # networks:
-    #   - chain
     network_mode: "host"
     depends_on:
       - meili
@@ -27,8 +24,6 @@ services:
       - ./meili:/data.ms
     ports:
       - "7700:7700"
-    # networks:
-    #   - chain
     network_mode: "host"
 
   ipfs:
@@ -42,10 +37,4 @@ services:
       - "4001:4001"
       - "5001:5001"
       - "8080:8080"
-    # networks:
-    #   - chain
     network_mode: "host"
-
-# networks:
-#   chain:
-#     driver: bridge
