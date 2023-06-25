@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"github.com/yu-org/yu/common"
 	"github.com/yu-org/yu/core/keypair"
 	"github.com/yu-org/yu/example/client/callchain"
@@ -18,12 +19,13 @@ func main() {
 	titleOrId := os.Args[2]
 	content := os.Args[3]
 
+	logrus.SetLevel(logrus.DebugLevel)
 	fmt.Printf("%s %s %s \n", action, titleOrId, content)
 
 	var (
-		tripod string
-		exec   string
-		params []byte
+		tripod  string
+		writing string
+		params  []byte
 
 		err error
 	)
@@ -49,7 +51,7 @@ func main() {
 			os.Exit(1)
 		}
 		tripod = "question"
-		exec = "AddQuestion"
+		writing = "AddQuestion"
 	case "answer":
 		info := &types.AnswerAddRequest{
 			QID:         titleOrId,
@@ -63,7 +65,7 @@ func main() {
 			os.Exit(1)
 		}
 		tripod = "answer"
-		exec = "AddAnswer"
+		writing = "AddAnswer"
 	case "comment":
 		info := &types.CommentAddRequest{
 			AID:       titleOrId,
@@ -77,12 +79,12 @@ func main() {
 			os.Exit(1)
 		}
 		tripod = "comment"
-		exec = "AddComment"
+		writing = "AddComment"
 	}
 
 	callchain.CallChainByExec(callchain.Websocket, priv, pub, &common.WrCall{
 		TripodName:  tripod,
-		WritingName: exec,
+		WritingName: writing,
 		Params:      string(params),
 		LeiPrice:    0,
 	})
