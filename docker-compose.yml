@@ -14,7 +14,7 @@ services:
     network_mode: "host"
     depends_on:
       - meili
-      - ipfs
+#     - ipfs
 
   meili:
     container_name: meili
@@ -26,15 +26,15 @@ services:
       - "7700:7700"
     network_mode: "host"
 
-  ipfs:
-    container_name: ipfs
-    image: ipfs/go-ipfs:latest
-    restart: unless-stopped
-    volumes:
-      - ./ipfs/export:/export
-      - ./ipfs/data:/data/ipfs
-    ports:
-      - "4001:4001"
-      - "5001:5001"
-      - "8080:8080"
-    network_mode: "host"
+#  ipfs:
+#    container_name: ipfs
+#    image: ipfs/go-ipfs:latest
+#    restart: unless-stopped
+#    volumes:
+#      - ./ipfs/export:/export
+#      - ./ipfs/data:/data/ipfs
+#    ports:
+#      - "4001:4001"
+#      - "5001:5001"
+#      - "8080:8080"
+#    network_mode: "host"

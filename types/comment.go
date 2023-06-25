@@ -11,9 +11,9 @@ type CommentAddRequest struct {
 	// reply answer id
 	AID string `json:"aid"`
 	// reply comment id
-	CID       string     `json:"cid"`
-	Content   *StoreInfo `json:"content"`
-	Timestamp string     `json:"timestamp"`
+	CID       string `json:"cid"`
+	Content   []byte `json:"content"`
+	Timestamp string `json:"timestamp"`
 }
 
 type CommentUpdateRequest struct {

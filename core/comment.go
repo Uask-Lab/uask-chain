@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"github.com/yu-org/yu/core/context"
 	"github.com/yu-org/yu/core/tripod"
-	ytypes "github.com/yu-org/yu/core/types"
 	"uask-chain/filestore"
 	"uask-chain/types"
 )
@@ -21,17 +20,7 @@ func NewComment(fileStore filestore.FileStore) *Comment {
 	tri := tripod.NewTripod()
 	c := &Comment{Tripod: tri, fileStore: fileStore}
 	c.SetWritings(c.AddComment, c.UpdateComment, c.DeleteComment)
-	c.SetTxnChecker(c)
 	return c
-}
-
-func (c *Comment) CheckTxn(txn *ytypes.SignedTxn) error {
-	req := &types.CommentAddRequest{}
-	err := txn.BindJsonParams(req)
-	if err != nil {
-		return err
-	}
-	return checkOffchainOrStoreOnchain(txn.FromP2p(), req.Content, c.fileStore)
 }
 
 func (c *Comment) AddComment(ctx *context.WriteContext) error {
@@ -49,11 +38,16 @@ func (c *Comment) AddComment(ctx *context.WriteContext) error {
 		return err
 	}
 
+	fileHash, err := c.fileStore.Put(req.Content)
+	if err != nil {
+		return err
+	}
+
 	scheme := &types.CommentScheme{
 		ID:        ctx.Txn.TxnHash.String(),
 		AID:       req.AID,
 		CID:       req.CID,
-		FileHash:  req.Content.Hash,
+		FileHash:  fileHash,
 		Commenter: commenter,
 		Timestamp: req.Timestamp,
 	}
@@ -103,10 +97,21 @@ func (c *Comment) UpdateComment(ctx *context.WriteContext) error {
 		return err
 	}
 
+	// remove old answer and store new one.
+	err = c.fileStore.Remove(comment.FileHash)
+	if err != nil {
+		return err
+	}
+	fileHash, err := c.fileStore.Put(req.Content)
+	if err != nil {
+		return err
+	}
+
 	scheme := &types.CommentScheme{
 		ID:        req.ID,
 		AID:       req.AID,
 		CID:       req.CID,
+		FileHash:  fileHash,
 		Commenter: commenter,
 		Timestamp: req.Timestamp,
 	}

@@ -1,10 +1,10 @@
 package filestore
 
 import (
+	"crypto/sha256"
 	"io"
 	"os"
 	"path/filepath"
-	"uask-chain/types"
 )
 
 type LocalStore struct {
@@ -12,30 +12,38 @@ type LocalStore struct {
 }
 
 func NewLocalStore(dir string) (*LocalStore, error) {
-	err := os.MkdirAll(dir, os.ModeDir)
+	err := os.MkdirAll(dir, os.ModePerm)
 	if err != nil {
 		return nil, err
 	}
 	return &LocalStore{dir: dir}, err
 }
 
-func (l *LocalStore) Put(key string, file *types.StoreInfo) (string, error) {
-	f, err := os.Open(filepath.Join(l.dir, key))
+func (l *LocalStore) Put(content []byte) (string, error) {
+	hashByt := sha256.Sum256(content)
+	hash := string(hashByt[:])
+
+	path := filepath.Join(l.dir, hash)
+	f, err := os.Open(path)
 	if err != nil {
 		return "", err
 	}
 	defer f.Close()
-	_, err = f.Write(file.Content)
-	return key, err
+	_, err = f.Write(content)
+	return hash, err
 }
 
-func (l *LocalStore) Get(key string) ([]byte, error) {
-	f, err := os.Open(filepath.Join(l.dir, key))
+func (l *LocalStore) Get(hash string) ([]byte, error) {
+	f, err := os.Open(filepath.Join(l.dir, hash))
 	if err != nil {
 		return nil, err
 	}
 	defer f.Close()
 	return io.ReadAll(f)
+}
+
+func (l *LocalStore) Remove(hash string) error {
+	return os.RemoveAll(filepath.Join(l.dir, hash))
 }
 
 func (l *LocalStore) Url() string {

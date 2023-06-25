@@ -1,10 +1,8 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	api "github.com/ipfs/go-ipfs-api"
 	"github.com/yu-org/yu/common"
 	"github.com/yu-org/yu/core/keypair"
 	"github.com/yu-org/yu/example/client/callchain"
@@ -30,20 +28,17 @@ func main() {
 		err error
 	)
 
-	url := "localhost:5001"
-	hash, err := api.NewShell(url).Add(bytes.NewReader([]byte(content)))
-	if err != nil {
-		panic(err)
-	}
+	//url := "localhost:5001"
+	//hash, err := api.NewShell(url).Add(bytes.NewReader([]byte(content)))
+	//if err != nil {
+	//	panic(err)
+	//}
 
 	switch action {
 	case "ask":
 		info := &types.QuestionAddRequest{
-			Title: titleOrId,
-			Content: &types.StoreInfo{
-				Url:  url,
-				Hash: hash,
-			},
+			Title:       titleOrId,
+			Content:     []byte(content),
 			Tags:        nil,
 			Timestamp:   time.Now().String(),
 			Recommender: common.Address{},
@@ -57,11 +52,8 @@ func main() {
 		exec = "AddQuestion"
 	case "answer":
 		info := &types.AnswerAddRequest{
-			QID: titleOrId,
-			Content: &types.StoreInfo{
-				Url:  url,
-				Hash: hash,
-			},
+			QID:         titleOrId,
+			Content:     []byte(content),
 			Timestamp:   time.Now().String(),
 			Recommender: common.Address{},
 		}
@@ -74,12 +66,9 @@ func main() {
 		exec = "AddAnswer"
 	case "comment":
 		info := &types.CommentAddRequest{
-			AID: titleOrId,
-			CID: titleOrId,
-			Content: &types.StoreInfo{
-				Url:  url,
-				Hash: hash,
-			},
+			AID:       titleOrId,
+			CID:       titleOrId,
+			Content:   []byte(content),
 			Timestamp: time.Now().String(),
 		}
 		params, err = json.Marshal(info)

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"github.com/yu-org/yu/core/context"
 	"github.com/yu-org/yu/core/tripod"
-	ytypes "github.com/yu-org/yu/core/types"
 	"uask-chain/filestore"
 	"uask-chain/types"
 )
@@ -22,17 +21,7 @@ func NewAnswer(fileStore filestore.FileStore) *Answer {
 	a := &Answer{Tripod: tri, fileStore: fileStore}
 	a.SetWritings(a.AddAnswer, a.UpdateAnswer, a.DeleteAnswer)
 	a.SetReadings(a.GetAnswer)
-	a.SetTxnChecker(a)
 	return a
-}
-
-func (a *Answer) CheckTxn(txn *ytypes.SignedTxn) error {
-	req := &types.AnswerAddRequest{}
-	err := txn.BindJsonParams(req)
-	if err != nil {
-		return err
-	}
-	return checkOffchainOrStoreOnchain(txn.FromP2p(), req.Content, a.fileStore)
 }
 
 func (a *Answer) AddAnswer(ctx *context.WriteContext) error {
@@ -50,10 +39,15 @@ func (a *Answer) AddAnswer(ctx *context.WriteContext) error {
 		return types.ErrQuestionNotFound
 	}
 
+	fileHash, err := a.fileStore.Put(req.Content)
+	if err != nil {
+		return err
+	}
+
 	scheme := &types.AnswerScheme{
 		ID:          ctx.Txn.TxnHash.String(),
 		QID:         req.QID,
-		FileHash:    req.Content.Hash,
+		FileHash:    fileHash,
 		Answerer:    answerer,
 		Timestamp:   req.Timestamp,
 		Recommender: req.Recommender,
@@ -105,10 +99,20 @@ func (a *Answer) UpdateAnswer(ctx *context.WriteContext) error {
 		return types.ErrNoPermission
 	}
 
+	// remove old answer and store new one.
+	err = a.fileStore.Remove(answer.FileHash)
+	if err != nil {
+		return err
+	}
+	fileHash, err := a.fileStore.Put(req.Content)
+	if err != nil {
+		return err
+	}
+
 	scheme := &types.AnswerScheme{
 		ID:          req.ID,
 		QID:         req.QID,
-		FileHash:    req.Content.Hash,
+		FileHash:    fileHash,
 		Answerer:    answerer,
 		Timestamp:   req.Timestamp,
 		Recommender: req.Recommender,

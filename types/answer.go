@@ -11,7 +11,7 @@ type AnswerInfo struct {
 type AnswerAddRequest struct {
 	// question id
 	QID         string         `json:"qid"`
-	Content     *StoreInfo     `json:"content"`
+	Content     []byte         `json:"content"`
 	Timestamp   string         `json:"timestamp"`
 	Recommender common.Address `json:"recommender"`
 }

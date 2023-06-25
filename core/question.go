@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"github.com/yu-org/yu/core/context"
 	"github.com/yu-org/yu/core/tripod"
-	ytypes "github.com/yu-org/yu/core/types"
 	"uask-chain/filestore"
 	"uask-chain/search"
 	"uask-chain/types"
@@ -23,17 +22,7 @@ func NewQuestion(fileStore filestore.FileStore, sch search.Search) *Question {
 	q := &Question{Tripod: tri, fileStore: fileStore, sch: sch}
 	q.SetWritings(q.AddQuestion, q.UpdateQuestion, q.DeleteQuestion)
 	q.SetReadings(q.SearchQuestion)
-	q.SetTxnChecker(q)
 	return q
-}
-
-func (q *Question) CheckTxn(txn *ytypes.SignedTxn) error {
-	req := &types.QuestionAddRequest{}
-	err := txn.BindJsonParams(req)
-	if err != nil {
-		return err
-	}
-	return checkOffchainOrStoreOnchain(txn.FromP2p(), req.Content, q.fileStore)
 }
 
 func (q *Question) SearchQuestion(ctx *context.ReadContext) error {
@@ -55,10 +44,16 @@ func (q *Question) AddQuestion(ctx *context.WriteContext) error {
 		return err
 	}
 
+	fileHash, err := q.fileStore.Put(req.Content)
+	if err != nil {
+		return err
+	}
+
 	scheme := &types.QuestionScheme{
 		ID:          ctx.Txn.TxnHash.String(),
 		Title:       req.Title,
 		Asker:       asker,
+		FileHash:    fileHash,
 		Tags:        req.Tags,
 		Timestamp:   req.Timestamp,
 		Recommender: req.Recommender,
@@ -67,15 +62,12 @@ func (q *Question) AddQuestion(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
+
 	// add search
-	contentByt, err := q.fileStore.Get(req.Content.Hash)
-	if err != nil {
-		return err
-	}
 	err = q.sch.AddDoc(&types.Question{
 		ID:          scheme.ID,
 		Title:       scheme.Title,
-		FileContent: contentByt,
+		FileContent: req.Content,
 		Asker:       scheme.Asker,
 		Tags:        scheme.Tags,
 		Timestamp:   scheme.Timestamp,
@@ -107,10 +99,20 @@ func (q *Question) UpdateQuestion(ctx *context.WriteContext) error {
 		return types.ErrNoPermission
 	}
 
+	// remove old answer and store new one.
+	err = q.fileStore.Remove(question.FileHash)
+	if err != nil {
+		return err
+	}
+	fileHash, err := q.fileStore.Put(req.Content)
+	if err != nil {
+		return err
+	}
+
 	scheme := &types.QuestionScheme{
 		ID:          req.ID,
 		Title:       req.Title,
-		FileHash:    req.Content.Hash,
+		FileHash:    fileHash,
 		Asker:       asker,
 		Tags:        req.Tags,
 		Timestamp:   req.Timestamp,
@@ -120,15 +122,12 @@ func (q *Question) UpdateQuestion(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	// update search
-	contentByt, err := q.fileStore.Get(req.Content.Hash)
-	if err != nil {
-		return err
-	}
+
+	// update doc
 	err = q.sch.UpdateDoc(scheme.ID, &types.Question{
 		ID:          scheme.ID,
 		Title:       scheme.Title,
-		FileContent: contentByt,
+		FileContent: req.Content,
 		Asker:       scheme.Asker,
 		Tags:        scheme.Tags,
 		Timestamp:   scheme.Timestamp,
@@ -182,27 +181,4 @@ func (q *Question) getQuestionScheme(id string) (*types.QuestionScheme, error) {
 
 func (q *Question) existQuestion(id string) bool {
 	return q.Exist([]byte(id))
-}
-
-func checkOffchainOrStoreOnchain(fromP2P bool, info *types.StoreInfo, store filestore.FileStore) error {
-	if !fromP2P {
-		// from RPC, store it into ipfs and clean the content.
-		hash, err := store.Put("", info)
-		if err != nil {
-			return err
-		}
-		info.Hash = hash
-		info.Url = store.Url()
-		info.Content = nil
-		return nil
-	}
-	// check ipfs if file exists
-	byt, err := store.Get(info.Hash)
-	if err != nil {
-		return err
-	}
-	if byt == nil {
-		return types.ErrFileNotfound
-	}
-	return nil
 }
