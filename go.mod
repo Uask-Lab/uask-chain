@@ -8,7 +8,7 @@ require (
 	github.com/meilisearch/meilisearch-go v0.24.0
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.9.0
-	github.com/yu-org/yu v0.0.0-20230625094253-2be2c11b6fc9
+	github.com/yu-org/yu v0.0.0-20230625153025-01a03c0317f7
 )
 
 require (
