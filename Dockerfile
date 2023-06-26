@@ -7,4 +7,5 @@ RUN GOPROXY=https://goproxy.io go build -o ./uask_node ./cmd/uask_node/full_node
 FROM alpine:latest
 WORKDIR /
 COPY --from=builder /uask_node /
+EXPOSE 7999/tcp 8999/tcp
 ENTRYPOINT ["/uask_node"]
