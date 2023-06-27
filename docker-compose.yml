@@ -21,7 +21,7 @@ services:
     image: getmeili/meilisearch:v1.2
     restart: unless-stopped
     volumes:
-      - ./meili:/data.ms
+      - ./meili:/meili_data/data.ms
     ports:
       - "7700:7700"
 
