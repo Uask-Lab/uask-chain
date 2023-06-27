@@ -18,3 +18,4 @@ clean:
 
 reset:
 	@rm -f ./uask/chain.db ./uask/yu.db
+	@rm -f ./meili ./uask-files
