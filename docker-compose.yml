@@ -12,7 +12,6 @@ services:
     ports:
       - "7999:7999"
       - "8999:8999"
-    network_mode: "host"
     depends_on:
       - meili
 #     - ipfs
@@ -25,7 +24,6 @@ services:
       - ./meili:/data.ms
     ports:
       - "7700:7700"
-    network_mode: "host"
 
 #  ipfs:
 #    container_name: ipfs
@@ -38,4 +36,3 @@ services:
 #      - "4001:4001"
 #      - "5001:5001"
 #      - "8080:8080"
-#    network_mode: "host"

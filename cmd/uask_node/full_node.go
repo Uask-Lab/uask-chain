@@ -17,7 +17,8 @@ func main() {
 		logrus.Fatal(err)
 	}
 	meili, err := search.NewMeili(&search.MeiliCfg{
-		Host:       "http://localhost:7700",
+		// this host is for docker
+		Host:       "http://meili:7700",
 		Index:      "uask",
 		PrimaryKey: "id",
 	})
