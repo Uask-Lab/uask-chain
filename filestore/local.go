@@ -2,6 +2,7 @@ package filestore
 
 import (
 	"crypto/sha256"
+	"github.com/yu-org/yu/common"
 	"io"
 	"os"
 	"path/filepath"
@@ -21,10 +22,10 @@ func NewLocalStore(dir string) (*LocalStore, error) {
 
 func (l *LocalStore) Put(content []byte) (string, error) {
 	hashByt := sha256.Sum256(content)
-	hash := string(hashByt[:])
+	hash := common.Bytes2Hex(hashByt[:])
 
 	path := filepath.Join(l.dir, hash)
-	f, err := os.Open(path)
+	f, err := os.Create(path)
 	if err != nil {
 		return "", err
 	}
