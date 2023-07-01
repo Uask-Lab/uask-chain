@@ -2,6 +2,7 @@ package core
 
 import (
 	"encoding/json"
+	"github.com/yu-org/yu/common"
 	"github.com/yu-org/yu/core/context"
 	"github.com/yu-org/yu/core/tripod"
 	"uask-chain/filestore"
@@ -65,7 +66,7 @@ func (a *Answer) AddAnswer(ctx *context.WriteContext) error {
 	//err = a.sch.AddDoc(&types.Answer{
 	//	ID:          scheme.ID,
 	//	Answerer:    scheme.Answerer,
-	//	FileContent: contentByt,
+	//	Content: contentByt,
 	//	Recommender: scheme.Recommender,
 	//	Timestamp:   scheme.Timestamp,
 	//})
@@ -129,7 +130,7 @@ func (a *Answer) UpdateAnswer(ctx *context.WriteContext) error {
 	//err = a.sch.UpdateDoc(req.ID, &types.Answer{
 	//	ID:          scheme.ID,
 	//	Answerer:    scheme.Answerer,
-	//	FileContent: contentByt,
+	//	Content: contentByt,
 	//	Recommender: scheme.Recommender,
 	//	Timestamp:   scheme.Timestamp,
 	//})
@@ -151,12 +152,16 @@ func (a *Answer) GetAnswer(ctx *context.ReadContext) error {
 	if err != nil {
 		return err
 	}
-	answer := &types.Answer{
-		ID:          scheme.ID,
-		Answerer:    scheme.Answerer,
-		FileContent: fileByt,
-		Recommender: scheme.Recommender,
-		Timestamp:   scheme.Timestamp,
+	answer := &types.AnswerInfo{
+		AnswerUpdateRequest: types.AnswerUpdateRequest{
+			ID: scheme.ID,
+			AnswerAddRequest: types.AnswerAddRequest{
+				QID:         scheme.QID,
+				Content:     fileByt,
+				Timestamp:   scheme.Timestamp,
+				Recommender: scheme.Recommender,
+			},
+		},
 	}
 	return ctx.Json(answer)
 }
@@ -182,8 +187,9 @@ func (a *Answer) setAnswerScheme(scheme *types.AnswerScheme) error {
 	if err != nil {
 		return err
 	}
+	hashByt := common.Sha256(byt)
 
-	a.Set([]byte(scheme.ID), byt)
+	a.Set([]byte(scheme.ID), hashByt)
 	return nil
 }
 

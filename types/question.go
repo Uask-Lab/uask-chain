@@ -5,15 +5,14 @@ import (
 )
 
 type QuestionInfo struct {
-	QuestionUpdateRequest
-	Asker   common.Address `json:"asker"`
-	Answers []*AnswerInfo  `json:"answers"`
+	QuestionDoc
+	AnswersIDs []string `json:"answers_ids"`
 }
 
 type QuestionAddRequest struct {
 	Title       string         `json:"title"`
 	Content     []byte         `json:"content"`
-	Tags        []string       `json:"tags"`
+	Tags        []string       `json:"tags,omitempty"`
 	Timestamp   string         `json:"timestamp"`
 	Recommender common.Address `json:"recommender"`
 }
@@ -24,22 +23,22 @@ type QuestionUpdateRequest struct {
 }
 
 type QuestionScheme struct {
-	ID          string         `json:"id"`
+	ID          string         `json:"id" gorm:"primaryKey"`
 	Title       string         `json:"title"`
 	FileHash    string         `json:"file_hash"`
 	Asker       common.Address `json:"asker"`
-	Tags        []string       `json:"tags"`
+	Tags        []string       `json:"tags,omitempty"`
 	Timestamp   string         `json:"timestamp"`
 	Recommender common.Address `json:"recommender"`
 }
 
-// Question stores into search
-type Question struct {
+// QuestionDoc stores into search
+type QuestionDoc struct {
 	ID          string         `json:"id"`
 	Title       string         `json:"title"`
-	FileContent []byte         `json:"file_content"`
+	Content     []byte         `json:"content"`
 	Asker       common.Address `json:"asker"`
-	Tags        []string       `json:"tags"`
+	Tags        []string       `json:"tags,omitempty"`
 	Timestamp   string         `json:"timestamp"`
 	Recommender common.Address `json:"recommender"`
 }

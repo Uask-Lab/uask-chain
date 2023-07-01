@@ -2,6 +2,7 @@ package core
 
 import (
 	"encoding/json"
+	"github.com/yu-org/yu/common"
 	"github.com/yu-org/yu/core/context"
 	"github.com/yu-org/yu/core/tripod"
 	"uask-chain/filestore"
@@ -21,8 +22,31 @@ func NewQuestion(fileStore filestore.FileStore, sch search.Search) *Question {
 	tri := tripod.NewTripod()
 	q := &Question{Tripod: tri, fileStore: fileStore, sch: sch}
 	q.SetWritings(q.AddQuestion, q.UpdateQuestion, q.DeleteQuestion)
-	q.SetReadings(q.SearchQuestion)
+	q.SetReadings(q.GetQuestion, q.SearchQuestion)
 	return q
+}
+
+func (q *Question) GetQuestion(ctx *context.ReadContext) error {
+	sch, err := q.getQuestionScheme(ctx.GetString("id"))
+	if err != nil {
+		return err
+	}
+	fileByt, err := q.fileStore.Get(sch.FileHash)
+	if err != nil {
+		return err
+	}
+	question := &types.QuestionInfo{
+		QuestionDoc: types.QuestionDoc{
+			ID:          sch.ID,
+			Title:       sch.Title,
+			Content:     fileByt,
+			Asker:       sch.Asker,
+			Tags:        sch.Tags,
+			Timestamp:   sch.Timestamp,
+			Recommender: sch.Recommender,
+		},
+	}
+	return ctx.Json(question)
 }
 
 func (q *Question) SearchQuestion(ctx *context.ReadContext) error {
@@ -64,10 +88,10 @@ func (q *Question) AddQuestion(ctx *context.WriteContext) error {
 	}
 
 	// add search
-	err = q.sch.AddDoc(&types.Question{
+	err = q.sch.AddDoc(&types.QuestionDoc{
 		ID:          scheme.ID,
 		Title:       scheme.Title,
-		FileContent: req.Content,
+		Content:     req.Content,
 		Asker:       scheme.Asker,
 		Tags:        scheme.Tags,
 		Timestamp:   scheme.Timestamp,
@@ -124,10 +148,10 @@ func (q *Question) UpdateQuestion(ctx *context.WriteContext) error {
 	}
 
 	// update doc
-	err = q.sch.UpdateDoc(scheme.ID, &types.Question{
+	err = q.sch.UpdateDoc(scheme.ID, &types.QuestionDoc{
 		ID:          scheme.ID,
 		Title:       scheme.Title,
-		FileContent: req.Content,
+		Content:     req.Content,
 		Asker:       scheme.Asker,
 		Tags:        scheme.Tags,
 		Timestamp:   scheme.Timestamp,
@@ -161,8 +185,9 @@ func (q *Question) setQuestionScheme(scheme *types.QuestionScheme) error {
 	if err != nil {
 		return err
 	}
+	hashByt := common.Sha256(byt)
 
-	q.Set([]byte(scheme.ID), byt)
+	q.Set([]byte(scheme.ID), hashByt)
 	return nil
 }
 

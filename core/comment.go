@@ -2,6 +2,7 @@ package core
 
 import (
 	"encoding/json"
+	"github.com/yu-org/yu/common"
 	"github.com/yu-org/yu/core/context"
 	"github.com/yu-org/yu/core/tripod"
 	"uask-chain/filestore"
@@ -45,6 +46,7 @@ func (c *Comment) AddComment(ctx *context.WriteContext) error {
 
 	scheme := &types.CommentScheme{
 		ID:        ctx.Txn.TxnHash.String(),
+		QID:       req.QID,
 		AID:       req.AID,
 		CID:       req.CID,
 		FileHash:  fileHash,
@@ -60,9 +62,9 @@ func (c *Comment) AddComment(ctx *context.WriteContext) error {
 	//if err != nil {
 	//	return err
 	//}
-	//err = c.sch.AddDoc(&types.Comment{
+	//err = c.sch.AddDoc(&types.CommentState{
 	//	ID:          scheme.ID,
-	//	FileContent: contentByt,
+	//	Content: contentByt,
 	//	Commenter:   scheme.Commenter,
 	//	Timestamp:   scheme.Timestamp,
 	//})
@@ -124,9 +126,9 @@ func (c *Comment) UpdateComment(ctx *context.WriteContext) error {
 	//if err != nil {
 	//	return err
 	//}
-	//err = c.sch.UpdateDoc(scheme.ID, &types.Comment{
+	//err = c.sch.UpdateDoc(scheme.ID, &types.CommentState{
 	//	ID:          scheme.ID,
-	//	FileContent: contentByt,
+	//	Content: contentByt,
 	//	Commenter:   scheme.Commenter,
 	//	Timestamp:   scheme.Timestamp,
 	//})
@@ -159,8 +161,9 @@ func (c *Comment) setCommentScheme(scheme *types.CommentScheme) error {
 	if err != nil {
 		return err
 	}
+	hashByt := common.Sha256(byt)
 
-	c.Set([]byte(scheme.ID), byt)
+	c.Set([]byte(scheme.ID), hashByt)
 	return nil
 }
 
