@@ -7,6 +7,7 @@ import (
 	tc "github.com/testcontainers/testcontainers-go/modules/compose"
 	"github.com/yu-org/yu/common"
 	"github.com/yu-org/yu/core/keypair"
+	"github.com/yu-org/yu/core/result"
 	"github.com/yu-org/yu/example/client/callchain"
 	"testing"
 	"time"
@@ -31,31 +32,56 @@ var (
 	commentPub, commentPriv = keypair.GenSrKeyWithSecret([]byte("comment"))
 )
 
-func TestQuestion(t *testing.T) {
+func TestUask(t *testing.T) {
 	startDockerCompose(t)
-	go callchain.SubEvent()
 
+	resultCh := make(chan result.Result)
+	go callchain.SubEvent(resultCh)
+
+	// add question
 	assert.NoError(t, writeQuestion("AddQuestion", &types.QuestionAddRequest{
 		Title:     "What is Uask",
 		Content:   []byte("What is Uask, what can it do?"),
 		Timestamp: time.Now().String(),
 	}))
 
+	questionId := getIdfromEvent(t, resultCh)
+
+	// update question
 	assert.NoError(t, writeQuestion("UpdateQuestion", &types.QuestionUpdateRequest{
-		ID: "",
+		ID: questionId,
 		QuestionAddRequest: types.QuestionAddRequest{
 			Title:     "What is the Uask",
 			Content:   []byte("What can Uask do? how can I run it?"),
 			Timestamp: time.Now().String(),
 		},
 	}))
-}
+	<-resultCh
 
-func TestAnswer(t *testing.T) {
+	// search question
+	resp, err := readQuestion("searchQuestion", map[string]string{"phrase": "Uask"})
+	assert.NoError(t, err, "search question")
+	t.Logf("search quesion result: %s", resp)
 
-}
+	// add answer
+	assert.NoError(t, writeAnswer("AddAnswer", &types.AnswerAddRequest{
+		QID:       questionId,
+		Content:   []byte("It is a question and answer appchain"),
+		Timestamp: time.Now().String(),
+	}))
 
-func TestComment(t *testing.T) {
+	aid := getIdfromEvent(t, resultCh)
+
+	// update answer
+	assert.NoError(t, writeAnswer("UpdateAnswer", &types.AnswerUpdateRequest{
+		ID: aid,
+		AnswerAddRequest: types.AnswerAddRequest{
+			QID:       questionId,
+			Content:   []byte("Uask is a question and answer appchain!"),
+			Timestamp: time.Now().String(),
+		},
+	}))
+	<-resultCh
 
 }
 
@@ -106,4 +132,12 @@ func readFromUask(tripodName, rdName string, params interface{}) ([]byte, error)
 		ReadingName: rdName,
 		Params:      string(byt),
 	}), nil
+}
+
+func getIdfromEvent(t *testing.T, resCh chan result.Result) string {
+	res := <-resCh
+	assert.Equal(t, result.EventType, res.Type())
+	m := make(map[string]string)
+	assert.NoError(t, res.(*result.Event).DecodeJsonValue(&m))
+	return m["id"]
 }
