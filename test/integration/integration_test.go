@@ -18,6 +18,10 @@ func startDockerCompose(t *testing.T) {
 	assert.NoError(t, cmd.Run())
 }
 
+func stopDockerCompose() {
+	exec.Command("docker-compose", "stop").Run()
+}
+
 var (
 	askPub, askPriv         = keypair.GenSrKeyWithSecret([]byte("asker"))
 	answerPub, answerPriv   = keypair.GenSrKeyWithSecret([]byte("answer"))
@@ -26,6 +30,7 @@ var (
 
 func TestUask(t *testing.T) {
 	startDockerCompose(t)
+	defer stopDockerCompose()
 
 	time.Sleep(3 * time.Second)
 	resultCh := make(chan result.Result)
