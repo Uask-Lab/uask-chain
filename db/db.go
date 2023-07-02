@@ -43,14 +43,10 @@ func (db *Database) DeleteQuestion(id string) error {
 			return err
 		}
 		// delete all answers of this questions and these quesions' comments.
-		var as []*types.AnswerScheme
-		err = tx.Where(&types.AnswerScheme{QID: id}).Find(&as).Error
+		var answersIDs []string
+		err = tx.Select("aid").Where(&types.AnswerScheme{QID: id}).Scan(&answersIDs).Error
 		if err != nil {
 			return err
-		}
-		var answersIDs []string
-		for _, a := range as {
-			answersIDs = append(answersIDs, a.ID)
 		}
 		err = tx.Where("aid IN ?", answersIDs).Delete(new(types.CommentScheme)).Error
 		if err != nil {
