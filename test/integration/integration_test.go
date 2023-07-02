@@ -48,7 +48,7 @@ func TestUask(t *testing.T) {
 			Timestamp: time.Now().String(),
 		},
 	}))
-	<-resultCh
+	dealResult(t, resultCh)
 
 	// search question
 	resp, err := readQuestion("searchQuestion", map[string]string{"phrase": "Uask"})
@@ -73,7 +73,7 @@ func TestUask(t *testing.T) {
 			Timestamp: time.Now().String(),
 		},
 	}))
-	<-resultCh
+	dealResult(t, resultCh)
 
 	// add comment
 
@@ -134,4 +134,9 @@ func getIdfromEvent(t *testing.T, resCh chan result.Result) string {
 	m := make(map[string]string)
 	assert.NoError(t, res.(*result.Event).DecodeJsonValue(&m))
 	return m["id"]
+}
+
+func dealResult(t *testing.T, resCh chan result.Result) {
+	res := <-resCh
+	assert.Equal(t, result.EventType, res.Type())
 }
