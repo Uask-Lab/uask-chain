@@ -77,7 +77,24 @@ func TestUask(t *testing.T) {
 	dealResult(t, resultCh)
 
 	// add comment
+	assert.NoError(t, writeComment("AddComment", &types.CommentAddRequest{
+		AID:       aid,
+		Content:   []byte("I agree with you"),
+		Timestamp: time.Now().String(),
+	}))
 
+	cid := getIdfromEvent(t, resultCh)
+
+	// update comment
+	assert.NoError(t, writeComment("UpdateComment", &types.CommentUpdateRequest{
+		ID: cid,
+		CommentAddRequest: types.CommentAddRequest{
+			AID:       aid,
+			Content:   []byte("I don't agree with you"),
+			Timestamp: time.Now().String(),
+		},
+	}))
+	dealResult(t, resultCh)
 }
 
 func writeQuestion(wrName string, params interface{}) error {
