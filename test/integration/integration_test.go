@@ -1,29 +1,21 @@
 package integration
 
 import (
-	"context"
 	"encoding/json"
 	"github.com/stretchr/testify/assert"
-	tc "github.com/testcontainers/testcontainers-go/modules/compose"
 	"github.com/yu-org/yu/common"
 	"github.com/yu-org/yu/core/keypair"
 	"github.com/yu-org/yu/core/result"
 	"github.com/yu-org/yu/example/client/callchain"
+	"os/exec"
 	"testing"
 	"time"
 	"uask-chain/types"
 )
 
 func startDockerCompose(t *testing.T) {
-	compose, err := tc.NewDockerCompose("./docker-compose.yml")
-	assert.NoError(t, err, "NewDockerComposeAPI()")
-	t.Cleanup(func() {
-		assert.NoError(t, compose.Down(context.Background(), tc.RemoveOrphans(true), tc.RemoveImagesLocal), "compose.Down()")
-	})
-	ctx, cancel := context.WithCancel(context.Background())
-	t.Cleanup(cancel)
-
-	assert.NoError(t, compose.Up(ctx, tc.Wait(true)), "compose.Up()")
+	cmd := exec.Command("docker-compose", "up", "-d")
+	assert.NoError(t, cmd.Run())
 }
 
 var (
@@ -45,11 +37,11 @@ func TestUask(t *testing.T) {
 		Timestamp: time.Now().String(),
 	}))
 
-	questionId := getIdfromEvent(t, resultCh)
+	qid := getIdfromEvent(t, resultCh)
 
 	// update question
 	assert.NoError(t, writeQuestion("UpdateQuestion", &types.QuestionUpdateRequest{
-		ID: questionId,
+		ID: qid,
 		QuestionAddRequest: types.QuestionAddRequest{
 			Title:     "What is the Uask",
 			Content:   []byte("What can Uask do? how can I run it?"),
@@ -65,7 +57,7 @@ func TestUask(t *testing.T) {
 
 	// add answer
 	assert.NoError(t, writeAnswer("AddAnswer", &types.AnswerAddRequest{
-		QID:       questionId,
+		QID:       qid,
 		Content:   []byte("It is a question and answer appchain"),
 		Timestamp: time.Now().String(),
 	}))
@@ -76,12 +68,14 @@ func TestUask(t *testing.T) {
 	assert.NoError(t, writeAnswer("UpdateAnswer", &types.AnswerUpdateRequest{
 		ID: aid,
 		AnswerAddRequest: types.AnswerAddRequest{
-			QID:       questionId,
+			QID:       qid,
 			Content:   []byte("Uask is a question and answer appchain!"),
 			Timestamp: time.Now().String(),
 		},
 	}))
 	<-resultCh
+
+	// add comment
 
 }
 
