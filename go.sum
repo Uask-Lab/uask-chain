@@ -1422,8 +1422,8 @@ github.com/tendermint/tendermint v0.34.24 h1:879MKKJWYYPJEMMKME+DWUTY4V9f/FBpnZD
 github.com/tendermint/tendermint v0.34.24/go.mod h1:rXVrl4OYzmIa1I91av3iLv2HS0fGSiucyW9J4aMTpKI=
 github.com/testcontainers/testcontainers-go v0.21.0 h1:syePAxdeTzfkap+RrJaQZpJQ/s/fsUgn11xIvHrOE9U=
 github.com/testcontainers/testcontainers-go v0.21.0/go.mod h1:c1ez3WVRHq7T/Aj+X3TIipFBwkBaNT5iNCY8+1b83Ng=
-github.com/testcontainers/testcontainers-go/modules/compose v0.21.0 h1:B6FpJIWgiJESYu8Rr5EUs27krVP5b0Rr0vkHIwsvdNA=
-github.com/testcontainers/testcontainers-go/modules/compose v0.21.0/go.mod h1:p9xONdA7/kbkO+S2SIoKOHD1yMcSr6gw3uUasRi3hRs=
+github.com/testcontainers/testcontainers-go/modules/compose v0.20.1 h1:I6/IB2gzlS7zDQhScMmrmAIF7ZyDzm+lE9wQwr+QUIo=
+github.com/testcontainers/testcontainers-go/modules/compose v0.20.1/go.mod h1:sCzdl1NTL1KexCVYlTNmY/ji/Y5JAZJRL6zHQlXKSkM=
 github.com/theupdateframework/notary v0.7.0 h1:QyagRZ7wlSpjT5N2qQAh/pN+DVqgekv4DzbAiAiEL3c=
 github.com/theupdateframework/notary v0.7.0/go.mod h1:c9DRxcmhHmVLDay4/2fUYdISnHqbFDGRSlXPO0AhYWw=
 github.com/tilt-dev/fsnotify v1.4.8-0.20220602155310-fff9c274a375 h1:QB54BJwA6x8QU9nHY3xJSZR2kX9bgpZekRKGkLTmEXA=
@@ -1485,8 +1485,6 @@ github.com/xeipuuv/gojsonschema v1.2.0/go.mod h1:anYRn/JVcOK2ZgGU+IjEV4nwlhoK5sQ
 github.com/xlab/treeprint v0.0.0-20180616005107-d6fb6747feb6/go.mod h1:ce1O1j6UtZfjr22oyGxGLbauSBp2YVXpARAosm7dHBg=
 github.com/xordataexchange/crypt v0.0.3-0.20170626215501-b2862e3d0a77/go.mod h1:aYKd//L2LvnjZzWKhF00oedf4jCCReLcmhLdhm1A27Q=
 github.com/yalp/jsonpath v0.0.0-20180802001716-5cc68e5049a0/go.mod h1:/LWChgwKmvncFJFHJ7Gvn9wZArjbV5/FppcK2fKk/tI=
-github.com/yu-org/yu v0.0.0-20230625153025-01a03c0317f7 h1:rE4gehg7PsJW5CicdZ2Q4zBd0lwG1oy9RtZZ1xOBdH4=
-github.com/yu-org/yu v0.0.0-20230625153025-01a03c0317f7/go.mod h1:UfhG4TF0pUzOZ6UYz9GXDcPQMSRKNq21iyX34o1J74U=
 github.com/yu-org/yu v0.0.0-20230702054738-82266893cb17 h1:t5YGhqOnHhMGNfOFdm6UJgYEnDXgBkG/cBxQHrOdoIE=
 github.com/yu-org/yu v0.0.0-20230702054738-82266893cb17/go.mod h1:UfhG4TF0pUzOZ6UYz9GXDcPQMSRKNq21iyX34o1J74U=
 github.com/yudai/gojsondiff v1.0.0/go.mod h1:AY32+k2cwILAkW1fbgxQ5mUmMiZFgLIV+FBNExI05xg=

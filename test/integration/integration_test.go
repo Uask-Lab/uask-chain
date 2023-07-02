@@ -33,17 +33,21 @@ var (
 
 func TestQuestion(t *testing.T) {
 	startDockerCompose(t)
+	go callchain.SubEvent()
 
 	assert.NoError(t, writeQuestion("AddQuestion", &types.QuestionAddRequest{
 		Title:     "What is Uask",
 		Content:   []byte("What is Uask, what can it do?"),
-		Tags:      nil,
 		Timestamp: time.Now().String(),
 	}))
 
 	assert.NoError(t, writeQuestion("UpdateQuestion", &types.QuestionUpdateRequest{
-		ID:                 "",
-		QuestionAddRequest: types.QuestionAddRequest{},
+		ID: "",
+		QuestionAddRequest: types.QuestionAddRequest{
+			Title:     "What is the Uask",
+			Content:   []byte("What can Uask do? how can I run it?"),
+			Timestamp: time.Now().String(),
+		},
 	}))
 }
 
