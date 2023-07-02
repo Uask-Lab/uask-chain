@@ -5,6 +5,7 @@ import (
 	"github.com/yu-org/yu/common"
 	"github.com/yu-org/yu/core/context"
 	"github.com/yu-org/yu/core/tripod"
+	"uask-chain/db"
 	"uask-chain/filestore"
 	"uask-chain/search"
 	"uask-chain/types"
@@ -14,20 +15,21 @@ type Question struct {
 	*tripod.Tripod
 	fileStore filestore.FileStore
 	sch       search.Search
+	db        *db.Database
 
 	answer *Answer `tripod:"answer"`
 }
 
-func NewQuestion(fileStore filestore.FileStore, sch search.Search) *Question {
+func NewQuestion(fileStore filestore.FileStore, sch search.Search, db *db.Database) *Question {
 	tri := tripod.NewTripod()
-	q := &Question{Tripod: tri, fileStore: fileStore, sch: sch}
+	q := &Question{Tripod: tri, fileStore: fileStore, sch: sch, db: db}
 	q.SetWritings(q.AddQuestion, q.UpdateQuestion, q.DeleteQuestion)
 	q.SetReadings(q.GetQuestion, q.SearchQuestion)
 	return q
 }
 
 func (q *Question) GetQuestion(ctx *context.ReadContext) error {
-	sch, err := q.getQuestionScheme(ctx.GetString("id"))
+	sch, err := q.db.GetQuestion(ctx.GetString("id"))
 	if err != nil {
 		return err
 	}
@@ -82,7 +84,13 @@ func (q *Question) AddQuestion(ctx *context.WriteContext) error {
 		Timestamp:   req.Timestamp,
 		Recommender: req.Recommender,
 	}
-	err = q.setQuestionScheme(scheme)
+	err = q.setQuestionState(scheme)
+	if err != nil {
+		return err
+	}
+
+	// store into database
+	err = q.db.AddQuestion(scheme)
 	if err != nil {
 		return err
 	}
@@ -115,7 +123,7 @@ func (q *Question) UpdateQuestion(ctx *context.WriteContext) error {
 		return err
 	}
 
-	question, err := q.getQuestionScheme(req.ID)
+	question, err := q.db.GetQuestion(req.ID)
 	if err != nil {
 		return err
 	}
@@ -142,7 +150,13 @@ func (q *Question) UpdateQuestion(ctx *context.WriteContext) error {
 		Timestamp:   req.Timestamp,
 		Recommender: req.Recommender,
 	}
-	err = q.setQuestionScheme(scheme)
+	err = q.setQuestionState(scheme)
+	if err != nil {
+		return err
+	}
+
+	// update database
+	err = q.db.UpdateQuestion(scheme)
 	if err != nil {
 		return err
 	}
@@ -169,7 +183,7 @@ func (q *Question) DeleteQuestion(ctx *context.WriteContext) error {
 	ctx.SetLei(10)
 	id := ctx.GetString("id")
 	asker := ctx.GetCaller()
-	scheme, err := q.getQuestionScheme(id)
+	scheme, err := q.db.GetQuestion(id)
 	if err != nil {
 		return err
 	}
@@ -177,10 +191,14 @@ func (q *Question) DeleteQuestion(ctx *context.WriteContext) error {
 		return types.ErrNoPermission
 	}
 	q.Delete([]byte(id))
+	err = q.db.DeleteQuestion(id)
+	if err != nil {
+		return err
+	}
 	return q.sch.DeleteDoc(id)
 }
 
-func (q *Question) setQuestionScheme(scheme *types.QuestionScheme) error {
+func (q *Question) setQuestionState(scheme *types.QuestionScheme) error {
 	byt, err := json.Marshal(scheme)
 	if err != nil {
 		return err
@@ -189,19 +207,6 @@ func (q *Question) setQuestionScheme(scheme *types.QuestionScheme) error {
 
 	q.Set([]byte(scheme.ID), hashByt)
 	return nil
-}
-
-func (q *Question) getQuestionScheme(id string) (*types.QuestionScheme, error) {
-	byt, err := q.Get([]byte(id))
-	if err != nil {
-		return nil, err
-	}
-	scheme := &types.QuestionScheme{}
-	err = json.Unmarshal(byt, scheme)
-	if err != nil {
-		return nil, err
-	}
-	return scheme, nil
 }
 
 func (q *Question) existQuestion(id string) bool {

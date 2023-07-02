@@ -5,6 +5,7 @@ import (
 	"github.com/yu-org/yu/common"
 	"github.com/yu-org/yu/core/context"
 	"github.com/yu-org/yu/core/tripod"
+	"uask-chain/db"
 	"uask-chain/filestore"
 	"uask-chain/types"
 )
@@ -12,14 +13,15 @@ import (
 type Answer struct {
 	*tripod.Tripod
 	fileStore filestore.FileStore
+	db        *db.Database
 	// sch       search.Search
 
 	Question *Question `tripod:"question"`
 }
 
-func NewAnswer(fileStore filestore.FileStore) *Answer {
+func NewAnswer(fileStore filestore.FileStore, db *db.Database) *Answer {
 	tri := tripod.NewTripod()
-	a := &Answer{Tripod: tri, fileStore: fileStore}
+	a := &Answer{Tripod: tri, fileStore: fileStore, db: db}
 	a.SetWritings(a.AddAnswer, a.UpdateAnswer, a.DeleteAnswer)
 	a.SetReadings(a.GetAnswer)
 	return a
@@ -53,7 +55,13 @@ func (a *Answer) AddAnswer(ctx *context.WriteContext) error {
 		Timestamp:   req.Timestamp,
 		Recommender: req.Recommender,
 	}
-	err = a.setAnswerScheme(scheme)
+	err = a.setAnswerState(scheme)
+	if err != nil {
+		return err
+	}
+
+	// store into database
+	err = a.db.AddAnswer(scheme)
 	if err != nil {
 		return err
 	}
@@ -92,7 +100,7 @@ func (a *Answer) UpdateAnswer(ctx *context.WriteContext) error {
 		return types.ErrAnswerNotFound
 	}
 
-	answer, err := a.getAnswerScheme(req.ID)
+	answer, err := a.db.GetAnswer(req.ID)
 	if err != nil {
 		return err
 	}
@@ -118,10 +126,17 @@ func (a *Answer) UpdateAnswer(ctx *context.WriteContext) error {
 		Timestamp:   req.Timestamp,
 		Recommender: req.Recommender,
 	}
-	err = a.setAnswerScheme(scheme)
+	err = a.setAnswerState(scheme)
 	if err != nil {
 		return err
 	}
+
+	// update database
+	err = a.db.UpdateAnswer(scheme)
+	if err != nil {
+		return err
+	}
+
 	// update content into search
 	//contentByt, err := a.fileStore.Get(req.Content.Hash)
 	//if err != nil {
@@ -144,7 +159,7 @@ func (a *Answer) UpdateAnswer(ctx *context.WriteContext) error {
 
 func (a *Answer) GetAnswer(ctx *context.ReadContext) error {
 	id := ctx.GetString("id")
-	scheme, err := a.getAnswerScheme(id)
+	scheme, err := a.db.GetAnswer(id)
 	if err != nil {
 		return err
 	}
@@ -170,7 +185,7 @@ func (a *Answer) DeleteAnswer(ctx *context.WriteContext) error {
 	ctx.SetLei(10)
 	id := ctx.GetString("id")
 	answerer := ctx.GetCaller()
-	scheme, err := a.getAnswerScheme(id)
+	scheme, err := a.db.GetAnswer(id)
 	if err != nil {
 		return err
 	}
@@ -178,11 +193,10 @@ func (a *Answer) DeleteAnswer(ctx *context.WriteContext) error {
 		return types.ErrNoPermission
 	}
 	a.Delete([]byte(id))
-	// return a.sch.DeleteDoc(id)
-	return nil
+	return a.db.DeleteAnswer(id)
 }
 
-func (a *Answer) setAnswerScheme(scheme *types.AnswerScheme) error {
+func (a *Answer) setAnswerState(scheme *types.AnswerScheme) error {
 	byt, err := json.Marshal(scheme)
 	if err != nil {
 		return err
@@ -191,19 +205,6 @@ func (a *Answer) setAnswerScheme(scheme *types.AnswerScheme) error {
 
 	a.Set([]byte(scheme.ID), hashByt)
 	return nil
-}
-
-func (a *Answer) getAnswerScheme(id string) (*types.AnswerScheme, error) {
-	byt, err := a.Get([]byte(id))
-	if err != nil {
-		return nil, err
-	}
-	scheme := &types.AnswerScheme{}
-	err = json.Unmarshal(byt, scheme)
-	if err != nil {
-		return nil, err
-	}
-	return scheme, nil
 }
 
 func (a *Answer) existAnswer(id string) bool {

@@ -26,6 +26,11 @@ func (db *Database) UpdateQuestion(q *types.QuestionScheme) error {
 	return db.Save(q).Error
 }
 
+func (db *Database) GetQuestion(id string) (question *types.QuestionScheme, err error) {
+	err = db.Model(&types.QuestionScheme{ID: id}).Limit(1).Find(question).Error
+	return
+}
+
 func (db *Database) QueryQuestions(query interface{}) (qs []*types.QuestionScheme, err error) {
 	err = db.DB.Where(query).Find(&qs).Error
 	return
@@ -64,6 +69,11 @@ func (db *Database) UpdateAnswer(a *types.AnswerScheme) error {
 	return db.Save(a).Error
 }
 
+func (db *Database) GetAnswer(id string) (answer *types.AnswerScheme, err error) {
+	err = db.Model(&types.AnswerScheme{ID: id}).Limit(1).Find(answer).Error
+	return
+}
+
 func (db *Database) QueryAnswers(query interface{}) (answers []*types.AnswerScheme, err error) {
 	err = db.Where(query).Find(&answers).Error
 	return
@@ -85,6 +95,11 @@ func (db *Database) AddComment(c *types.CommentScheme) error {
 
 func (db *Database) UpdateComment(c *types.CommentScheme) error {
 	return db.Save(c).Error
+}
+
+func (db *Database) GetComment(id string) (comment *types.CommentScheme, err error) {
+	err = db.Model(&types.CommentScheme{ID: id}).Limit(1).Find(comment).Error
+	return
 }
 
 func (db *Database) QueryComments(query interface{}) (comments []*types.CommentScheme, err error) {

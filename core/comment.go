@@ -5,6 +5,7 @@ import (
 	"github.com/yu-org/yu/common"
 	"github.com/yu-org/yu/core/context"
 	"github.com/yu-org/yu/core/tripod"
+	"uask-chain/db"
 	"uask-chain/filestore"
 	"uask-chain/types"
 )
@@ -12,14 +13,15 @@ import (
 type Comment struct {
 	*tripod.Tripod
 	fileStore filestore.FileStore
+	db        *db.Database
 	// sch       search.Search
 
 	Answer *Answer `tripod:"answer"`
 }
 
-func NewComment(fileStore filestore.FileStore) *Comment {
+func NewComment(fileStore filestore.FileStore, db *db.Database) *Comment {
 	tri := tripod.NewTripod()
-	c := &Comment{Tripod: tri, fileStore: fileStore}
+	c := &Comment{Tripod: tri, fileStore: fileStore, db: db}
 	c.SetWritings(c.AddComment, c.UpdateComment, c.DeleteComment)
 	return c
 }
@@ -53,10 +55,17 @@ func (c *Comment) AddComment(ctx *context.WriteContext) error {
 		Commenter: commenter,
 		Timestamp: req.Timestamp,
 	}
-	err = c.setCommentScheme(scheme)
+	err = c.setCommentState(scheme)
 	if err != nil {
 		return err
 	}
+
+	// store into database
+	err = c.db.AddComment(scheme)
+	if err != nil {
+		return err
+	}
+
 	// add search
 	//contentByt, err := c.fileStore.Get(req.Content.Hash)
 	//if err != nil {
@@ -86,7 +95,7 @@ func (c *Comment) UpdateComment(ctx *context.WriteContext) error {
 		return err
 	}
 
-	comment, err := c.getCommentScheme(req.ID)
+	comment, err := c.db.GetComment(req.ID)
 	if err != nil {
 		return err
 	}
@@ -117,10 +126,17 @@ func (c *Comment) UpdateComment(ctx *context.WriteContext) error {
 		Commenter: commenter,
 		Timestamp: req.Timestamp,
 	}
-	err = c.setCommentScheme(scheme)
+	err = c.setCommentState(scheme)
 	if err != nil {
 		return err
 	}
+
+	// update database
+	err = c.db.UpdateComment(scheme)
+	if err != nil {
+		return err
+	}
+
 	// update search
 	//contentByt, err := c.fileStore.Get(req.Content.Hash)
 	//if err != nil {
@@ -144,7 +160,7 @@ func (c *Comment) DeleteComment(ctx *context.WriteContext) error {
 	ctx.SetLei(10)
 	id := ctx.GetString("id")
 	commenter := ctx.GetCaller()
-	scheme, err := c.getCommentScheme(id)
+	scheme, err := c.db.GetComment(id)
 	if err != nil {
 		return err
 	}
@@ -152,11 +168,10 @@ func (c *Comment) DeleteComment(ctx *context.WriteContext) error {
 		return types.ErrNoPermission
 	}
 	c.Delete([]byte(id))
-	// return c.sch.DeleteDoc(id)
-	return nil
+	return c.db.DeleteComment(id)
 }
 
-func (c *Comment) setCommentScheme(scheme *types.CommentScheme) error {
+func (c *Comment) setCommentState(scheme *types.CommentScheme) error {
 	byt, err := json.Marshal(scheme)
 	if err != nil {
 		return err
@@ -169,20 +184,6 @@ func (c *Comment) setCommentScheme(scheme *types.CommentScheme) error {
 
 func (c *Comment) existComment(id string) bool {
 	return c.Exist([]byte(id))
-}
-
-func (c *Comment) getCommentScheme(id string) (*types.CommentScheme, error) {
-	byt, err := c.Get([]byte(id))
-	if err != nil {
-		return nil, err
-	}
-
-	scheme := &types.CommentScheme{}
-	err = json.Unmarshal(byt, scheme)
-	if err != nil {
-		return nil, err
-	}
-	return scheme, nil
 }
 
 func (c *Comment) ifReplyExist(answerID, commentID string) error {
