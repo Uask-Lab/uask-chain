@@ -27,7 +27,7 @@ type QuestionScheme struct {
 	Title       string         `json:"title"`
 	FileHash    string         `json:"file_hash"`
 	Asker       common.Address `json:"asker"`
-	Tags        []string       `json:"tags,omitempty"`
+	Tags        []string       `json:"tags,omitempty" gorm:"type:text[]"`
 	Timestamp   string         `json:"timestamp"`
 	Recommender common.Address `json:"recommender"`
 }
