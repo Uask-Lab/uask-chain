@@ -9,6 +9,8 @@ import (
 	"github.com/yu-org/yu/core/keypair"
 	"github.com/yu-org/yu/example/client/callchain"
 	"testing"
+	"time"
+	"uask-chain/types"
 )
 
 func startDockerCompose(t *testing.T) {
@@ -32,11 +34,13 @@ var (
 func TestQuestion(t *testing.T) {
 	startDockerCompose(t)
 
-	callchain.CallChainByWriting(callchain.Http, askPriv, askPub, &common.WrCall{
-		TripodName:  "question",
-		WritingName: "AddQuestion",
-		Params:      "",
+	err := writeQuestion("AddQuestion", &types.QuestionAddRequest{
+		Title:     "What is Uask",
+		Content:   []byte("What is Uask, what can it do?"),
+		Tags:      nil,
+		Timestamp: time.Now().String(),
 	})
+	assert.NoError(t, err)
 }
 
 func TestAnswer(t *testing.T) {
