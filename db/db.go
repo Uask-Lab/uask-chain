@@ -22,6 +22,10 @@ func (db *Database) AddQuestion(q *types.QuestionScheme) error {
 	return db.Create(q).Error
 }
 
+func (db *Database) UpdateQuestion(q *types.QuestionScheme) error {
+	return db.Save(q).Error
+}
+
 func (db *Database) QueryQuestions(query interface{}) (qs []*types.QuestionScheme, err error) {
 	err = db.DB.Where(query).Find(&qs).Error
 	return
@@ -60,6 +64,10 @@ func (db *Database) AddAnswer(a *types.AnswerScheme) error {
 	return db.Create(a).Error
 }
 
+func (db *Database) UpdateAnswer(a *types.AnswerScheme) error {
+	return db.Save(a).Error
+}
+
 func (db *Database) QueryAnswers(query interface{}) (answers []*types.AnswerScheme, err error) {
 	err = db.Where(query).Find(&answers).Error
 	return
@@ -77,6 +85,10 @@ func (db *Database) DeleteAnswer(id string) error {
 
 func (db *Database) AddComment(c *types.CommentScheme) error {
 	return db.Create(c).Error
+}
+
+func (db *Database) UpdateComment(c *types.CommentScheme) error {
+	return db.Save(c).Error
 }
 
 func (db *Database) QueryComments(query interface{}) (comments []*types.CommentScheme, err error) {
