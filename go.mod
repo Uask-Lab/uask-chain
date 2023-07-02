@@ -22,7 +22,7 @@ require (
 	github.com/meilisearch/meilisearch-go v0.24.0
 	github.com/sirupsen/logrus v1.9.0
 	github.com/stretchr/testify v1.8.4
-	github.com/testcontainers/testcontainers-go/modules/compose v0.20.1
+	github.com/testcontainers/testcontainers-go/modules/compose v0.21.0
 	github.com/yu-org/yu v0.0.0-20230702054738-82266893cb17
 	gorm.io/driver/sqlite v1.1.4
 	gorm.io/gorm v1.21.4
