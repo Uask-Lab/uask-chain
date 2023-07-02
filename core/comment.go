@@ -81,8 +81,11 @@ func (c *Comment) AddComment(ctx *context.WriteContext) error {
 	//	return err
 	//}
 
-	ctx.EmitStringEvent("add comment(%s) successfully by commenter(%s)", scheme.ID, commenter.String())
-	return nil
+	return ctx.EmitJsonEvent(map[string]string{
+		"writing":   "add_comment",
+		"id":        scheme.ID,
+		"commenter": commenter.String(),
+	})
 }
 
 func (c *Comment) UpdateComment(ctx *context.WriteContext) error {
@@ -152,8 +155,7 @@ func (c *Comment) UpdateComment(ctx *context.WriteContext) error {
 	//	return err
 	//}
 
-	ctx.EmitStringEvent("update comment(%s) successfully!", req.ID)
-	return nil
+	return ctx.EmitJsonEvent(map[string]string{"writing": "update_comment", "id": req.ID})
 }
 
 func (c *Comment) DeleteComment(ctx *context.WriteContext) error {
@@ -168,7 +170,11 @@ func (c *Comment) DeleteComment(ctx *context.WriteContext) error {
 		return types.ErrNoPermission
 	}
 	c.Delete([]byte(id))
-	return c.db.DeleteComment(id)
+	err = c.db.DeleteComment(id)
+	if err != nil {
+		return err
+	}
+	return ctx.EmitJsonEvent(map[string]string{"writing": "delete_comment", "id": id})
 }
 
 func (c *Comment) setCommentState(scheme *types.CommentScheme) error {

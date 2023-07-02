@@ -34,13 +34,17 @@ var (
 func TestQuestion(t *testing.T) {
 	startDockerCompose(t)
 
-	err := writeQuestion("AddQuestion", &types.QuestionAddRequest{
+	assert.NoError(t, writeQuestion("AddQuestion", &types.QuestionAddRequest{
 		Title:     "What is Uask",
 		Content:   []byte("What is Uask, what can it do?"),
 		Tags:      nil,
 		Timestamp: time.Now().String(),
-	})
-	assert.NoError(t, err)
+	}))
+
+	assert.NoError(t, writeQuestion("UpdateQuestion", &types.QuestionUpdateRequest{
+		ID:                 "",
+		QuestionAddRequest: types.QuestionAddRequest{},
+	}))
 }
 
 func TestAnswer(t *testing.T) {

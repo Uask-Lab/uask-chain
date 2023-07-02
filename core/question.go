@@ -109,8 +109,12 @@ func (q *Question) AddQuestion(ctx *context.WriteContext) error {
 		return err
 	}
 
-	ctx.EmitStringEvent("add question(%s) successfully by asker(%s)! question-id=%s", scheme.Title, asker.String(), scheme.ID)
-	return nil
+	return ctx.EmitJsonEvent(map[string]string{
+		"writing": "add_question",
+		"id":      scheme.ID,
+		"title":   scheme.Title,
+		"asker":   asker.String(),
+	})
 }
 
 func (q *Question) UpdateQuestion(ctx *context.WriteContext) error {
@@ -175,8 +179,7 @@ func (q *Question) UpdateQuestion(ctx *context.WriteContext) error {
 		return err
 	}
 
-	ctx.EmitStringEvent("update question(%s) successfully!", req.ID)
-	return nil
+	return ctx.EmitJsonEvent(map[string]string{"writing": "update_question", "id": scheme.ID})
 }
 
 func (q *Question) DeleteQuestion(ctx *context.WriteContext) error {
@@ -195,7 +198,11 @@ func (q *Question) DeleteQuestion(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	return q.sch.DeleteDoc(id)
+	err = q.sch.DeleteDoc(id)
+	if err != nil {
+		return err
+	}
+	return ctx.EmitJsonEvent(map[string]string{"writing": "delete_question", "id": id})
 }
 
 func (q *Question) setQuestionState(scheme *types.QuestionScheme) error {

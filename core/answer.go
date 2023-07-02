@@ -82,8 +82,12 @@ func (a *Answer) AddAnswer(ctx *context.WriteContext) error {
 	//	return err
 	//}
 
-	ctx.EmitStringEvent("add answer(%s) to question(%s) successfully by answerer(%s)!", scheme.ID, scheme.QID, answerer.String())
-	return nil
+	return ctx.EmitJsonEvent(map[string]string{
+		"writing":     "add_answer",
+		"id":          scheme.ID,
+		"question_id": scheme.QID,
+		"answerer":    answerer.String(),
+	})
 }
 
 func (a *Answer) UpdateAnswer(ctx *context.WriteContext) error {
@@ -153,8 +157,7 @@ func (a *Answer) UpdateAnswer(ctx *context.WriteContext) error {
 	//	return err
 	//}
 
-	ctx.EmitStringEvent("update answer(%s) successfully!", req.ID)
-	return nil
+	return ctx.EmitJsonEvent(map[string]string{"writing": "update_answer", "id": req.ID})
 }
 
 func (a *Answer) GetAnswer(ctx *context.ReadContext) error {
@@ -193,7 +196,11 @@ func (a *Answer) DeleteAnswer(ctx *context.WriteContext) error {
 		return types.ErrNoPermission
 	}
 	a.Delete([]byte(id))
-	return a.db.DeleteAnswer(id)
+	err = a.db.DeleteAnswer(id)
+	if err != nil {
+		return err
+	}
+	return ctx.EmitJsonEvent(map[string]string{"writing": "delete_answer", "id": id})
 }
 
 func (a *Answer) setAnswerState(scheme *types.AnswerScheme) error {
