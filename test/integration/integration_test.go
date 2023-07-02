@@ -27,6 +27,7 @@ var (
 func TestUask(t *testing.T) {
 	startDockerCompose(t)
 
+	time.Sleep(3 * time.Second)
 	resultCh := make(chan result.Result)
 	go callchain.SubEvent(resultCh)
 
