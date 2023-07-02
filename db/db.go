@@ -17,15 +17,7 @@ func NewDB(dsn string) (*Database, error) {
 	}
 
 	d := &Database{db}
-	err = d.createIfNotExist(&types.QuestionScheme{})
-	if err != nil {
-		return nil, err
-	}
-	err = d.createIfNotExist(&types.AnswerScheme{})
-	if err != nil {
-		return nil, err
-	}
-	err = d.createIfNotExist(&types.CommentScheme{})
+	err = d.AutoMigrate(&types.QuestionScheme{}, &types.AnswerScheme{}, &types.CommentScheme{})
 	return d, err
 }
 
@@ -120,11 +112,4 @@ func (db *Database) QueryComments(query interface{}) (comments []*types.CommentS
 
 func (db *Database) DeleteComment(id string) error {
 	return db.Delete(&types.CommentScheme{ID: id}).Error
-}
-
-func (db *Database) createIfNotExist(table interface{}) error {
-	if db.Migrator().HasTable(table) {
-		return nil
-	}
-	return db.Migrator().CreateTable(table)
 }
