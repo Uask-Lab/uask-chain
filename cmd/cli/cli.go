@@ -82,7 +82,7 @@ func main() {
 		writing = "AddComment"
 	}
 
-	callchain.CallChainByExec(callchain.Http, priv, pub, &common.WrCall{
+	callchain.CallChainByWriting(callchain.Http, priv, pub, &common.WrCall{
 		TripodName:  tripod,
 		WritingName: writing,
 		Params:      string(params),
