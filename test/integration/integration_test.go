@@ -32,7 +32,7 @@ func TestUask(t *testing.T) {
 	startDockerCompose(t)
 	defer stopDockerCompose()
 
-	time.Sleep(3 * time.Second)
+	time.Sleep(5 * time.Second)
 	resultCh := make(chan result.Result)
 	go callchain.SubEvent(resultCh)
 
@@ -99,6 +99,33 @@ func TestUask(t *testing.T) {
 			Timestamp: time.Now().String(),
 		},
 	}))
+	dealResult(t, resultCh)
+
+	// get questions, answers, comments by id
+	qbyt, err := readQuestion("GetQuestion", map[string]string{"id": qid})
+	assert.NoError(t, err, "get question")
+	q := new(types.QuestionInfo)
+	assert.NoError(t, json.Unmarshal(qbyt, q))
+	assert.Equal(t, "What is the Uask", q.Title)
+
+	abyt, err := readAnswer("GetAnswer", map[string]string{"id": aid})
+	assert.NoError(t, err, "get answer")
+	a := new(types.AnswerInfo)
+	assert.NoError(t, json.Unmarshal(abyt, a))
+	assert.Equal(t, qid, a.QID)
+
+	cbyt, err := readComment("GetComment", map[string]string{"id": cid})
+	assert.NoError(t, err, "get comment")
+	c := new(types.CommentInfo)
+	assert.NoError(t, json.Unmarshal(cbyt, c))
+	assert.Equal(t, []byte("I don't agree with you"), c.Content)
+
+	// delete all questions, answers, comments
+	assert.NoError(t, writeQuestion("DeleteQuestion", map[string]string{"id": qid}))
+	dealResult(t, resultCh)
+	assert.NoError(t, writeAnswer("DeleteAnswer", map[string]string{"id": aid}))
+	dealResult(t, resultCh)
+	assert.NoError(t, writeComment("DeleteComment", map[string]string{"id": cid}))
 	dealResult(t, resultCh)
 }
 
