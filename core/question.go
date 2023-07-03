@@ -127,6 +127,10 @@ func (q *Question) UpdateQuestion(ctx *context.WriteContext) error {
 		return err
 	}
 
+	if !q.existQuestion(req.ID) {
+		return types.ErrQuestionNotFound
+	}
+
 	question, err := q.db.GetQuestion(req.ID)
 	if err != nil {
 		return err
