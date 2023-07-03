@@ -30,6 +30,7 @@ func (db *Database) UpdateQuestion(q *types.QuestionScheme) error {
 }
 
 func (db *Database) GetQuestion(id string) (question *types.QuestionScheme, err error) {
+	question = new(types.QuestionScheme)
 	err = db.Model(&types.QuestionScheme{ID: id}).Limit(1).Find(question).Error
 	return
 }
@@ -73,6 +74,7 @@ func (db *Database) UpdateAnswer(a *types.AnswerScheme) error {
 }
 
 func (db *Database) GetAnswer(id string) (answer *types.AnswerScheme, err error) {
+	answer = new(types.AnswerScheme)
 	err = db.Model(&types.AnswerScheme{ID: id}).Limit(1).Find(answer).Error
 	return
 }
@@ -101,6 +103,7 @@ func (db *Database) UpdateComment(c *types.CommentScheme) error {
 }
 
 func (db *Database) GetComment(id string) (comment *types.CommentScheme, err error) {
+	comment = new(types.CommentScheme)
 	err = db.Model(&types.CommentScheme{ID: id}).Limit(1).Find(comment).Error
 	return
 }
