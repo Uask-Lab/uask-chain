@@ -2,6 +2,7 @@ package core
 
 import (
 	"encoding/json"
+	"github.com/sirupsen/logrus"
 	"github.com/yu-org/yu/common"
 	"github.com/yu-org/yu/core/context"
 	"github.com/yu-org/yu/core/tripod"
@@ -209,6 +210,8 @@ func (a *Answer) setAnswerState(scheme *types.AnswerScheme) error {
 		return err
 	}
 	hashByt := common.Sha256(byt)
+
+	logrus.Info("---- answer id = ", scheme.ID)
 
 	a.Set([]byte(scheme.ID), hashByt)
 	return nil
