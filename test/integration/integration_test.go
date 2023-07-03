@@ -29,10 +29,10 @@ var (
 )
 
 func TestUask(t *testing.T) {
-	//startDockerCompose(t)
-	//defer stopDockerCompose()
-	//
-	//time.Sleep(5 * time.Second)
+	startDockerCompose(t)
+	defer stopDockerCompose()
+
+	time.Sleep(5 * time.Second)
 	resultCh := make(chan result.Result)
 	go callchain.SubEvent(resultCh)
 
