@@ -44,23 +44,23 @@ func TestUask(t *testing.T) {
 
 	go callchain.SubEvent(resultCh)
 
-	t.Run("testAddQuestion", testAddQuestion)
-	t.Run("testUpdateQuestion", testUpdateQuestion)
-	t.Run("testSearchQuestion", testSearchQuestion)
+	t.Run("AddQuestion", testAddQuestion)
+	t.Run("UpdateQuestion", testUpdateQuestion)
+	t.Run("SearchQuestion", testSearchQuestion)
 
-	t.Run("testAddAnswer", testAddAnswer)
-	t.Run("testUpdateAnswer", testUpdateAnswer)
+	t.Run("AddAnswer", testAddAnswer)
+	t.Run("UpdateAnswer", testUpdateAnswer)
 
-	t.Run("testAddComment", testAddComment)
-	t.Run("testUpdateComment", testUpdateComment)
+	t.Run("AddComment", testAddComment)
+	t.Run("UpdateComment", testUpdateComment)
 
-	t.Run("testGetQuestion", testGetQuestion)
-	t.Run("testGetAnswer", testGetAnswer)
-	t.Run("testGetComment", testGetComment)
+	t.Run("GetQuestion", testGetQuestion)
+	t.Run("GetAnswer", testGetAnswer)
+	t.Run("GetComment", testGetComment)
 
-	t.Run("testDeleteQuestion", testDeleteQuestion)
-	t.Run("testDeleteAnswer", testDeleteAnswer)
-	t.Run("testDeleteComment", testDeleteComment)
+	t.Run("DeleteQuestion", testDeleteQuestion)
+	t.Run("DeleteAnswer", testDeleteAnswer)
+	t.Run("DeleteComment", testDeleteComment)
 
 }
 
