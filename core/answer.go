@@ -51,9 +51,9 @@ func (a *Answer) AddAnswer(ctx *context.WriteContext) error {
 		ID:          ctx.Txn.TxnHash.String(),
 		QID:         req.QID,
 		FileHash:    fileHash,
-		Answerer:    answerer,
+		Answerer:    answerer.String(),
 		Timestamp:   req.Timestamp,
-		Recommender: req.Recommender,
+		Recommender: req.Recommender.String(),
 	}
 	err = a.setAnswerState(scheme)
 	if err != nil {
@@ -108,7 +108,7 @@ func (a *Answer) UpdateAnswer(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	if answer.Answerer != answerer {
+	if answer.Answerer != answerer.String() {
 		return types.ErrNoPermission
 	}
 
@@ -126,9 +126,9 @@ func (a *Answer) UpdateAnswer(ctx *context.WriteContext) error {
 		ID:          req.ID,
 		QID:         req.QID,
 		FileHash:    fileHash,
-		Answerer:    answerer,
+		Answerer:    answerer.String(),
 		Timestamp:   req.Timestamp,
-		Recommender: req.Recommender,
+		Recommender: req.Recommender.String(),
 	}
 	err = a.setAnswerState(scheme)
 	if err != nil {
@@ -177,7 +177,7 @@ func (a *Answer) GetAnswer(ctx *context.ReadContext) error {
 				QID:         scheme.QID,
 				Content:     fileByt,
 				Timestamp:   scheme.Timestamp,
-				Recommender: scheme.Recommender,
+				Recommender: common.HexToAddress(scheme.Recommender),
 			},
 		},
 	}
@@ -192,7 +192,7 @@ func (a *Answer) DeleteAnswer(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	if answerer != scheme.Answerer {
+	if answerer.String() != scheme.Answerer {
 		return types.ErrNoPermission
 	}
 	a.Delete([]byte(id))

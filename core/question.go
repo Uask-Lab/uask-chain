@@ -42,10 +42,10 @@ func (q *Question) GetQuestion(ctx *context.ReadContext) error {
 			ID:          sch.ID,
 			Title:       sch.Title,
 			Content:     fileByt,
-			Asker:       sch.Asker,
+			Asker:       common.HexToAddress(sch.Asker),
 			Tags:        sch.Tags,
 			Timestamp:   sch.Timestamp,
-			Recommender: sch.Recommender,
+			Recommender: common.HexToAddress(sch.Recommender),
 		},
 	}
 	return ctx.Json(question)
@@ -78,11 +78,11 @@ func (q *Question) AddQuestion(ctx *context.WriteContext) error {
 	scheme := &types.QuestionScheme{
 		ID:          ctx.Txn.TxnHash.String(),
 		Title:       req.Title,
-		Asker:       asker,
+		Asker:       asker.String(),
 		FileHash:    fileHash,
 		Tags:        req.Tags,
 		Timestamp:   req.Timestamp,
-		Recommender: req.Recommender,
+		Recommender: req.Recommender.String(),
 	}
 	err = q.setQuestionState(scheme)
 	if err != nil {
@@ -100,10 +100,10 @@ func (q *Question) AddQuestion(ctx *context.WriteContext) error {
 		ID:          scheme.ID,
 		Title:       scheme.Title,
 		Content:     req.Content,
-		Asker:       scheme.Asker,
+		Asker:       common.HexToAddress(scheme.Asker),
 		Tags:        scheme.Tags,
 		Timestamp:   scheme.Timestamp,
-		Recommender: scheme.Recommender,
+		Recommender: common.HexToAddress(scheme.Recommender),
 	})
 	if err != nil {
 		return err
@@ -131,7 +131,7 @@ func (q *Question) UpdateQuestion(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	if question.Asker != asker {
+	if question.Asker != asker.String() {
 		return types.ErrNoPermission
 	}
 
@@ -149,10 +149,10 @@ func (q *Question) UpdateQuestion(ctx *context.WriteContext) error {
 		ID:          req.ID,
 		Title:       req.Title,
 		FileHash:    fileHash,
-		Asker:       asker,
+		Asker:       asker.String(),
 		Tags:        req.Tags,
 		Timestamp:   req.Timestamp,
-		Recommender: req.Recommender,
+		Recommender: req.Recommender.String(),
 	}
 	err = q.setQuestionState(scheme)
 	if err != nil {
@@ -170,10 +170,10 @@ func (q *Question) UpdateQuestion(ctx *context.WriteContext) error {
 		ID:          scheme.ID,
 		Title:       scheme.Title,
 		Content:     req.Content,
-		Asker:       scheme.Asker,
+		Asker:       common.HexToAddress(scheme.Asker),
 		Tags:        scheme.Tags,
 		Timestamp:   scheme.Timestamp,
-		Recommender: scheme.Recommender,
+		Recommender: common.HexToAddress(scheme.Recommender),
 	})
 	if err != nil {
 		return err
@@ -190,7 +190,7 @@ func (q *Question) DeleteQuestion(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	if asker != scheme.Asker {
+	if asker.String() != scheme.Asker {
 		return types.ErrNoPermission
 	}
 	q.Delete([]byte(id))

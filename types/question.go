@@ -23,13 +23,13 @@ type QuestionUpdateRequest struct {
 }
 
 type QuestionScheme struct {
-	ID          string         `json:"id" gorm:"primaryKey"`
-	Title       string         `json:"title"`
-	FileHash    string         `json:"file_hash"`
-	Asker       common.Address `json:"asker"`
-	Tags        []string       `json:"tags,omitempty" gorm:"type:text[]"`
-	Timestamp   string         `json:"timestamp"`
-	Recommender common.Address `json:"recommender"`
+	ID          string   `json:"id" gorm:"primaryKey"`
+	Title       string   `json:"title"`
+	FileHash    string   `json:"file_hash"`
+	Asker       string   `json:"asker"`
+	Tags        []string `json:"tags,omitempty" gorm:"type:text[]"`
+	Timestamp   string   `json:"timestamp"`
+	Recommender string   `json:"recommender"`
 }
 
 // QuestionDoc stores into search

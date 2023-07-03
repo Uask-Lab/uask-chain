@@ -52,7 +52,7 @@ func (c *Comment) AddComment(ctx *context.WriteContext) error {
 		AID:       req.AID,
 		CID:       req.CID,
 		FileHash:  fileHash,
-		Commenter: commenter,
+		Commenter: commenter.String(),
 		Timestamp: req.Timestamp,
 	}
 	err = c.setCommentState(scheme)
@@ -102,7 +102,7 @@ func (c *Comment) UpdateComment(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	if comment.Commenter != commenter {
+	if comment.Commenter != commenter.String() {
 		return types.ErrNoPermission
 	}
 
@@ -126,7 +126,7 @@ func (c *Comment) UpdateComment(ctx *context.WriteContext) error {
 		AID:       req.AID,
 		CID:       req.CID,
 		FileHash:  fileHash,
-		Commenter: commenter,
+		Commenter: commenter.String(),
 		Timestamp: req.Timestamp,
 	}
 	err = c.setCommentState(scheme)
@@ -166,7 +166,7 @@ func (c *Comment) DeleteComment(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	if commenter != scheme.Commenter {
+	if commenter.String() != scheme.Commenter {
 		return types.ErrNoPermission
 	}
 	c.Delete([]byte(id))

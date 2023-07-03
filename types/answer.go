@@ -22,10 +22,10 @@ type AnswerUpdateRequest struct {
 
 // AnswerScheme stores into statedb
 type AnswerScheme struct {
-	ID          string         `json:"id" gorm:"primaryKey"`
-	QID         string         `json:"qid"`
-	FileHash    string         `json:"file_hash"`
-	Answerer    common.Address `json:"answerer"`
-	Timestamp   string         `json:"timestamp"`
-	Recommender common.Address `json:"recommender"`
+	ID          string `json:"id" gorm:"primaryKey"`
+	QID         string `json:"qid"`
+	FileHash    string `json:"file_hash"`
+	Answerer    string `json:"answerer"`
+	Timestamp   string `json:"timestamp"`
+	Recommender string `json:"recommender"`
 }
