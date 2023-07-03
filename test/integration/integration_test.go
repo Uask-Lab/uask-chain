@@ -28,24 +28,53 @@ var (
 	commentPub, commentPriv = keypair.GenSrKeyWithSecret([]byte("comment"))
 )
 
+var (
+	qid string
+	aid string
+	cid string
+
+	resultCh = make(chan result.Result)
+)
+
 func TestUask(t *testing.T) {
 	startDockerCompose(t)
 	defer stopDockerCompose()
 
 	time.Sleep(5 * time.Second)
-	resultCh := make(chan result.Result)
+
 	go callchain.SubEvent(resultCh)
 
-	// add question
+	t.Run("testAddQuestion", testAddQuestion)
+	t.Run("testUpdateQuestion", testUpdateQuestion)
+	t.Run("testSearchQuestion", testSearchQuestion)
+
+	t.Run("testAddAnswer", testAddAnswer)
+	t.Run("testUpdateAnswer", testUpdateAnswer)
+
+	t.Run("testAddComment", testAddComment)
+	t.Run("testUpdateComment", testUpdateComment)
+
+	t.Run("testGetQuestion", testGetQuestion)
+	t.Run("testGetAnswer", testGetAnswer)
+	t.Run("testGetComment", testGetComment)
+
+	t.Run("testDeleteQuestion", testDeleteQuestion)
+	t.Run("testDeleteAnswer", testDeleteAnswer)
+	t.Run("testDeleteComment", testDeleteComment)
+
+}
+
+func testAddQuestion(t *testing.T) {
 	assert.NoError(t, writeQuestion("AddQuestion", &types.QuestionAddRequest{
 		Title:     "What is Uask",
 		Content:   []byte("What is Uask, what can it do?"),
 		Timestamp: time.Now().String(),
 	}))
 
-	qid := getIdfromEvent(t, resultCh)
+	qid = getIdfromEvent(t, resultCh)
+}
 
-	// update question
+func testUpdateQuestion(t *testing.T) {
 	assert.NoError(t, writeQuestion("UpdateQuestion", &types.QuestionUpdateRequest{
 		ID: qid,
 		QuestionAddRequest: types.QuestionAddRequest{
@@ -55,22 +84,25 @@ func TestUask(t *testing.T) {
 		},
 	}))
 	dealResult(t, resultCh)
+}
 
-	// search question
+func testSearchQuestion(t *testing.T) {
 	resp, err := readQuestion("searchQuestion", map[string]string{"phrase": "Uask"})
 	assert.NoError(t, err, "search question")
 	t.Logf("search quesion result: %s", resp)
+}
 
-	// add answer
+func testAddAnswer(t *testing.T) {
 	assert.NoError(t, writeAnswer("AddAnswer", &types.AnswerAddRequest{
 		QID:       qid,
 		Content:   []byte("It is a question and answer appchain"),
 		Timestamp: time.Now().String(),
 	}))
 
-	aid := getIdfromEvent(t, resultCh)
+	aid = getIdfromEvent(t, resultCh)
+}
 
-	// update answer
+func testUpdateAnswer(t *testing.T) {
 	assert.NoError(t, writeAnswer("UpdateAnswer", &types.AnswerUpdateRequest{
 		ID: aid,
 		AnswerAddRequest: types.AnswerAddRequest{
@@ -80,17 +112,19 @@ func TestUask(t *testing.T) {
 		},
 	}))
 	dealResult(t, resultCh)
+}
 
-	// add comment
+func testAddComment(t *testing.T) {
 	assert.NoError(t, writeComment("AddComment", &types.CommentAddRequest{
 		AID:       aid,
 		Content:   []byte("I agree with you"),
 		Timestamp: time.Now().String(),
 	}))
 
-	cid := getIdfromEvent(t, resultCh)
+	cid = getIdfromEvent(t, resultCh)
+}
 
-	// update comment
+func testUpdateComment(t *testing.T) {
 	assert.NoError(t, writeComment("UpdateComment", &types.CommentUpdateRequest{
 		ID: cid,
 		CommentAddRequest: types.CommentAddRequest{
@@ -100,34 +134,48 @@ func TestUask(t *testing.T) {
 		},
 	}))
 	dealResult(t, resultCh)
+}
 
-	// get questions, answers, comments by id
+func testGetQuestion(t *testing.T) {
 	qbyt, err := readQuestion("GetQuestion", map[string]string{"id": qid})
 	assert.NoError(t, err, "get question")
 	q := new(types.QuestionInfo)
 	assert.NoError(t, json.Unmarshal(qbyt, q))
 	assert.Equal(t, "What is the Uask", q.Title)
+}
 
+func testGetAnswer(t *testing.T) {
 	abyt, err := readAnswer("GetAnswer", map[string]string{"id": aid})
 	assert.NoError(t, err, "get answer")
 	a := new(types.AnswerInfo)
 	assert.NoError(t, json.Unmarshal(abyt, a))
 	assert.Equal(t, qid, a.QID)
+}
 
+func testGetComment(t *testing.T) {
 	cbyt, err := readComment("GetComment", map[string]string{"id": cid})
 	assert.NoError(t, err, "get comment")
 	c := new(types.CommentInfo)
 	assert.NoError(t, json.Unmarshal(cbyt, c))
 	assert.Equal(t, []byte("I don't agree with you"), c.Content)
+}
 
-	// delete all questions, answers, comments
+func testDeleteQuestion(t *testing.T) {
 	assert.NoError(t, writeQuestion("DeleteQuestion", map[string]string{"id": qid}))
 	dealResult(t, resultCh)
+}
+
+func testDeleteAnswer(t *testing.T) {
 	assert.NoError(t, writeAnswer("DeleteAnswer", map[string]string{"id": aid}))
 	dealResult(t, resultCh)
+}
+
+func testDeleteComment(t *testing.T) {
 	assert.NoError(t, writeComment("DeleteComment", map[string]string{"id": cid}))
 	dealResult(t, resultCh)
 }
+
+// helper funcs
 
 func writeQuestion(wrName string, params interface{}) error {
 	return writeToUask("question", wrName, askPriv, askPub, params)
