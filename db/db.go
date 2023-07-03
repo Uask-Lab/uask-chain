@@ -26,7 +26,7 @@ func (db *Database) AddQuestion(q *types.QuestionScheme) error {
 }
 
 func (db *Database) UpdateQuestion(q *types.QuestionScheme) error {
-	return db.Save(q).Error
+	return db.Model(&types.QuestionScheme{ID: q.ID}).Updates(q).Error
 }
 
 func (db *Database) GetQuestion(id string) (question *types.QuestionScheme, err error) {
@@ -69,7 +69,7 @@ func (db *Database) AddAnswer(a *types.AnswerScheme) error {
 }
 
 func (db *Database) UpdateAnswer(a *types.AnswerScheme) error {
-	return db.Save(a).Error
+	return db.Model(&types.AnswerScheme{ID: a.ID}).Updates(a).Error
 }
 
 func (db *Database) GetAnswer(id string) (answer *types.AnswerScheme, err error) {
@@ -97,7 +97,7 @@ func (db *Database) AddComment(c *types.CommentScheme) error {
 }
 
 func (db *Database) UpdateComment(c *types.CommentScheme) error {
-	return db.Save(c).Error
+	return db.Model(&types.CommentScheme{ID: c.ID}).Updates(c).Error
 }
 
 func (db *Database) GetComment(id string) (comment *types.CommentScheme, err error) {
