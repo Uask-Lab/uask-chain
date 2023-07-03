@@ -136,7 +136,7 @@ func (a *Answer) UpdateAnswer(ctx *context.WriteContext) error {
 	}
 
 	// update database
-	err = a.db.UpdateAnswer(*scheme)
+	err = a.db.UpdateAnswer(scheme)
 	if err != nil {
 		return err
 	}
