@@ -87,7 +87,7 @@ func testUpdateQuestion(t *testing.T) {
 }
 
 func testSearchQuestion(t *testing.T) {
-	resp, err := readQuestion("searchQuestion", map[string]string{"phrase": "Uask"})
+	resp, err := readQuestion("SearchQuestion", map[string]string{"phrase": "Uask"})
 	assert.NoError(t, err, "search question")
 	t.Logf("search quesion result: %s", resp)
 }
