@@ -13,16 +13,16 @@ package filestore
 //type IpfsStore struct {
 //	cli *api.Shell
 //	url string
-//	dir string
+//	Dir string
 //}
 //
-//func NewIpfsStore(url, dir string) (*IpfsStore, error) {
-//	err := os.MkdirAll(dir, os.ModeDir)
+//func NewIpfsStore(url, Dir string) (*IpfsStore, error) {
+//	err := os.MkdirAll(Dir, os.ModeDir)
 //	if err != nil {
 //		return nil, err
 //	}
 //	cli := api.NewShell(url)
-//	return &IpfsStore{cli: cli, url: url, dir: dir}, nil
+//	return &IpfsStore{cli: cli, url: url, Dir: Dir}, nil
 //}
 //
 //func (i *IpfsStore) Put(_ string, content *types.StoreInfo) (string, error) {
@@ -30,11 +30,11 @@ package filestore
 //}
 //
 //func (i *IpfsStore) Get(hash string) ([]byte, error) {
-//	err := i.cli.Get(hash, i.dir)
+//	err := i.cli.Get(hash, i.Dir)
 //	if err != nil {
 //		return nil, err
 //	}
-//	fpath := filepath.Join(i.dir, hash)
+//	fpath := filepath.Join(i.Dir, hash)
 //	byt, err := ioutil.ReadFile(fpath)
 //	if err != nil {
 //		return nil, err

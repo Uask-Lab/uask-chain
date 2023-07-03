@@ -10,8 +10,12 @@ type Database struct {
 	*gorm.DB
 }
 
-func NewDB(dsn string) (*Database, error) {
-	db, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{CreateBatchSize: 50000})
+type Config struct {
+	Dsn string `toml:"dsn"`
+}
+
+func NewDB(cfg *Config) (*Database, error) {
+	db, err := gorm.Open(sqlite.Open(cfg.Dsn), &gorm.Config{CreateBatchSize: 50000})
 	if err != nil {
 		return nil, err
 	}

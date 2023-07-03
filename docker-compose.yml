@@ -8,6 +8,7 @@ services:
       - ./uask:/uask
       - ./uask/db:/uask/db
       - ./yu.toml:/yu.toml:ro
+      - ./uask.toml:/uask.toml:ro
       - ./poa.toml:/poa.toml:ro
     ports:
       - "7999:7999"

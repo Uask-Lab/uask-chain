@@ -4,8 +4,9 @@ import (
 	"github.com/common-nighthawk/go-figure"
 	"github.com/sirupsen/logrus"
 	"github.com/yu-org/yu/apps/poa"
-	"github.com/yu-org/yu/config"
+	ycfg "github.com/yu-org/yu/config"
 	"github.com/yu-org/yu/core/startup"
+	"uask-chain/config"
 	"uask-chain/core"
 	"uask-chain/db"
 	"uask-chain/filestore"
@@ -13,26 +14,24 @@ import (
 )
 
 func main() {
-	localStore, err := filestore.NewLocalStore("uask/files")
+	uaskCfg := new(config.Config)
+	ycfg.LoadTomlConf("uask.toml", uaskCfg)
+
+	localStore, err := filestore.NewLocalStore(uaskCfg.Files)
 	if err != nil {
 		logrus.Fatal(err)
 	}
-	meili, err := search.NewMeili(&search.MeiliCfg{
-		// this host is for docker
-		Host:       "http://meili:7700",
-		Index:      "uask",
-		PrimaryKey: "id",
-	})
+	meili, err := search.NewMeili(uaskCfg.Search)
 	if err != nil {
 		logrus.Fatal(err)
 	}
-	database, err := db.NewDB("uask/db/scheme")
+	database, err := db.NewDB(uaskCfg.DB)
 	if err != nil {
 		logrus.Fatal(err)
 	}
 
 	poaCfg := new(poa.PoaConfig)
-	config.LoadTomlConf("poa.toml", poaCfg)
+	ycfg.LoadTomlConf("poa.toml", poaCfg)
 
 	figure.NewColorFigure("Uask", "big", "green", false).Print()
 
