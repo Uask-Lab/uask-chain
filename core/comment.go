@@ -135,7 +135,7 @@ func (c *Comment) UpdateComment(ctx *context.WriteContext) error {
 	}
 
 	// update database
-	err = c.db.UpdateComment(scheme)
+	err = c.db.UpdateComment(*scheme)
 	if err != nil {
 		return err
 	}

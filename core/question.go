@@ -160,7 +160,7 @@ func (q *Question) UpdateQuestion(ctx *context.WriteContext) error {
 	}
 
 	// update database
-	err = q.db.UpdateQuestion(scheme)
+	err = q.db.UpdateQuestion(*scheme)
 	if err != nil {
 		return err
 	}
