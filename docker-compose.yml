@@ -6,8 +6,9 @@ services:
     restart: unless-stopped
     volumes:
       - ./uask:/uask
-      - ./uask-files:/uask-files
+      - ./uask/db:/uask/db
       - ./yu.toml:/yu.toml:ro
+      - ./uask.toml:/uask.toml:ro
       - ./poa.toml:/poa.toml:ro
     ports:
       - "7999:7999"

@@ -8,6 +8,8 @@ type CommentInfo struct {
 }
 
 type CommentAddRequest struct {
+	// reply question id
+	QID string `json:"qid"`
 	// reply answer id
 	AID string `json:"aid"`
 	// reply comment id
@@ -21,21 +23,16 @@ type CommentUpdateRequest struct {
 	CommentAddRequest
 }
 
+// CommentScheme stores into statedb
 type CommentScheme struct {
-	ID string `json:"id"`
+	ID string `json:"id" gorm:"primaryKey"`
+	// reply question id
+	QID string `json:"qid"`
 	// reply answer id
 	AID string `json:"aid"`
 	// reply comment id
-	CID       string         `json:"cid"`
-	FileHash  string         `json:"file_hash"`
-	Commenter common.Address `json:"commenter"`
-	Timestamp string         `json:"timestamp"`
-}
-
-// Comment stores into search
-type Comment struct {
-	ID          string         `json:"id"`
-	FileContent []byte         `json:"file_content"`
-	Commenter   common.Address `json:"commenter"`
-	Timestamp   string         `json:"timestamp"`
+	CID       string `json:"cid"`
+	FileHash  string `json:"file_hash"`
+	Commenter string `json:"commenter"`
+	Timestamp string `json:"timestamp"`
 }

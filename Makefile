@@ -17,5 +17,4 @@ clean:
 	@rm -rf build/bin
 
 reset:
-	@rm -f ./uask/chain.db ./uask/yu.db
-	@rm -rf ./meili ./uask-files
+	@rm -rf ./uask ./meili
