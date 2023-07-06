@@ -14,7 +14,6 @@ type Comment struct {
 	*tripod.Tripod
 	fileStore filestore.FileStore
 	db        *db.Database
-	// sch       search.Search
 
 	Answer *Answer `tripod:"answer"`
 }
@@ -65,21 +64,6 @@ func (c *Comment) AddComment(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-
-	// add search
-	//contentByt, err := c.fileStore.Get(req.Content.Hash)
-	//if err != nil {
-	//	return err
-	//}
-	//err = c.sch.AddDoc(&types.CommentState{
-	//	ID:          scheme.ID,
-	//	Content: contentByt,
-	//	Commenter:   scheme.Commenter,
-	//	Timestamp:   scheme.Timestamp,
-	//})
-	//if err != nil {
-	//	return err
-	//}
 
 	return ctx.EmitJsonEvent(map[string]string{
 		"writing":   "add_comment",
@@ -139,21 +123,6 @@ func (c *Comment) UpdateComment(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-
-	// update search
-	//contentByt, err := c.fileStore.Get(req.Content.Hash)
-	//if err != nil {
-	//	return err
-	//}
-	//err = c.sch.UpdateDoc(scheme.ID, &types.CommentState{
-	//	ID:          scheme.ID,
-	//	Content: contentByt,
-	//	Commenter:   scheme.Commenter,
-	//	Timestamp:   scheme.Timestamp,
-	//})
-	//if err != nil {
-	//	return err
-	//}
 
 	return ctx.EmitJsonEvent(map[string]string{"writing": "update_comment", "id": req.ID})
 }

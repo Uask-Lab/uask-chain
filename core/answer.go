@@ -14,7 +14,6 @@ type Answer struct {
 	*tripod.Tripod
 	fileStore filestore.FileStore
 	db        *db.Database
-	// sch       search.Search
 
 	Question *Question `tripod:"question"`
 }
@@ -65,22 +64,6 @@ func (a *Answer) AddAnswer(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-
-	// add content into search
-	//contentByt, err := a.fileStore.Get(req.Content.Hash)
-	//if err != nil {
-	//	return err
-	//}
-	//err = a.sch.AddDoc(&types.Answer{
-	//	ID:          scheme.ID,
-	//	Answerer:    scheme.Answerer,
-	//	Content: contentByt,
-	//	Recommender: scheme.Recommender,
-	//	Timestamp:   scheme.Timestamp,
-	//})
-	//if err != nil {
-	//	return err
-	//}
 
 	return ctx.EmitJsonEvent(map[string]string{
 		"writing":     "add_answer",
@@ -140,22 +123,6 @@ func (a *Answer) UpdateAnswer(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-
-	// update content into search
-	//contentByt, err := a.fileStore.Get(req.Content.Hash)
-	//if err != nil {
-	//	return err
-	//}
-	//err = a.sch.UpdateDoc(req.ID, &types.Answer{
-	//	ID:          scheme.ID,
-	//	Answerer:    scheme.Answerer,
-	//	Content: contentByt,
-	//	Recommender: scheme.Recommender,
-	//	Timestamp:   scheme.Timestamp,
-	//})
-	//if err != nil {
-	//	return err
-	//}
 
 	return ctx.EmitJsonEvent(map[string]string{"writing": "update_answer", "id": req.ID})
 }
