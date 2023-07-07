@@ -61,7 +61,7 @@ func (db *Database) DeleteQuestion(id string) error {
 		if err != nil {
 			return err
 		}
-		err = tx.Where("aid IN ?", answersIDs).Delete(new(types.CommentScheme)).Error
+		err = tx.Model(&types.CommentScheme{}).Where("aid IN ?", answersIDs).Delete(new(types.CommentScheme)).Error
 		if err != nil {
 			return err
 		}
