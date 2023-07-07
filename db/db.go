@@ -57,7 +57,7 @@ func (db *Database) DeleteQuestion(id string) error {
 		}
 		// delete all answers of this questions and these quesions' comments.
 		var answersIDs []string
-		err = tx.Model(&types.AnswerScheme{}).Select("id").Where(&types.AnswerScheme{QID: id}).Scan(&answersIDs).Error
+		err = tx.Where(&types.AnswerScheme{QID: id}).Pluck("id", &answersIDs).Error
 		if err != nil {
 			return err
 		}
