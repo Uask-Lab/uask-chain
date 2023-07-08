@@ -60,8 +60,6 @@ func TestUask(t *testing.T) {
 	t.Run("DeleteQuestion", testDeleteQuestion)
 	t.Run("DeleteAnswer", testDeleteAnswer)
 	t.Run("DeleteComment", testDeleteComment)
-
-	close(resultCh)
 }
 
 func testAddQuestion(t *testing.T) {
