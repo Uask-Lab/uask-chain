@@ -62,8 +62,8 @@ func TestUask(t *testing.T) {
 	t.Run("DeleteAnswer", testDeleteAnswer)
 	t.Run("DeleteComment", testDeleteComment)
 
-	//sub.CloseSub()
-	//stopDockerCompose()
+	sub.CloseSub()
+	stopDockerCompose()
 }
 
 func testAddQuestion(t *testing.T) {
