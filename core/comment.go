@@ -22,6 +22,7 @@ func NewComment(fileStore filestore.FileStore, db *db.Database) *Comment {
 	tri := tripod.NewTripod()
 	c := &Comment{Tripod: tri, fileStore: fileStore, db: db}
 	c.SetWritings(c.AddComment, c.UpdateComment, c.DeleteComment)
+	c.SetReadings(c.GetComment)
 	return c
 }
 
@@ -132,6 +133,9 @@ func (c *Comment) DeleteComment(ctx *context.WriteContext) error {
 	id := ctx.GetString("id")
 	commenter := ctx.GetCaller()
 	scheme, err := c.db.GetComment(id)
+	if err == types.ErrCommentNotFound {
+		return ctx.EmitJsonEvent(map[string]string{"writing": "delete_comment", "id": id, "status": "none"})
+	}
 	if err != nil {
 		return err
 	}
@@ -143,7 +147,31 @@ func (c *Comment) DeleteComment(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	return ctx.EmitJsonEvent(map[string]string{"writing": "delete_comment", "id": id})
+	return ctx.EmitJsonEvent(map[string]string{"writing": "delete_comment", "id": id, "status": "success"})
+}
+
+func (c *Comment) GetComment(ctx *context.ReadContext) error {
+	sch, err := c.db.GetComment(ctx.GetString("id"))
+	if err != nil {
+		return err
+	}
+	fileByt, err := c.fileStore.Get(sch.FileHash)
+	if err != nil {
+		return err
+	}
+	comment := &types.CommentInfo{
+		CommentUpdateRequest: types.CommentUpdateRequest{
+			ID: sch.ID,
+			CommentAddRequest: types.CommentAddRequest{
+				QID:       sch.QID,
+				AID:       sch.AID,
+				CID:       sch.CID,
+				Content:   fileByt,
+				Timestamp: sch.Timestamp,
+			},
+		},
+	}
+	return ctx.Json(comment)
 }
 
 func (c *Comment) setCommentState(scheme *types.CommentScheme) error {

@@ -4,7 +4,6 @@ import "github.com/yu-org/yu/common"
 
 type CommentInfo struct {
 	CommentUpdateRequest
-	Commenter common.Address `json:"commenter"`
 }
 
 type CommentAddRequest struct {
@@ -13,9 +12,10 @@ type CommentAddRequest struct {
 	// reply answer id
 	AID string `json:"aid"`
 	// reply comment id
-	CID       string `json:"cid"`
-	Content   []byte `json:"content"`
-	Timestamp string `json:"timestamp"`
+	CID       string         `json:"cid"`
+	Content   []byte         `json:"content"`
+	Timestamp string         `json:"timestamp"`
+	Commenter common.Address `json:"commenter"`
 }
 
 type CommentUpdateRequest struct {
@@ -29,7 +29,7 @@ type CommentScheme struct {
 	// reply question id
 	QID string `json:"qid"`
 	// reply answer id
-	AID string `json:"aid"`
+	AID string `json:"aid" gorm:"column:aid"`
 	// reply comment id
 	CID       string `json:"cid"`
 	FileHash  string `json:"file_hash"`
