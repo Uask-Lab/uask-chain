@@ -192,7 +192,7 @@ func (q *Question) DeleteQuestion(ctx *context.WriteContext) error {
 	asker := ctx.GetCaller()
 	scheme, err := q.db.GetQuestion(id)
 	if err == types.ErrQuestionNotFound {
-		return nil
+		return ctx.EmitJsonEvent(map[string]string{"writing": "delete_question", "id": id, "status": "none"})
 	}
 	if err != nil {
 		return err
@@ -209,7 +209,7 @@ func (q *Question) DeleteQuestion(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	return ctx.EmitJsonEvent(map[string]string{"writing": "delete_question", "id": id})
+	return ctx.EmitJsonEvent(map[string]string{"writing": "delete_question", "id": id, "status": "success"})
 }
 
 func (q *Question) setQuestionState(scheme *types.QuestionScheme) error {

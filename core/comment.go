@@ -134,7 +134,7 @@ func (c *Comment) DeleteComment(ctx *context.WriteContext) error {
 	commenter := ctx.GetCaller()
 	scheme, err := c.db.GetComment(id)
 	if err == types.ErrCommentNotFound {
-		return nil
+		return ctx.EmitJsonEvent(map[string]string{"writing": "delete_comment", "id": id, "status": "none"})
 	}
 	if err != nil {
 		return err
@@ -147,7 +147,7 @@ func (c *Comment) DeleteComment(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	return ctx.EmitJsonEvent(map[string]string{"writing": "delete_comment", "id": id})
+	return ctx.EmitJsonEvent(map[string]string{"writing": "delete_comment", "id": id, "status": "success"})
 }
 
 func (c *Comment) GetComment(ctx *context.ReadContext) error {

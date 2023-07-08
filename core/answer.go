@@ -157,7 +157,7 @@ func (a *Answer) DeleteAnswer(ctx *context.WriteContext) error {
 	answerer := ctx.GetCaller()
 	scheme, err := a.db.GetAnswer(id)
 	if err == types.ErrAnswerNotFound {
-		return nil
+		return ctx.EmitJsonEvent(map[string]string{"writing": "delete_answer", "id": id, "status": "none"})
 	}
 	if err != nil {
 		return err
@@ -170,7 +170,7 @@ func (a *Answer) DeleteAnswer(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	return ctx.EmitJsonEvent(map[string]string{"writing": "delete_answer", "id": id})
+	return ctx.EmitJsonEvent(map[string]string{"writing": "delete_answer", "id": id, "status": "success"})
 }
 
 func (a *Answer) setAnswerState(scheme *types.AnswerScheme) error {
