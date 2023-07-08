@@ -33,10 +33,16 @@ func (db *Database) UpdateQuestion(q *types.QuestionScheme) error {
 	return db.Model(&types.QuestionScheme{ID: q.ID}).Updates(q).Error
 }
 
-func (db *Database) GetQuestion(id string) (question *types.QuestionScheme, err error) {
-	question = new(types.QuestionScheme)
-	err = db.Model(&types.QuestionScheme{ID: id}).Limit(1).Find(question).Error
-	return
+func (db *Database) GetQuestion(id string) (*types.QuestionScheme, error) {
+	question := new(types.QuestionScheme)
+	err := db.Model(&types.QuestionScheme{ID: id}).Limit(1).Find(question).Error
+	if err == gorm.ErrRecordNotFound {
+		return nil, types.ErrQuestionNotFound
+	}
+	if err != nil {
+		return nil, err
+	}
+	return question, nil
 }
 
 func (db *Database) QueryQuestions(query interface{}) (qs []*types.QuestionScheme, err error) {
@@ -77,10 +83,16 @@ func (db *Database) UpdateAnswer(a *types.AnswerScheme) error {
 	return db.Model(&types.AnswerScheme{ID: a.ID}).Updates(a).Error
 }
 
-func (db *Database) GetAnswer(id string) (answer *types.AnswerScheme, err error) {
-	answer = new(types.AnswerScheme)
-	err = db.Model(&types.AnswerScheme{ID: id}).Limit(1).Find(answer).Error
-	return
+func (db *Database) GetAnswer(id string) (*types.AnswerScheme, error) {
+	answer := new(types.AnswerScheme)
+	err := db.Model(&types.AnswerScheme{ID: id}).First(answer).Error
+	if err == gorm.ErrRecordNotFound {
+		return nil, types.ErrAnswerNotFound
+	}
+	if err != nil {
+		return nil, err
+	}
+	return answer, nil
 }
 
 func (db *Database) QueryAnswers(query interface{}) (answers []*types.AnswerScheme, err error) {
@@ -106,10 +118,16 @@ func (db *Database) UpdateComment(c *types.CommentScheme) error {
 	return db.Model(&types.CommentScheme{ID: c.ID}).Updates(c).Error
 }
 
-func (db *Database) GetComment(id string) (comment *types.CommentScheme, err error) {
-	comment = new(types.CommentScheme)
-	err = db.Model(&types.CommentScheme{ID: id}).Limit(1).Find(comment).Error
-	return
+func (db *Database) GetComment(id string) (*types.CommentScheme, error) {
+	comment := new(types.CommentScheme)
+	err := db.Model(&types.CommentScheme{ID: id}).First(comment).Error
+	if err == gorm.ErrRecordNotFound {
+		return nil, types.ErrCommentNotFound
+	}
+	if err != nil {
+		return nil, err
+	}
+	return comment, nil
 }
 
 func (db *Database) QueryComments(query interface{}) (comments []*types.CommentScheme, err error) {
