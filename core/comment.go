@@ -133,6 +133,9 @@ func (c *Comment) DeleteComment(ctx *context.WriteContext) error {
 	id := ctx.GetString("id")
 	commenter := ctx.GetCaller()
 	scheme, err := c.db.GetComment(id)
+	if err == types.ErrCommentNotFound {
+		return nil
+	}
 	if err != nil {
 		return err
 	}

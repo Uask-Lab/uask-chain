@@ -191,6 +191,9 @@ func (q *Question) DeleteQuestion(ctx *context.WriteContext) error {
 	id := ctx.GetString("id")
 	asker := ctx.GetCaller()
 	scheme, err := q.db.GetQuestion(id)
+	if err == types.ErrQuestionNotFound {
+		return nil
+	}
 	if err != nil {
 		return err
 	}

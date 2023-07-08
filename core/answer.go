@@ -156,6 +156,9 @@ func (a *Answer) DeleteAnswer(ctx *context.WriteContext) error {
 	id := ctx.GetString("id")
 	answerer := ctx.GetCaller()
 	scheme, err := a.db.GetAnswer(id)
+	if err == types.ErrAnswerNotFound {
+		return nil
+	}
 	if err != nil {
 		return err
 	}
