@@ -38,6 +38,7 @@ var (
 
 func TestUask(t *testing.T) {
 	startDockerCompose(t)
+	defer stopDockerCompose()
 
 	time.Sleep(5 * time.Second)
 
@@ -59,8 +60,6 @@ func TestUask(t *testing.T) {
 	t.Run("DeleteQuestion", testDeleteQuestion)
 	t.Run("DeleteAnswer", testDeleteAnswer)
 	t.Run("DeleteComment", testDeleteComment)
-
-	stopDockerCompose()
 }
 
 func testAddQuestion(t *testing.T) {
