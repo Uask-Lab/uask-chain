@@ -40,8 +40,10 @@ func TestUask(t *testing.T) {
 	startDockerCompose(t)
 
 	time.Sleep(5 * time.Second)
+	sub, err := callchain.NewSubscriber()
+	assert.NoError(t, err)
 
-	go callchain.SubEvent(resultCh)
+	go sub.SubEvent(resultCh)
 
 	t.Run("AddQuestion", testAddQuestion)
 	t.Run("UpdateQuestion", testUpdateQuestion)
@@ -60,7 +62,7 @@ func TestUask(t *testing.T) {
 	t.Run("DeleteAnswer", testDeleteAnswer)
 	t.Run("DeleteComment", testDeleteComment)
 
-	callchain.CloseSub()
+	sub.CloseSub()
 	stopDockerCompose()
 }
 
