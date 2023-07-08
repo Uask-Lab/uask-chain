@@ -60,6 +60,7 @@ func TestUask(t *testing.T) {
 	t.Run("DeleteAnswer", testDeleteAnswer)
 	t.Run("DeleteComment", testDeleteComment)
 
+	callchain.CloseSub()
 	stopDockerCompose()
 }
 
