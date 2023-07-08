@@ -29,7 +29,7 @@ type CommentScheme struct {
 	// reply question id
 	QID string `json:"qid"`
 	// reply answer id
-	AID string `json:"aid"`
+	AID string `json:"aid" gorm:"column:aid"`
 	// reply comment id
 	CID       string `json:"cid"`
 	FileHash  string `json:"file_hash"`
