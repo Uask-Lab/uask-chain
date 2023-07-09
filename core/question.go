@@ -24,8 +24,18 @@ func NewQuestion(fileStore filestore.FileStore, sch search.Search, db *db.Databa
 	tri := tripod.NewTripod()
 	q := &Question{Tripod: tri, fileStore: fileStore, sch: sch, db: db}
 	q.SetWritings(q.AddQuestion, q.UpdateQuestion, q.DeleteQuestion)
-	q.SetReadings(q.GetQuestion, q.SearchQuestion)
+	q.SetReadings(q.ListQuestions, q.GetQuestion, q.SearchQuestion)
 	return q
+}
+
+func (q *Question) ListQuestions(ctx *context.ReadContext) error {
+	limit := ctx.GetInt("limit")
+	offset := ctx.GetInt("offset")
+	qs, err := q.db.ListQuestions(limit, offset)
+	if err != nil {
+		return err
+	}
+	return ctx.Json(qs)
 }
 
 func (q *Question) GetQuestion(ctx *context.ReadContext) error {
