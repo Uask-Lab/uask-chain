@@ -31,11 +31,21 @@ func NewQuestion(fileStore filestore.FileStore, sch search.Search, db *db.Databa
 func (q *Question) ListQuestions(ctx *context.ReadContext) error {
 	limit := ctx.GetInt("limit")
 	offset := ctx.GetInt("offset")
-	qs, err := q.db.ListQuestions(limit, offset)
+	qschs, err := q.db.ListQuestions(limit, offset)
 	if err != nil {
 		return err
 	}
-	return ctx.Json(qs)
+
+	var infos []*types.QuestionInfo
+	for _, qsch := range qschs {
+		info, serr := q.scheme2Info(qsch)
+		if serr != nil {
+			return serr
+		}
+		infos = append(infos, info)
+	}
+
+	return ctx.Json(infos)
 }
 
 func (q *Question) GetQuestion(ctx *context.ReadContext) error {
@@ -43,20 +53,9 @@ func (q *Question) GetQuestion(ctx *context.ReadContext) error {
 	if err != nil {
 		return err
 	}
-	fileByt, err := q.fileStore.Get(sch.FileHash)
+	question, err := q.scheme2Info(sch)
 	if err != nil {
 		return err
-	}
-	question := &types.QuestionInfo{
-		QuestionDoc: types.QuestionDoc{
-			ID:          sch.ID,
-			Title:       sch.Title,
-			Content:     fileByt,
-			Asker:       common.HexToAddress(sch.Asker),
-			Tags:        sch.Tags,
-			Timestamp:   sch.Timestamp,
-			Recommender: common.HexToAddress(sch.Recommender),
-		},
 	}
 	return ctx.Json(question)
 }
@@ -235,4 +234,22 @@ func (q *Question) setQuestionState(scheme *types.QuestionScheme) error {
 
 func (q *Question) existQuestion(id string) bool {
 	return q.Exist([]byte(id))
+}
+
+func (q *Question) scheme2Info(sch *types.QuestionScheme) (*types.QuestionInfo, error) {
+	fileByt, err := q.fileStore.Get(sch.FileHash)
+	if err != nil {
+		return nil, err
+	}
+	return &types.QuestionInfo{
+		QuestionDoc: types.QuestionDoc{
+			ID:          sch.ID,
+			Title:       sch.Title,
+			Content:     fileByt,
+			Asker:       common.HexToAddress(sch.Asker),
+			Tags:        sch.Tags,
+			Timestamp:   sch.Timestamp,
+			Recommender: common.HexToAddress(sch.Recommender),
+		},
+	}, nil
 }

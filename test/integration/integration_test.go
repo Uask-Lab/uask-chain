@@ -29,11 +29,28 @@ var (
 )
 
 var (
-	qid string
-	aid string
-	cid string
+	qid1 string
+	qid2 string
+	aid  string
+	cid  string
 
 	resultCh = make(chan result.Result)
+)
+
+var (
+	q1Title   = "What is Uask"
+	q1Content = []byte("What is Uask, what can it do?")
+	q2Title   = "what is Ethereum"
+	q2Content = []byte("What is Ethereum, what it blockchain")
+
+	q1UpTitle   = "What is the Uask chain"
+	q1UpContent = []byte("What can Uask do? how can I run it?")
+
+	answer   = []byte("It is a question and answer appchain")
+	answerUp = []byte("Uask is a question and answer appchain!")
+
+	comment   = []byte("I agree with you")
+	commentUp = []byte("I don't agree with you")
 )
 
 func TestUask(t *testing.T) {
@@ -46,6 +63,7 @@ func TestUask(t *testing.T) {
 	go sub.SubEvent(resultCh)
 
 	t.Run("AddQuestion", testAddQuestion)
+	t.Run("ListQuestions", testListQuestions)
 	t.Run("UpdateQuestion", testUpdateQuestion)
 	t.Run("GetQuestion", testGetQuestion)
 	t.Run("SearchQuestion", testSearchQuestion)
@@ -68,20 +86,37 @@ func TestUask(t *testing.T) {
 
 func testAddQuestion(t *testing.T) {
 	assert.NoError(t, writeQuestion("AddQuestion", &types.QuestionAddRequest{
-		Title:     "What is Uask",
-		Content:   []byte("What is Uask, what can it do?"),
+		Title:     q1Title,
+		Content:   q1Content,
 		Timestamp: time.Now().String(),
 	}))
 
-	qid = getIdfromEvent(t, resultCh)
+	qid1 = getIdfromEvent(t, resultCh)
+
+	assert.NoError(t, writeQuestion("AddQuestion", &types.QuestionAddRequest{
+		Title:     q2Title,
+		Content:   q2Content,
+		Timestamp: time.Now().String(),
+	}))
+
+	qid2 = getIdfromEvent(t, resultCh)
+}
+
+func testListQuestions(t *testing.T) {
+	bytes, err := readQuestion("ListQuestions", map[string]int{"limit": 0, "offset": 2})
+	assert.NoError(t, err)
+	var qs []*types.QuestionInfo
+	assert.NoError(t, json.Unmarshal(bytes, &qs))
+	assert.Equal(t, qs[0].ID, qid1)
+	assert.Equal(t, qs[1].ID, qid2)
 }
 
 func testUpdateQuestion(t *testing.T) {
 	assert.NoError(t, writeQuestion("UpdateQuestion", &types.QuestionUpdateRequest{
-		ID: qid,
+		ID: qid1,
 		QuestionAddRequest: types.QuestionAddRequest{
-			Title:     "What is the Uask",
-			Content:   []byte("What can Uask do? how can I run it?"),
+			Title:     q1UpTitle,
+			Content:   q1UpContent,
 			Timestamp: time.Now().String(),
 		},
 	}))
@@ -96,8 +131,8 @@ func testSearchQuestion(t *testing.T) {
 
 func testAddAnswer(t *testing.T) {
 	assert.NoError(t, writeAnswer("AddAnswer", &types.AnswerAddRequest{
-		QID:       qid,
-		Content:   []byte("It is a question and answer appchain"),
+		QID:       qid1,
+		Content:   answer,
 		Timestamp: time.Now().String(),
 	}))
 
@@ -108,8 +143,8 @@ func testUpdateAnswer(t *testing.T) {
 	assert.NoError(t, writeAnswer("UpdateAnswer", &types.AnswerUpdateRequest{
 		ID: aid,
 		AnswerAddRequest: types.AnswerAddRequest{
-			QID:       qid,
-			Content:   []byte("Uask is a question and answer appchain!"),
+			QID:       qid1,
+			Content:   answerUp,
 			Timestamp: time.Now().String(),
 		},
 	}))
@@ -119,7 +154,7 @@ func testUpdateAnswer(t *testing.T) {
 func testAddComment(t *testing.T) {
 	assert.NoError(t, writeComment("AddComment", &types.CommentAddRequest{
 		AID:       aid,
-		Content:   []byte("I agree with you"),
+		Content:   comment,
 		Timestamp: time.Now().String(),
 	}))
 
@@ -131,7 +166,7 @@ func testUpdateComment(t *testing.T) {
 		ID: cid,
 		CommentAddRequest: types.CommentAddRequest{
 			AID:       aid,
-			Content:   []byte("I don't agree with you"),
+			Content:   commentUp,
 			Timestamp: time.Now().String(),
 		},
 	}))
@@ -139,11 +174,11 @@ func testUpdateComment(t *testing.T) {
 }
 
 func testGetQuestion(t *testing.T) {
-	qbyt, err := readQuestion("GetQuestion", map[string]string{"id": qid})
+	qbyt, err := readQuestion("GetQuestion", map[string]string{"id": qid1})
 	assert.NoError(t, err, "get question")
 	q := new(types.QuestionInfo)
 	assert.NoError(t, json.Unmarshal(qbyt, q))
-	assert.Equal(t, "What is the Uask", q.Title)
+	assert.Equal(t, q1Title, q.Title)
 }
 
 func testGetAnswer(t *testing.T) {
@@ -151,7 +186,7 @@ func testGetAnswer(t *testing.T) {
 	assert.NoError(t, err, "get answer")
 	a := new(types.AnswerInfo)
 	assert.NoError(t, json.Unmarshal(abyt, a))
-	assert.Equal(t, qid, a.QID)
+	assert.Equal(t, qid1, a.QID)
 }
 
 func testGetComment(t *testing.T) {
@@ -159,11 +194,11 @@ func testGetComment(t *testing.T) {
 	assert.NoError(t, err, "get comment")
 	c := new(types.CommentInfo)
 	assert.NoError(t, json.Unmarshal(cbyt, c))
-	assert.Equal(t, []byte("I don't agree with you"), c.Content)
+	assert.Equal(t, commentUp, c.Content)
 }
 
 func testDeleteQuestion(t *testing.T) {
-	assert.NoError(t, writeQuestion("DeleteQuestion", map[string]string{"id": qid}))
+	assert.NoError(t, writeQuestion("DeleteQuestion", map[string]string{"id": qid1}))
 	dealResult(t, resultCh)
 }
 
