@@ -45,6 +45,11 @@ func (db *Database) GetQuestion(id string) (*types.QuestionScheme, error) {
 	return question, nil
 }
 
+func (db *Database) ListQuestions(limit, offset int) (qs []*types.QuestionScheme, err error) {
+	err = db.Model(&types.QuestionScheme{}).Limit(limit).Offset(offset).Order("timestamp desc").Find(&qs).Error
+	return
+}
+
 func (db *Database) QueryQuestions(query interface{}) (qs []*types.QuestionScheme, err error) {
 	err = db.DB.Where(query).Find(&qs).Error
 	return
