@@ -9,11 +9,11 @@ type QuestionInfo struct {
 }
 
 type QuestionAddRequest struct {
-	Title       string         `json:"title"`
-	Content     []byte         `json:"content"`
-	Tags        []string       `json:"tags,omitempty"`
-	Timestamp   string         `json:"timestamp"`
-	Recommender common.Address `json:"recommender"`
+	Title       string          `json:"title"`
+	Content     []byte          `json:"content"`
+	Tags        []string        `json:"tags,omitempty"`
+	Timestamp   string          `json:"timestamp"`
+	Recommender *common.Address `json:"recommender,omitempty"`
 }
 
 type QuestionUpdateRequest struct {

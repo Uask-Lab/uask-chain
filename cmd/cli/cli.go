@@ -39,11 +39,10 @@ func main() {
 	switch action {
 	case "ask":
 		info := &types.QuestionAddRequest{
-			Title:       titleOrId,
-			Content:     []byte(content),
-			Tags:        nil,
-			Timestamp:   time.Now().String(),
-			Recommender: common.Address{},
+			Title:     titleOrId,
+			Content:   []byte(content),
+			Tags:      nil,
+			Timestamp: time.Now().String(),
 		}
 		params, err = json.Marshal(info)
 		if err != nil {
@@ -54,10 +53,9 @@ func main() {
 		writing = "AddQuestion"
 	case "answer":
 		info := &types.AnswerAddRequest{
-			QID:         titleOrId,
-			Content:     []byte(content),
-			Timestamp:   time.Now().String(),
-			Recommender: common.Address{},
+			QID:       titleOrId,
+			Content:   []byte(content),
+			Timestamp: time.Now().String(),
 		}
 		params, err = json.Marshal(info)
 		if err != nil {

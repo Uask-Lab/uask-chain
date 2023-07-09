@@ -9,10 +9,10 @@ type AnswerInfo struct {
 
 type AnswerAddRequest struct {
 	// question id
-	QID         string         `json:"qid"`
-	Content     []byte         `json:"content"`
-	Timestamp   string         `json:"timestamp"`
-	Recommender common.Address `json:"recommender"`
+	QID         string          `json:"qid"`
+	Content     []byte          `json:"content"`
+	Timestamp   string          `json:"timestamp"`
+	Recommender *common.Address `json:"recommender,omitempty"`
 }
 
 type AnswerUpdateRequest struct {
