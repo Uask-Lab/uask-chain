@@ -103,13 +103,13 @@ func testAddQuestion(t *testing.T) {
 }
 
 func testListQuestions(t *testing.T) {
-	bytes, err := readQuestion("ListQuestions", map[string]int{"limit": 0, "offset": 2})
+	bytes, err := readQuestion("ListQuestions", map[string]int{"limit": 2, "offset": 0})
 	assert.NoError(t, err)
 	var qs []*types.QuestionInfo
 	t.Logf("bytes = %s", bytes)
 	assert.NoError(t, json.Unmarshal(bytes, &qs))
-	assert.Equal(t, qs[0].ID, qid1)
-	assert.Equal(t, qs[1].ID, qid2)
+	assert.Equal(t, qs[0].ID, qid2)
+	assert.Equal(t, qs[1].ID, qid1)
 }
 
 func testUpdateQuestion(t *testing.T) {
