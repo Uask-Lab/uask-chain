@@ -29,9 +29,10 @@ func NewQuestion(fileStore filestore.FileStore, sch search.Search, db *db.Databa
 }
 
 func (q *Question) ListQuestions(ctx *context.ReadContext) error {
-	limit := ctx.GetInt("limit")
-	offset := ctx.GetInt("offset")
-	qschs, err := q.db.ListQuestions(limit, offset)
+	pageSize := ctx.GetInt("pageSize")
+	page := ctx.GetInt("page")
+
+	qschs, err := q.db.ListQuestions(pageSize, (page-1)*pageSize)
 	if err != nil {
 		return err
 	}

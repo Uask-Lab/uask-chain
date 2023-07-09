@@ -103,7 +103,7 @@ func testAddQuestion(t *testing.T) {
 }
 
 func testListQuestions(t *testing.T) {
-	bytes, err := readQuestion("ListQuestions", map[string]int{"limit": 2, "offset": 0})
+	bytes, err := readQuestion("ListQuestions", map[string]int{"pageSize": 2, "page": 1})
 	assert.NoError(t, err)
 	var qs []*types.QuestionInfo
 	t.Logf("bytes = %s", bytes)
