@@ -16,8 +16,6 @@ type Question struct {
 	fileStore filestore.FileStore
 	sch       search.Search
 	db        *db.Database
-
-	answer *Answer `tripod:"answer"`
 }
 
 func NewQuestion(fileStore filestore.FileStore, sch search.Search, db *db.Database) *Question {
@@ -85,6 +83,11 @@ func (q *Question) AddQuestion(ctx *context.WriteContext) error {
 		return err
 	}
 
+	var recommender string
+	if req.Recommender != nil {
+		recommender = req.Recommender.String()
+	}
+
 	scheme := &types.QuestionScheme{
 		ID:          ctx.Txn.TxnHash.String(),
 		Title:       req.Title,
@@ -92,7 +95,7 @@ func (q *Question) AddQuestion(ctx *context.WriteContext) error {
 		FileHash:    fileHash,
 		Tags:        req.Tags,
 		Timestamp:   req.Timestamp,
-		Recommender: req.Recommender.String(),
+		Recommender: recommender,
 	}
 	err = q.setQuestionState(scheme)
 	if err != nil {
@@ -159,6 +162,10 @@ func (q *Question) UpdateQuestion(ctx *context.WriteContext) error {
 		return err
 	}
 
+	var recommender string
+	if req.Recommender != nil {
+		recommender = req.Recommender.String()
+	}
 	scheme := &types.QuestionScheme{
 		ID:          req.ID,
 		Title:       req.Title,
@@ -166,7 +173,7 @@ func (q *Question) UpdateQuestion(ctx *context.WriteContext) error {
 		Asker:       asker.String(),
 		Tags:        req.Tags,
 		Timestamp:   req.Timestamp,
-		Recommender: req.Recommender.String(),
+		Recommender: recommender,
 	}
 	err = q.setQuestionState(scheme)
 	if err != nil {

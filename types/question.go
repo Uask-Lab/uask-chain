@@ -6,15 +6,14 @@ import (
 
 type QuestionInfo struct {
 	QuestionDoc
-	AnswersIDs []string `json:"answers_ids"`
 }
 
 type QuestionAddRequest struct {
-	Title       string         `json:"title"`
-	Content     []byte         `json:"content"`
-	Tags        []string       `json:"tags,omitempty"`
-	Timestamp   string         `json:"timestamp"`
-	Recommender common.Address `json:"recommender"`
+	Title       string          `json:"title"`
+	Content     []byte          `json:"content"`
+	Tags        []string        `json:"tags,omitempty"`
+	Timestamp   string          `json:"timestamp"`
+	Recommender *common.Address `json:"recommender,omitempty"`
 }
 
 type QuestionUpdateRequest struct {
