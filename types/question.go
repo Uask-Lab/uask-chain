@@ -6,7 +6,6 @@ import (
 
 type QuestionInfo struct {
 	QuestionDoc
-	AnswersIDs []string `json:"answers_ids"`
 }
 
 type QuestionAddRequest struct {

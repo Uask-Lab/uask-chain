@@ -16,8 +16,6 @@ type Question struct {
 	fileStore filestore.FileStore
 	sch       search.Search
 	db        *db.Database
-
-	answer *Answer `tripod:"answer"`
 }
 
 func NewQuestion(fileStore filestore.FileStore, sch search.Search, db *db.Database) *Question {
