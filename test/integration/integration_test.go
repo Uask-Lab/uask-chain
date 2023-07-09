@@ -179,7 +179,7 @@ func testGetQuestion(t *testing.T) {
 	assert.NoError(t, err, "get question")
 	q := new(types.QuestionInfo)
 	assert.NoError(t, json.Unmarshal(qbyt, q))
-	assert.Equal(t, q1Title, q.Title)
+	assert.Equal(t, q1UpTitle, q.Title)
 }
 
 func testGetAnswer(t *testing.T) {
@@ -187,7 +187,7 @@ func testGetAnswer(t *testing.T) {
 	assert.NoError(t, err, "get answer")
 	a := new(types.AnswerInfo)
 	assert.NoError(t, json.Unmarshal(abyt, a))
-	assert.Equal(t, qid1, a.QID)
+	assert.Equal(t, answerUp, a.Content)
 }
 
 func testGetComment(t *testing.T) {
