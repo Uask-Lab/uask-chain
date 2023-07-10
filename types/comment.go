@@ -10,9 +10,7 @@ type CommentAddRequest struct {
 	// reply question id
 	QID string `json:"qid"`
 	// reply answer id
-	AID string `json:"aid"`
-	// reply comment id
-	CID       string         `json:"cid"`
+	AID       string         `json:"aid"`
 	Content   []byte         `json:"content"`
 	Timestamp string         `json:"timestamp"`
 	Commenter common.Address `json:"commenter"`
@@ -29,9 +27,7 @@ type CommentScheme struct {
 	// reply question id
 	QID string `json:"qid" gorm:"column:qid"`
 	// reply answer id
-	AID string `json:"aid" gorm:"column:aid"`
-	// reply comment id
-	CID       string `json:"cid" gorm:"column:cid"`
+	AID       string `json:"aid" gorm:"column:aid"`
 	FileHash  string `json:"file_hash" gorm:"column:file_hash"`
 	Commenter string `json:"commenter" gorm:"column:commenter"`
 	Timestamp string `json:"timestamp" gorm:"column:timestamp"`

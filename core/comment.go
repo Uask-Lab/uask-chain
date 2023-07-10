@@ -15,7 +15,8 @@ type Comment struct {
 	fileStore filestore.FileStore
 	db        *db.Database
 
-	Answer *Answer `tripod:"answer"`
+	Question *Question `tripod:"question"`
+	Answer   *Answer   `tripod:"answer"`
 }
 
 func NewComment(fileStore filestore.FileStore, db *db.Database) *Comment {
@@ -36,7 +37,7 @@ func (c *Comment) AddComment(ctx *context.WriteContext) error {
 		return err
 	}
 
-	err = c.ifReplyExist(req.AID, req.CID)
+	err = c.ifReplyExist(req.QID, req.AID)
 	if err != nil {
 		return err
 	}
@@ -50,7 +51,6 @@ func (c *Comment) AddComment(ctx *context.WriteContext) error {
 		ID:        ctx.Txn.TxnHash.String(),
 		QID:       req.QID,
 		AID:       req.AID,
-		CID:       req.CID,
 		FileHash:  fileHash,
 		Commenter: commenter.String(),
 		Timestamp: req.Timestamp,
@@ -91,7 +91,7 @@ func (c *Comment) UpdateComment(ctx *context.WriteContext) error {
 		return types.ErrNoPermission
 	}
 
-	err = c.ifReplyExist(req.AID, req.CID)
+	err = c.ifReplyExist(req.QID, req.AID)
 	if err != nil {
 		return err
 	}
@@ -109,7 +109,6 @@ func (c *Comment) UpdateComment(ctx *context.WriteContext) error {
 	scheme := &types.CommentScheme{
 		ID:        req.ID,
 		AID:       req.AID,
-		CID:       req.CID,
 		FileHash:  fileHash,
 		Commenter: commenter.String(),
 		Timestamp: req.Timestamp,
@@ -165,7 +164,6 @@ func (c *Comment) GetComment(ctx *context.ReadContext) error {
 			CommentAddRequest: types.CommentAddRequest{
 				QID:       sch.QID,
 				AID:       sch.AID,
-				CID:       sch.CID,
 				Content:   fileByt,
 				Timestamp: sch.Timestamp,
 			},
@@ -189,15 +187,18 @@ func (c *Comment) existComment(id string) bool {
 	return c.Exist([]byte(id))
 }
 
-func (c *Comment) ifReplyExist(answerID, commentID string) error {
+func (c *Comment) ifReplyExist(questionID, answerID string) error {
+	if questionID == "" && answerID == "" {
+		return types.ErrNoneToReply
+	}
 	if answerID != "" {
 		if !c.Answer.existAnswer(answerID) {
 			return types.ErrAnswerNotFound
 		}
 	}
-	if commentID != "" {
-		if !c.existComment(commentID) {
-			return types.ErrCommentNotFound
+	if questionID != "" {
+		if !c.Question.existQuestion(questionID) {
+			return types.ErrQuestionNotFound
 		}
 	}
 	return nil
