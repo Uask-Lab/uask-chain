@@ -9,6 +9,8 @@ var (
 
 	ErrNoPermission = errors.New("no permission")
 
+	ErrNoneToReply = errors.New("none to reply")
+
 	ErrRewardNotEnough = errors.New("reward not enough")
 	ErrRewardIllegal   = errors.New("reward is illegal")
 
