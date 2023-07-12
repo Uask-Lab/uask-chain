@@ -4,7 +4,6 @@ import "github.com/yu-org/yu/common"
 
 type AnswerInfo struct {
 	AnswerUpdateRequest
-	CommentsIDs []string `json:"comments_ids"`
 }
 
 type AnswerAddRequest struct {
