@@ -1,7 +1,5 @@
 package types
 
-import "github.com/yu-org/yu/common"
-
 type CommentInfo struct {
 	CommentUpdateRequest
 }
@@ -10,10 +8,9 @@ type CommentAddRequest struct {
 	// reply question id
 	QID string `json:"qid"`
 	// reply answer id
-	AID       string         `json:"aid"`
-	Content   []byte         `json:"content"`
-	Timestamp string         `json:"timestamp"`
-	Commenter common.Address `json:"commenter"`
+	AID       string `json:"aid"`
+	Content   []byte `json:"content"`
+	Timestamp string `json:"timestamp"`
 }
 
 type CommentUpdateRequest struct {
