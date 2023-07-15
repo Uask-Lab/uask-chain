@@ -34,7 +34,7 @@ var (
 	aid  string
 	cid  string
 
-	resultCh = make(chan result.Result)
+	resultCh = make(chan *result.Result)
 )
 
 var (
@@ -264,15 +264,15 @@ func readFromUask(tripodName, rdName string, params interface{}) ([]byte, error)
 	}), nil
 }
 
-func getIdfromEvent(t *testing.T, resCh chan result.Result) string {
+func getIdfromEvent(t *testing.T, resCh chan *result.Result) string {
 	res := <-resCh
-	assert.Equal(t, result.EventType, res.Type())
+	assert.Equal(t, result.EventType, res.Type)
 	m := make(map[string]string)
-	assert.NoError(t, res.(*result.Event).DecodeJsonValue(&m))
+	assert.NoError(t, res.Event.DecodeJsonValue(&m))
 	return m["id"]
 }
 
-func dealResult(t *testing.T, resCh chan result.Result) {
+func dealResult(t *testing.T, resCh chan *result.Result) {
 	res := <-resCh
-	assert.Equal(t, result.EventType, res.Type())
+	assert.Equal(t, result.EventType, res.Type)
 }
