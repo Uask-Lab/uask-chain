@@ -8,7 +8,7 @@ type AnswerAddRequest struct {
 	// question id
 	QID       string `json:"qid"`
 	Content   []byte `json:"content"`
-	Timestamp int    `json:"timestamp"`
+	Timestamp int64  `json:"timestamp"`
 }
 
 type AnswerUpdateRequest struct {
@@ -22,5 +22,5 @@ type AnswerScheme struct {
 	QID       string `json:"qid" gorm:"column:qid"`
 	FileHash  string `json:"file_hash" gorm:"column:file_hash"`
 	Answerer  string `json:"answerer" gorm:"column:answerer"`
-	Timestamp int    `json:"timestamp" gorm:"column:timestamp"`
+	Timestamp int64  `json:"timestamp" gorm:"column:timestamp"`
 }

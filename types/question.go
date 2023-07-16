@@ -12,7 +12,7 @@ type QuestionAddRequest struct {
 	Title     string   `json:"title"`
 	Content   []byte   `json:"content"`
 	Tags      []string `json:"tags,omitempty"`
-	Timestamp int      `json:"timestamp"`
+	Timestamp int64    `json:"timestamp"`
 }
 
 type QuestionUpdateRequest struct {
@@ -26,7 +26,7 @@ type QuestionScheme struct {
 	FileHash  string   `json:"file_hash" gorm:"column:file_hash"`
 	Asker     string   `json:"asker" gorm:"column:asker"`
 	Tags      []string `json:"tags,omitempty" gorm:"type:text[];column:tags"`
-	Timestamp int      `json:"timestamp" gorm:"column:timestamp"`
+	Timestamp int64    `json:"timestamp" gorm:"column:timestamp"`
 }
 
 // QuestionDoc stores into search
@@ -36,5 +36,5 @@ type QuestionDoc struct {
 	Content   []byte         `json:"content"`
 	Asker     common.Address `json:"asker"`
 	Tags      []string       `json:"tags,omitempty"`
-	Timestamp int            `json:"timestamp"`
+	Timestamp int64          `json:"timestamp"`
 }

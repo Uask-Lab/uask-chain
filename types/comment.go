@@ -10,7 +10,7 @@ type CommentAddRequest struct {
 	// reply answer id
 	AID       string `json:"aid"`
 	Content   []byte `json:"content"`
-	Timestamp int    `json:"timestamp"`
+	Timestamp int64  `json:"timestamp"`
 }
 
 type CommentUpdateRequest struct {
@@ -27,5 +27,5 @@ type CommentScheme struct {
 	AID       string `json:"aid" gorm:"column:aid"`
 	FileHash  string `json:"file_hash" gorm:"column:file_hash"`
 	Commenter string `json:"commenter" gorm:"column:commenter"`
-	Timestamp int    `json:"timestamp" gorm:"column:timestamp"`
+	Timestamp int64  `json:"timestamp" gorm:"column:timestamp"`
 }
