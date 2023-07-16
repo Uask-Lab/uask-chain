@@ -46,17 +46,12 @@ func (a *Answer) AddAnswer(ctx *context.WriteContext) error {
 		return err
 	}
 
-	var recommender string
-	if req.Recommender != nil {
-		recommender = req.Recommender.String()
-	}
 	scheme := &types.AnswerScheme{
-		ID:          ctx.Txn.TxnHash.String(),
-		QID:         req.QID,
-		FileHash:    fileHash,
-		Answerer:    answerer.String(),
-		Timestamp:   req.Timestamp,
-		Recommender: recommender,
+		ID:        ctx.Txn.TxnHash.String(),
+		QID:       req.QID,
+		FileHash:  fileHash,
+		Answerer:  answerer.String(),
+		Timestamp: req.Timestamp,
 	}
 	err = a.setAnswerState(scheme)
 	if err != nil {
@@ -109,17 +104,12 @@ func (a *Answer) UpdateAnswer(ctx *context.WriteContext) error {
 		return err
 	}
 
-	var recommender string
-	if recommender != "" {
-		recommender = req.Recommender.String()
-	}
 	scheme := &types.AnswerScheme{
-		ID:          req.ID,
-		QID:         req.QID,
-		FileHash:    fileHash,
-		Answerer:    answerer.String(),
-		Timestamp:   req.Timestamp,
-		Recommender: recommender,
+		ID:        req.ID,
+		QID:       req.QID,
+		FileHash:  fileHash,
+		Answerer:  answerer.String(),
+		Timestamp: req.Timestamp,
 	}
 	err = a.setAnswerState(scheme)
 	if err != nil {
@@ -146,19 +136,13 @@ func (a *Answer) GetAnswer(ctx *context.ReadContext) error {
 		return err
 	}
 
-	var recommender *common.Address
-	if scheme.Recommender != "" {
-		addr := common.HexToAddress(scheme.Recommender)
-		recommender = &addr
-	}
 	answer := &types.AnswerInfo{
 		AnswerUpdateRequest: types.AnswerUpdateRequest{
 			ID: scheme.ID,
 			AnswerAddRequest: types.AnswerAddRequest{
-				QID:         scheme.QID,
-				Content:     fileByt,
-				Timestamp:   scheme.Timestamp,
-				Recommender: recommender,
+				QID:       scheme.QID,
+				Content:   fileByt,
+				Timestamp: scheme.Timestamp,
 			},
 		},
 	}

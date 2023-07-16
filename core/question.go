@@ -83,19 +83,13 @@ func (q *Question) AddQuestion(ctx *context.WriteContext) error {
 		return err
 	}
 
-	var recommender string
-	if req.Recommender != nil {
-		recommender = req.Recommender.String()
-	}
-
 	scheme := &types.QuestionScheme{
-		ID:          ctx.Txn.TxnHash.String(),
-		Title:       req.Title,
-		Asker:       asker.String(),
-		FileHash:    fileHash,
-		Tags:        req.Tags,
-		Timestamp:   req.Timestamp,
-		Recommender: recommender,
+		ID:        ctx.Txn.TxnHash.String(),
+		Title:     req.Title,
+		Asker:     asker.String(),
+		FileHash:  fileHash,
+		Tags:      req.Tags,
+		Timestamp: req.Timestamp,
 	}
 	err = q.setQuestionState(scheme)
 	if err != nil {
@@ -110,13 +104,12 @@ func (q *Question) AddQuestion(ctx *context.WriteContext) error {
 
 	// add search
 	err = q.sch.AddDoc(&types.QuestionDoc{
-		ID:          scheme.ID,
-		Title:       scheme.Title,
-		Content:     req.Content,
-		Asker:       common.HexToAddress(scheme.Asker),
-		Tags:        scheme.Tags,
-		Timestamp:   scheme.Timestamp,
-		Recommender: common.HexToAddress(scheme.Recommender),
+		ID:        scheme.ID,
+		Title:     scheme.Title,
+		Content:   req.Content,
+		Asker:     common.HexToAddress(scheme.Asker),
+		Tags:      scheme.Tags,
+		Timestamp: scheme.Timestamp,
 	})
 	if err != nil {
 		return err
@@ -162,18 +155,13 @@ func (q *Question) UpdateQuestion(ctx *context.WriteContext) error {
 		return err
 	}
 
-	var recommender string
-	if req.Recommender != nil {
-		recommender = req.Recommender.String()
-	}
 	scheme := &types.QuestionScheme{
-		ID:          req.ID,
-		Title:       req.Title,
-		FileHash:    fileHash,
-		Asker:       asker.String(),
-		Tags:        req.Tags,
-		Timestamp:   req.Timestamp,
-		Recommender: recommender,
+		ID:        req.ID,
+		Title:     req.Title,
+		FileHash:  fileHash,
+		Asker:     asker.String(),
+		Tags:      req.Tags,
+		Timestamp: req.Timestamp,
 	}
 	err = q.setQuestionState(scheme)
 	if err != nil {
@@ -188,13 +176,12 @@ func (q *Question) UpdateQuestion(ctx *context.WriteContext) error {
 
 	// update doc
 	err = q.sch.UpdateDoc(scheme.ID, &types.QuestionDoc{
-		ID:          scheme.ID,
-		Title:       scheme.Title,
-		Content:     req.Content,
-		Asker:       common.HexToAddress(scheme.Asker),
-		Tags:        scheme.Tags,
-		Timestamp:   scheme.Timestamp,
-		Recommender: common.HexToAddress(scheme.Recommender),
+		ID:        scheme.ID,
+		Title:     scheme.Title,
+		Content:   req.Content,
+		Asker:     common.HexToAddress(scheme.Asker),
+		Tags:      scheme.Tags,
+		Timestamp: scheme.Timestamp,
 	})
 	if err != nil {
 		return err
@@ -251,13 +238,12 @@ func (q *Question) scheme2Info(sch *types.QuestionScheme) (*types.QuestionInfo, 
 	}
 	return &types.QuestionInfo{
 		QuestionDoc: types.QuestionDoc{
-			ID:          sch.ID,
-			Title:       sch.Title,
-			Content:     fileByt,
-			Asker:       common.HexToAddress(sch.Asker),
-			Tags:        sch.Tags,
-			Timestamp:   sch.Timestamp,
-			Recommender: common.HexToAddress(sch.Recommender),
+			ID:        sch.ID,
+			Title:     sch.Title,
+			Content:   fileByt,
+			Asker:     common.HexToAddress(sch.Asker),
+			Tags:      sch.Tags,
+			Timestamp: sch.Timestamp,
 		},
 	}, nil
 }

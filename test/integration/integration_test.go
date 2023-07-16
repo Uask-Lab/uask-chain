@@ -88,7 +88,7 @@ func testAddQuestion(t *testing.T) {
 	assert.NoError(t, writeQuestion("AddQuestion", &types.QuestionAddRequest{
 		Title:     q1Title,
 		Content:   q1Content,
-		Timestamp: time.Now().String(),
+		Timestamp: time.Now().Unix(),
 	}))
 
 	qid1 = getIdfromEvent(t, resultCh)
@@ -96,7 +96,7 @@ func testAddQuestion(t *testing.T) {
 	assert.NoError(t, writeQuestion("AddQuestion", &types.QuestionAddRequest{
 		Title:     q2Title,
 		Content:   q2Content,
-		Timestamp: time.Now().String(),
+		Timestamp: time.Now().Unix(),
 	}))
 
 	qid2 = getIdfromEvent(t, resultCh)
@@ -118,7 +118,7 @@ func testUpdateQuestion(t *testing.T) {
 		QuestionAddRequest: types.QuestionAddRequest{
 			Title:     q1UpTitle,
 			Content:   q1UpContent,
-			Timestamp: time.Now().String(),
+			Timestamp: time.Now().Unix(),
 		},
 	}))
 	dealResult(t, resultCh)
@@ -134,7 +134,7 @@ func testAddAnswer(t *testing.T) {
 	assert.NoError(t, writeAnswer("AddAnswer", &types.AnswerAddRequest{
 		QID:       qid1,
 		Content:   answer,
-		Timestamp: time.Now().String(),
+		Timestamp: time.Now().Unix(),
 	}))
 
 	aid = getIdfromEvent(t, resultCh)
@@ -146,7 +146,7 @@ func testUpdateAnswer(t *testing.T) {
 		AnswerAddRequest: types.AnswerAddRequest{
 			QID:       qid1,
 			Content:   answerUp,
-			Timestamp: time.Now().String(),
+			Timestamp: time.Now().Unix(),
 		},
 	}))
 	dealResult(t, resultCh)
@@ -156,7 +156,7 @@ func testAddComment(t *testing.T) {
 	assert.NoError(t, writeComment("AddComment", &types.CommentAddRequest{
 		AID:       aid,
 		Content:   comment,
-		Timestamp: time.Now().String(),
+		Timestamp: time.Now().Unix(),
 	}))
 
 	cid = getIdfromEvent(t, resultCh)
@@ -168,7 +168,7 @@ func testUpdateComment(t *testing.T) {
 		CommentAddRequest: types.CommentAddRequest{
 			AID:       aid,
 			Content:   commentUp,
-			Timestamp: time.Now().String(),
+			Timestamp: time.Now().Unix(),
 		},
 	}))
 	dealResult(t, resultCh)
