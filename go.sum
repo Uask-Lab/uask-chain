@@ -1061,6 +1061,8 @@ github.com/yu-org/yu v0.0.0-20230709122450-5a90d2ff3822 h1:DbCq3IQE+Ve+JtZVaRJau
 github.com/yu-org/yu v0.0.0-20230709122450-5a90d2ff3822/go.mod h1:+LGaSNl1cOOxWdtfI36EOkGcszJ/EARHgD0bbVcG9ow=
 github.com/yu-org/yu v0.0.0-20230715041100-3f220203f59e h1:0d1ezA3lzoAHb7goHkv/N7gSSN/e9uOiZ5alEUDGLb4=
 github.com/yu-org/yu v0.0.0-20230715041100-3f220203f59e/go.mod h1:A6FaugCycLIfRbXx1UwsiRE/7Uzdm4o9rI3huO9SW6E=
+github.com/yu-org/yu v0.0.0-20230717130818-afd1573c1c45 h1:6TNDMzj693oOD0tC0Zh1jEZzl2o+tu5mTV+fzkl2qcY=
+github.com/yu-org/yu v0.0.0-20230717130818-afd1573c1c45/go.mod h1:A6FaugCycLIfRbXx1UwsiRE/7Uzdm4o9rI3huO9SW6E=
 github.com/yudai/gojsondiff v1.0.0/go.mod h1:AY32+k2cwILAkW1fbgxQ5mUmMiZFgLIV+FBNExI05xg=
 github.com/yudai/golcs v0.0.0-20170316035057-ecda9a501e82/go.mod h1:lgjkn3NuSvDfVJdfcVVdX+jpBxNmX4rDAzaS45IcYoM=
 github.com/yudai/pp v2.0.1+incompatible/go.mod h1:PuxR/8QJ7cyCkFp/aUDS+JY727OFEZkTdatxwunjIkc=
