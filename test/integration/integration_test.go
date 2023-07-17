@@ -257,7 +257,7 @@ func readFromUask(tripodName, rdName string, params interface{}) ([]byte, error)
 	if err != nil {
 		return nil, err
 	}
-	return callchain.CallChainByReading(callchain.Http, &common.Rdcall{
+	return callchain.CallChainByReading(callchain.Http, &common.RdCall{
 		TripodName:  tripodName,
 		ReadingName: rdName,
 		Params:      string(byt),
