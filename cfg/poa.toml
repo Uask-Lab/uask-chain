@@ -1,0 +1,12 @@
+key_type = "sr25519"
+my_secret = "uask1"
+block_interval = 3
+
+[[validators]]
+pubkey = "0x31f619ce3d06da0756b14700d820e1ca2b9a1d83db09f40face888db88e186e564"
+
+[[validators]]
+pubkey = "0x317a43044d1528ecab4902a1d3bf8b870f9be5ff0e9a02cf3e0488fffe0fe0d40c"
+
+[[validators]]
+pubkey = "0x31bc930139cc55e5a40939cb2c00311e3700126beeea14b62393fb5d573d3beb42"

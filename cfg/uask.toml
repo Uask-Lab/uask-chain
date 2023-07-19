@@ -1,0 +1,10 @@
+[files]
+dir = "uask/files"
+
+[search]
+host = "http://meili:7700" #this host is for docker
+index = "uask"
+primary_key = "id"
+
+[db]
+dsn = "uask/db/scheme"

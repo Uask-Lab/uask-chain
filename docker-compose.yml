@@ -7,9 +7,9 @@ services:
     volumes:
       - ./uask:/uask
       - ./uask/db:/uask/db
-      - ./yu.toml:/yu.toml:ro
-      - ./uask.toml:/uask.toml:ro
-      - ./poa.toml:/poa.toml:ro
+      - ./cfg/yu.toml:/cfg/yu.toml:ro
+      - ./cfg/uask.toml:/cfg/uask.toml:ro
+      - ./cfg/poa.toml:/cfg/poa.toml:ro
     ports:
       - "7999:7999"
       - "8999:8999"
