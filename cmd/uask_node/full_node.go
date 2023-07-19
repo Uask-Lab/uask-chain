@@ -15,7 +15,7 @@ import (
 
 func main() {
 	uaskCfg := new(config.Config)
-	ycfg.LoadTomlConf("uask.toml", uaskCfg)
+	ycfg.LoadTomlConf("./cfg/uask.toml", uaskCfg)
 
 	localStore, err := filestore.NewLocalStore(uaskCfg.Files)
 	if err != nil {
@@ -31,11 +31,11 @@ func main() {
 	}
 
 	poaCfg := new(poa.PoaConfig)
-	ycfg.LoadTomlConf("poa.toml", poaCfg)
+	ycfg.LoadTomlConf("./cfg/poa.toml", poaCfg)
 
 	figure.NewColorFigure("Uask", "big", "green", false).Print()
 
-	startup.InitConfigFromPath("yu.toml")
+	startup.InitConfigFromPath("./cfg/yu.toml")
 	startup.DefaultStartup(
 		poa.NewPoa(poaCfg),
 		core.NewQuestion(localStore, meili, database),
