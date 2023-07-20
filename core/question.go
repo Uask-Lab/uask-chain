@@ -221,9 +221,7 @@ func (q *Question) setQuestionState(scheme *types.QuestionScheme) error {
 	if err != nil {
 		return err
 	}
-	hashByt := common.Sha256(byt)
-
-	q.Set([]byte(scheme.ID), hashByt)
+	q.Set([]byte(scheme.ID), byt)
 	return nil
 }
 

@@ -2,7 +2,6 @@ package core
 
 import (
 	"encoding/json"
-	"github.com/yu-org/yu/common"
 	"github.com/yu-org/yu/core/context"
 	"github.com/yu-org/yu/core/tripod"
 	"uask-chain/db"
@@ -177,9 +176,7 @@ func (c *Comment) setCommentState(scheme *types.CommentScheme) error {
 	if err != nil {
 		return err
 	}
-	hashByt := common.Sha256(byt)
-
-	c.Set([]byte(scheme.ID), hashByt)
+	c.Set([]byte(scheme.ID), byt)
 	return nil
 }
 
