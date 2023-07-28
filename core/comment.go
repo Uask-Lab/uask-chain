@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/yu-org/yu/core/context"
 	"github.com/yu-org/yu/core/tripod"
+	"time"
 	"uask-chain/db"
 	"uask-chain/filestore"
 	"uask-chain/types"
@@ -52,7 +53,7 @@ func (c *Comment) AddComment(ctx *context.WriteContext) error {
 		AID:       req.AID,
 		FileHash:  fileHash,
 		Commenter: commenter.String(),
-		Timestamp: req.Timestamp,
+		Timestamp: time.Now().Unix(),
 	}
 	err = c.setCommentState(scheme)
 	if err != nil {
@@ -110,7 +111,7 @@ func (c *Comment) UpdateComment(ctx *context.WriteContext) error {
 		AID:       req.AID,
 		FileHash:  fileHash,
 		Commenter: commenter.String(),
-		Timestamp: req.Timestamp,
+		Timestamp: time.Now().Unix(),
 	}
 	err = c.setCommentState(scheme)
 	if err != nil {
@@ -158,15 +159,11 @@ func (c *Comment) GetComment(ctx *context.ReadContext) error {
 		return err
 	}
 	comment := &types.CommentInfo{
-		CommentUpdateRequest: types.CommentUpdateRequest{
-			ID: sch.ID,
-			CommentAddRequest: types.CommentAddRequest{
-				QID:       sch.QID,
-				AID:       sch.AID,
-				Content:   fileByt,
-				Timestamp: sch.Timestamp,
-			},
-		},
+		ID:        sch.ID,
+		QID:       sch.QID,
+		AID:       sch.AID,
+		Content:   fileByt,
+		Timestamp: sch.Timestamp,
 	}
 	return ctx.Json(comment)
 }

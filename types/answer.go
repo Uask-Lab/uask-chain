@@ -1,14 +1,16 @@
 package types
 
 type AnswerInfo struct {
-	AnswerUpdateRequest
+	ID        string `json:"id"`
+	QID       string `json:"qid"`
+	Content   []byte `json:"content"`
+	Timestamp int64  `json:"timestamp"`
 }
 
 type AnswerAddRequest struct {
 	// question id
-	QID       string `json:"qid"`
-	Content   []byte `json:"content"`
-	Timestamp int64  `json:"timestamp"`
+	QID     string `json:"qid"`
+	Content []byte `json:"content"`
 }
 
 type AnswerUpdateRequest struct {

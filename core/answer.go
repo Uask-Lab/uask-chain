@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/yu-org/yu/core/context"
 	"github.com/yu-org/yu/core/tripod"
+	"time"
 	"uask-chain/db"
 	"uask-chain/filestore"
 	"uask-chain/types"
@@ -50,7 +51,7 @@ func (a *Answer) AddAnswer(ctx *context.WriteContext) error {
 		QID:       req.QID,
 		FileHash:  fileHash,
 		Answerer:  answerer.String(),
-		Timestamp: req.Timestamp,
+		Timestamp: time.Now().Unix(),
 	}
 	err = a.setAnswerState(scheme)
 	if err != nil {
@@ -108,7 +109,7 @@ func (a *Answer) UpdateAnswer(ctx *context.WriteContext) error {
 		QID:       req.QID,
 		FileHash:  fileHash,
 		Answerer:  answerer.String(),
-		Timestamp: req.Timestamp,
+		Timestamp: time.Now().Unix(),
 	}
 	err = a.setAnswerState(scheme)
 	if err != nil {
@@ -136,14 +137,10 @@ func (a *Answer) GetAnswer(ctx *context.ReadContext) error {
 	}
 
 	answer := &types.AnswerInfo{
-		AnswerUpdateRequest: types.AnswerUpdateRequest{
-			ID: scheme.ID,
-			AnswerAddRequest: types.AnswerAddRequest{
-				QID:       scheme.QID,
-				Content:   fileByt,
-				Timestamp: scheme.Timestamp,
-			},
-		},
+		ID:        scheme.ID,
+		QID:       scheme.QID,
+		Content:   fileByt,
+		Timestamp: scheme.Timestamp,
 	}
 	return ctx.Json(answer)
 }
