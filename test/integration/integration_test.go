@@ -86,17 +86,15 @@ func TestUask(t *testing.T) {
 
 func testAddQuestion(t *testing.T) {
 	assert.NoError(t, writeQuestion("AddQuestion", &types.QuestionAddRequest{
-		Title:     q1Title,
-		Content:   q1Content,
-		Timestamp: time.Now().Unix(),
+		Title:   q1Title,
+		Content: q1Content,
 	}))
 
 	qid1 = getIdfromEvent(t, resultCh)
 
 	assert.NoError(t, writeQuestion("AddQuestion", &types.QuestionAddRequest{
-		Title:     q2Title,
-		Content:   q2Content,
-		Timestamp: time.Now().Unix(),
+		Title:   q2Title,
+		Content: q2Content,
 	}))
 
 	qid2 = getIdfromEvent(t, resultCh)
@@ -116,9 +114,8 @@ func testUpdateQuestion(t *testing.T) {
 	assert.NoError(t, writeQuestion("UpdateQuestion", &types.QuestionUpdateRequest{
 		ID: qid1,
 		QuestionAddRequest: types.QuestionAddRequest{
-			Title:     q1UpTitle,
-			Content:   q1UpContent,
-			Timestamp: time.Now().Unix(),
+			Title:   q1UpTitle,
+			Content: q1UpContent,
 		},
 	}))
 	dealResult(t, resultCh)
@@ -132,9 +129,8 @@ func testSearchQuestion(t *testing.T) {
 
 func testAddAnswer(t *testing.T) {
 	assert.NoError(t, writeAnswer("AddAnswer", &types.AnswerAddRequest{
-		QID:       qid1,
-		Content:   answer,
-		Timestamp: time.Now().Unix(),
+		QID:     qid1,
+		Content: answer,
 	}))
 
 	aid = getIdfromEvent(t, resultCh)
@@ -144,9 +140,8 @@ func testUpdateAnswer(t *testing.T) {
 	assert.NoError(t, writeAnswer("UpdateAnswer", &types.AnswerUpdateRequest{
 		ID: aid,
 		AnswerAddRequest: types.AnswerAddRequest{
-			QID:       qid1,
-			Content:   answerUp,
-			Timestamp: time.Now().Unix(),
+			QID:     qid1,
+			Content: answerUp,
 		},
 	}))
 	dealResult(t, resultCh)
@@ -154,9 +149,8 @@ func testUpdateAnswer(t *testing.T) {
 
 func testAddComment(t *testing.T) {
 	assert.NoError(t, writeComment("AddComment", &types.CommentAddRequest{
-		AID:       aid,
-		Content:   comment,
-		Timestamp: time.Now().Unix(),
+		AID:     aid,
+		Content: comment,
 	}))
 
 	cid = getIdfromEvent(t, resultCh)
@@ -166,9 +160,8 @@ func testUpdateComment(t *testing.T) {
 	assert.NoError(t, writeComment("UpdateComment", &types.CommentUpdateRequest{
 		ID: cid,
 		CommentAddRequest: types.CommentAddRequest{
-			AID:       aid,
-			Content:   commentUp,
-			Timestamp: time.Now().Unix(),
+			AID:     aid,
+			Content: commentUp,
 		},
 	}))
 	dealResult(t, resultCh)

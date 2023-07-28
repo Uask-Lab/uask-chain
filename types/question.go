@@ -9,10 +9,10 @@ type QuestionInfo struct {
 }
 
 type QuestionAddRequest struct {
-	Title     string   `json:"title"`
-	Content   []byte   `json:"content"`
-	Tags      []string `json:"tags,omitempty"`
-	Timestamp int64    `json:"timestamp"`
+	Title   string   `json:"title"`
+	Content []byte   `json:"content"`
+	Tags    []string `json:"tags,omitempty"`
+	// Timestamp int64    `json:"timestamp"`
 }
 
 type QuestionUpdateRequest struct {
