@@ -5,7 +5,6 @@ import (
 	"github.com/yu-org/yu/common"
 	"github.com/yu-org/yu/core/context"
 	"github.com/yu-org/yu/core/tripod"
-	"time"
 	"uask-chain/db"
 	"uask-chain/filestore"
 	"uask-chain/search"
@@ -90,7 +89,7 @@ func (q *Question) AddQuestion(ctx *context.WriteContext) error {
 		Asker:     asker.String(),
 		FileHash:  fileHash,
 		Tags:      req.Tags,
-		Timestamp: time.Now().Unix(),
+		Timestamp: int64(ctx.GetTimestamp()),
 	}
 	err = q.setQuestionState(scheme)
 	if err != nil {
@@ -162,7 +161,7 @@ func (q *Question) UpdateQuestion(ctx *context.WriteContext) error {
 		FileHash:  fileHash,
 		Asker:     asker.String(),
 		Tags:      req.Tags,
-		Timestamp: time.Now().Unix(),
+		Timestamp: int64(ctx.GetTimestamp()),
 	}
 	err = q.setQuestionState(scheme)
 	if err != nil {
