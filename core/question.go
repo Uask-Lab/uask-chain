@@ -26,46 +26,51 @@ func NewQuestion(fileStore filestore.FileStore, sch search.Search, db *db.Databa
 	return q
 }
 
-func (q *Question) ListQuestions(ctx *context.ReadContext) error {
+func (q *Question) ListQuestions(ctx *context.ReadContext) {
 	pageSize := ctx.GetInt("pageSize")
 	page := ctx.GetInt("page")
 
 	qschs, err := q.db.ListQuestions(pageSize, (page-1)*pageSize)
 	if err != nil {
-		return err
+		ctx.JsonOk(types.Error(err))
+		return
 	}
 
 	var infos []*types.QuestionInfo
 	for _, qsch := range qschs {
 		info, serr := q.scheme2Info(qsch)
 		if serr != nil {
-			return serr
+			ctx.JsonOk(types.Error(serr))
+			return
 		}
 		infos = append(infos, info)
 	}
 
-	return ctx.Json(infos)
+	ctx.JsonOk(types.Ok(infos))
 }
 
-func (q *Question) GetQuestion(ctx *context.ReadContext) error {
+func (q *Question) GetQuestion(ctx *context.ReadContext) {
 	sch, err := q.db.GetQuestion(ctx.GetString("id"))
 	if err != nil {
-		return err
+		ctx.JsonOk(types.Error(err))
+		return
 	}
 	question, err := q.scheme2Info(sch)
 	if err != nil {
-		return err
+		ctx.JsonOk(types.Error(err))
+		return
 	}
-	return ctx.Json(question)
+	ctx.JsonOk(types.Ok(question))
 }
 
-func (q *Question) SearchQuestion(ctx *context.ReadContext) error {
+func (q *Question) SearchQuestion(ctx *context.ReadContext) {
 	phrase := ctx.GetString("phrase")
 	results, err := q.sch.SearchDoc(phrase)
 	if err != nil {
-		return err
+		ctx.JsonOk(types.Error(err))
+		return
 	}
-	return ctx.Json(results)
+	ctx.JsonOk(types.Ok(results))
 }
 
 func (q *Question) AddQuestion(ctx *context.WriteContext) error {
