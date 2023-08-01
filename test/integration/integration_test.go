@@ -173,13 +173,13 @@ func testGetQuestion(t *testing.T) {
 func testGetAnswer(t *testing.T) {
 	a, err := readAnswer("GetAnswer", map[string]string{"id": aid})
 	assert.NoError(t, err, "get answer")
-	assert.Equal(t, common.Bytes2Hex(answerUp), a.(map[string]any)["content"])
+	assert.Equal(t, string(answerUp), a.(map[string]any)["content"])
 }
 
 func testGetComment(t *testing.T) {
 	c, err := readComment("GetComment", map[string]string{"id": cid})
 	assert.NoError(t, err, "get comment")
-	assert.Equal(t, common.Bytes2Hex(commentUp), c.(map[string]any)["content"])
+	assert.Equal(t, string(commentUp), c.(map[string]any)["content"])
 }
 
 func testDeleteQuestion(t *testing.T) {
