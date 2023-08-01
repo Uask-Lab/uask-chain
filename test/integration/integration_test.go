@@ -103,8 +103,8 @@ func testAddQuestion(t *testing.T) {
 func testListQuestions(t *testing.T) {
 	qs, err := readQuestion("ListQuestions", map[string]int{"pageSize": 2, "page": 1})
 	assert.NoError(t, err)
-	assert.Equal(t, qs.([]map[string]any)[0]["id"], qid2)
-	assert.Equal(t, qs.([]map[string]any)[1]["id"], qid1)
+	assert.Equal(t, qs.([]any)[0].(map[string]any)["id"], qid2)
+	assert.Equal(t, qs.([]any)[1].(map[string]any)["id"], qid1)
 }
 
 func testUpdateQuestion(t *testing.T) {
