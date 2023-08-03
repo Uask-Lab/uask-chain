@@ -41,7 +41,7 @@ func (c *Comment) AddComment(ctx *context.WriteContext) error {
 		return err
 	}
 
-	fileHash, err := c.fileStore.Put(req.Content)
+	fileHash, err := c.fileStore.Put([]byte(req.Content))
 	if err != nil {
 		return err
 	}
@@ -100,7 +100,7 @@ func (c *Comment) UpdateComment(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	fileHash, err := c.fileStore.Put(req.Content)
+	fileHash, err := c.fileStore.Put([]byte(req.Content))
 	if err != nil {
 		return err
 	}
@@ -163,7 +163,7 @@ func (c *Comment) GetComment(ctx *context.ReadContext) {
 		ID:        sch.ID,
 		QID:       sch.QID,
 		AID:       sch.AID,
-		Content:   fileByt,
+		Content:   string(fileByt),
 		Timestamp: sch.Timestamp,
 	}
 	ctx.JsonOk(types.Ok(comment))

@@ -83,7 +83,7 @@ func (q *Question) AddQuestion(ctx *context.WriteContext) error {
 		return err
 	}
 
-	fileHash, err := q.fileStore.Put(req.Content)
+	fileHash, err := q.fileStore.Put([]byte(req.Content))
 	if err != nil {
 		return err
 	}
@@ -155,7 +155,7 @@ func (q *Question) UpdateQuestion(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	fileHash, err := q.fileStore.Put(req.Content)
+	fileHash, err := q.fileStore.Put([]byte(req.Content))
 	if err != nil {
 		return err
 	}
@@ -243,7 +243,7 @@ func (q *Question) scheme2Info(sch *types.QuestionScheme) (*types.QuestionInfo, 
 		QuestionDoc: types.QuestionDoc{
 			ID:        sch.ID,
 			Title:     sch.Title,
-			Content:   fileByt,
+			Content:   string(fileByt),
 			Asker:     common.HexToAddress(sch.Asker),
 			Tags:      sch.Tags,
 			Timestamp: sch.Timestamp,

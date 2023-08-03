@@ -39,18 +39,18 @@ var (
 
 var (
 	q1Title   = "What is Uask"
-	q1Content = []byte("What is Uask, what can it do?")
+	q1Content = "What is Uask, what can it do?"
 	q2Title   = "what is Ethereum"
-	q2Content = []byte("What is Ethereum, what it blockchain")
+	q2Content = "What is Ethereum, what it blockchain"
 
 	q1UpTitle   = "What is the Uask chain"
-	q1UpContent = []byte("What can Uask do? how can I run it?")
+	q1UpContent = "What can Uask do? how can I run it?"
 
-	answer   = []byte("It is a question and answer appchain")
-	answerUp = []byte("Uask is a question and answer appchain!")
+	answer   = "It is a question and answer appchain"
+	answerUp = "Uask is a question and answer appchain!"
 
-	comment   = []byte("I agree with you")
-	commentUp = []byte("I don't agree with you")
+	comment   = "I agree with you"
+	commentUp = "I don't agree with you"
 )
 
 func TestUask(t *testing.T) {
@@ -173,13 +173,13 @@ func testGetQuestion(t *testing.T) {
 func testGetAnswer(t *testing.T) {
 	a, err := readAnswer("GetAnswer", map[string]string{"id": aid})
 	assert.NoError(t, err, "get answer")
-	assert.Equal(t, string(answerUp), a.(map[string]any)["content"])
+	assert.Equal(t, answerUp, a.(map[string]any)["content"])
 }
 
 func testGetComment(t *testing.T) {
 	c, err := readComment("GetComment", map[string]string{"id": cid})
 	assert.NoError(t, err, "get comment")
-	assert.Equal(t, string(commentUp), c.(map[string]any)["content"])
+	assert.Equal(t, commentUp, c.(map[string]any)["content"])
 }
 
 func testDeleteQuestion(t *testing.T) {
