@@ -2,7 +2,6 @@ package core
 
 import (
 	"encoding/json"
-	"github.com/yu-org/yu/common"
 	"github.com/yu-org/yu/core/context"
 	"github.com/yu-org/yu/core/tripod"
 	"uask-chain/db"
@@ -112,7 +111,7 @@ func (q *Question) AddQuestion(ctx *context.WriteContext) error {
 		ID:        scheme.ID,
 		Title:     scheme.Title,
 		Content:   req.Content,
-		Asker:     common.HexToAddress(scheme.Asker),
+		Asker:     scheme.Asker,
 		Tags:      scheme.Tags,
 		Timestamp: scheme.Timestamp,
 	})
@@ -184,7 +183,7 @@ func (q *Question) UpdateQuestion(ctx *context.WriteContext) error {
 		ID:        scheme.ID,
 		Title:     scheme.Title,
 		Content:   req.Content,
-		Asker:     common.HexToAddress(scheme.Asker),
+		Asker:     scheme.Asker,
 		Tags:      scheme.Tags,
 		Timestamp: scheme.Timestamp,
 	})
@@ -244,7 +243,7 @@ func (q *Question) scheme2Info(sch *types.QuestionScheme) (*types.QuestionInfo, 
 			ID:        sch.ID,
 			Title:     sch.Title,
 			Content:   string(fileByt),
-			Asker:     common.HexToAddress(sch.Asker),
+			Asker:     sch.Asker,
 			Tags:      sch.Tags,
 			Timestamp: sch.Timestamp,
 		},

@@ -7,6 +7,7 @@ type CommentInfo struct {
 	// reply answer id
 	AID       string `json:"aid"`
 	Content   string `json:"content"`
+	Commenter string `json:"commenter"`
 	Timestamp int64  `json:"timestamp"`
 }
 

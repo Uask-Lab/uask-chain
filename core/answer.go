@@ -141,6 +141,7 @@ func (a *Answer) GetAnswer(ctx *context.ReadContext) {
 		ID:        scheme.ID,
 		QID:       scheme.QID,
 		Content:   string(fileByt),
+		Answerer:  scheme.Answerer,
 		Timestamp: scheme.Timestamp,
 	}
 	ctx.JsonOk(types.Ok(answer))
