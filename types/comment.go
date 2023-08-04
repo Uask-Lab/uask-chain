@@ -6,7 +6,7 @@ type CommentInfo struct {
 	QID string `json:"qid"`
 	// reply answer id
 	AID       string `json:"aid"`
-	Content   []byte `json:"content"`
+	Content   string `json:"content"`
 	Timestamp int64  `json:"timestamp"`
 }
 
@@ -15,7 +15,7 @@ type CommentAddRequest struct {
 	QID string `json:"qid"`
 	// reply answer id
 	AID     string `json:"aid"`
-	Content []byte `json:"content"`
+	Content string `json:"content"`
 	// Timestamp int64  `json:"timestamp"`
 }
 

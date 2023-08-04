@@ -41,7 +41,7 @@ func (c *Comment) AddComment(ctx *context.WriteContext) error {
 		return err
 	}
 
-	fileHash, err := c.fileStore.Put(req.Content)
+	fileHash, err := c.fileStore.Put([]byte(req.Content))
 	if err != nil {
 		return err
 	}
@@ -100,7 +100,7 @@ func (c *Comment) UpdateComment(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	fileHash, err := c.fileStore.Put(req.Content)
+	fileHash, err := c.fileStore.Put([]byte(req.Content))
 	if err != nil {
 		return err
 	}
@@ -148,23 +148,25 @@ func (c *Comment) DeleteComment(ctx *context.WriteContext) error {
 	return ctx.EmitJsonEvent(map[string]string{"writing": "delete_comment", "id": id, "status": "success"})
 }
 
-func (c *Comment) GetComment(ctx *context.ReadContext) error {
+func (c *Comment) GetComment(ctx *context.ReadContext) {
 	sch, err := c.db.GetComment(ctx.GetString("id"))
 	if err != nil {
-		return err
+		ctx.JsonOk(types.Error(err))
+		return
 	}
 	fileByt, err := c.fileStore.Get(sch.FileHash)
 	if err != nil {
-		return err
+		ctx.JsonOk(types.Error(err))
+		return
 	}
 	comment := &types.CommentInfo{
 		ID:        sch.ID,
 		QID:       sch.QID,
 		AID:       sch.AID,
-		Content:   fileByt,
+		Content:   string(fileByt),
 		Timestamp: sch.Timestamp,
 	}
-	return ctx.Json(comment)
+	ctx.JsonOk(types.Ok(comment))
 }
 
 func (c *Comment) setCommentState(scheme *types.CommentScheme) error {

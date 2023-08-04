@@ -10,7 +10,7 @@ type QuestionInfo struct {
 
 type QuestionAddRequest struct {
 	Title   string   `json:"title"`
-	Content []byte   `json:"content"`
+	Content string   `json:"content"`
 	Tags    []string `json:"tags,omitempty"`
 	// Timestamp int64    `json:"timestamp"`
 }
@@ -33,7 +33,7 @@ type QuestionScheme struct {
 type QuestionDoc struct {
 	ID        string         `json:"id"`
 	Title     string         `json:"title"`
-	Content   []byte         `json:"content"`
+	Content   string         `json:"content"`
 	Asker     common.Address `json:"asker"`
 	Tags      []string       `json:"tags,omitempty"`
 	Timestamp int64          `json:"timestamp"`

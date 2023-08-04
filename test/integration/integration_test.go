@@ -39,18 +39,18 @@ var (
 
 var (
 	q1Title   = "What is Uask"
-	q1Content = []byte("What is Uask, what can it do?")
+	q1Content = "What is Uask, what can it do?"
 	q2Title   = "what is Ethereum"
-	q2Content = []byte("What is Ethereum, what it blockchain")
+	q2Content = "What is Ethereum, what it blockchain"
 
 	q1UpTitle   = "What is the Uask chain"
-	q1UpContent = []byte("What can Uask do? how can I run it?")
+	q1UpContent = "What can Uask do? how can I run it?"
 
-	answer   = []byte("It is a question and answer appchain")
-	answerUp = []byte("Uask is a question and answer appchain!")
+	answer   = "It is a question and answer appchain"
+	answerUp = "Uask is a question and answer appchain!"
 
-	comment   = []byte("I agree with you")
-	commentUp = []byte("I don't agree with you")
+	comment   = "I agree with you"
+	commentUp = "I don't agree with you"
 )
 
 func TestUask(t *testing.T) {
@@ -101,13 +101,10 @@ func testAddQuestion(t *testing.T) {
 }
 
 func testListQuestions(t *testing.T) {
-	bytes, err := readQuestion("ListQuestions", map[string]int{"pageSize": 2, "page": 1})
+	qs, err := readQuestion("ListQuestions", map[string]int{"pageSize": 2, "page": 1})
 	assert.NoError(t, err)
-	var qs []*types.QuestionInfo
-	t.Logf("bytes = %s", bytes)
-	assert.NoError(t, json.Unmarshal(bytes, &qs))
-	assert.Equal(t, qs[0].ID, qid2)
-	assert.Equal(t, qs[1].ID, qid1)
+	assert.Equal(t, qs.([]any)[0].(map[string]any)["id"], qid2)
+	assert.Equal(t, qs.([]any)[1].(map[string]any)["id"], qid1)
 }
 
 func testUpdateQuestion(t *testing.T) {
@@ -168,27 +165,21 @@ func testUpdateComment(t *testing.T) {
 }
 
 func testGetQuestion(t *testing.T) {
-	qbyt, err := readQuestion("GetQuestion", map[string]string{"id": qid1})
+	q, err := readQuestion("GetQuestion", map[string]string{"id": qid1})
 	assert.NoError(t, err, "get question")
-	q := new(types.QuestionInfo)
-	assert.NoError(t, json.Unmarshal(qbyt, q))
-	assert.Equal(t, q1UpTitle, q.Title)
+	assert.Equal(t, q1UpTitle, q.(map[string]any)["title"])
 }
 
 func testGetAnswer(t *testing.T) {
-	abyt, err := readAnswer("GetAnswer", map[string]string{"id": aid})
+	a, err := readAnswer("GetAnswer", map[string]string{"id": aid})
 	assert.NoError(t, err, "get answer")
-	a := new(types.AnswerInfo)
-	assert.NoError(t, json.Unmarshal(abyt, a))
-	assert.Equal(t, answerUp, a.Content)
+	assert.Equal(t, answerUp, a.(map[string]any)["content"])
 }
 
 func testGetComment(t *testing.T) {
-	cbyt, err := readComment("GetComment", map[string]string{"id": cid})
+	c, err := readComment("GetComment", map[string]string{"id": cid})
 	assert.NoError(t, err, "get comment")
-	c := new(types.CommentInfo)
-	assert.NoError(t, json.Unmarshal(cbyt, c))
-	assert.Equal(t, commentUp, c.Content)
+	assert.Equal(t, commentUp, c.(map[string]any)["content"])
 }
 
 func testDeleteQuestion(t *testing.T) {
@@ -233,28 +224,34 @@ func writeToUask(tripodName, wrName string, priv keypair.PrivKey, pub keypair.Pu
 	return nil
 }
 
-func readQuestion(rdName string, params interface{}) ([]byte, error) {
+func readQuestion(rdName string, params interface{}) (any, error) {
 	return readFromUask("question", rdName, params)
 }
 
-func readAnswer(rdName string, params interface{}) ([]byte, error) {
+func readAnswer(rdName string, params interface{}) (any, error) {
 	return readFromUask("answer", rdName, params)
 }
 
-func readComment(rdName string, params interface{}) ([]byte, error) {
+func readComment(rdName string, params interface{}) (any, error) {
 	return readFromUask("comment", rdName, params)
 }
 
-func readFromUask(tripodName, rdName string, params interface{}) ([]byte, error) {
+func readFromUask(tripodName, rdName string, params interface{}) (any, error) {
 	byt, err := json.Marshal(params)
 	if err != nil {
 		return nil, err
 	}
-	return callchain.CallChainByReading(callchain.Http, &common.RdCall{
+	bytes := callchain.CallChainByReading(callchain.Http, &common.RdCall{
 		TripodName:  tripodName,
 		ReadingName: rdName,
 		Params:      string(byt),
-	}), nil
+	})
+	resp := new(types.Response)
+	err = json.Unmarshal(bytes, resp)
+	if err != nil {
+		return nil, err
+	}
+	return resp.Payload, nil
 }
 
 func getIdfromEvent(t *testing.T, resCh chan *result.Result) string {

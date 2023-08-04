@@ -40,7 +40,7 @@ func (a *Answer) AddAnswer(ctx *context.WriteContext) error {
 		return types.ErrQuestionNotFound
 	}
 
-	fileHash, err := a.fileStore.Put(req.Content)
+	fileHash, err := a.fileStore.Put([]byte(req.Content))
 	if err != nil {
 		return err
 	}
@@ -98,7 +98,7 @@ func (a *Answer) UpdateAnswer(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	fileHash, err := a.fileStore.Put(req.Content)
+	fileHash, err := a.fileStore.Put([]byte(req.Content))
 	if err != nil {
 		return err
 	}
@@ -124,24 +124,26 @@ func (a *Answer) UpdateAnswer(ctx *context.WriteContext) error {
 	return ctx.EmitJsonEvent(map[string]string{"writing": "update_answer", "id": req.ID})
 }
 
-func (a *Answer) GetAnswer(ctx *context.ReadContext) error {
+func (a *Answer) GetAnswer(ctx *context.ReadContext) {
 	id := ctx.GetString("id")
 	scheme, err := a.db.GetAnswer(id)
 	if err != nil {
-		return err
+		ctx.JsonOk(types.Error(err))
+		return
 	}
 	fileByt, err := a.fileStore.Get(scheme.FileHash)
 	if err != nil {
-		return err
+		ctx.JsonOk(types.Error(err))
+		return
 	}
 
 	answer := &types.AnswerInfo{
 		ID:        scheme.ID,
 		QID:       scheme.QID,
-		Content:   fileByt,
+		Content:   string(fileByt),
 		Timestamp: scheme.Timestamp,
 	}
-	return ctx.Json(answer)
+	ctx.JsonOk(types.Ok(answer))
 }
 
 func (a *Answer) DeleteAnswer(ctx *context.WriteContext) error {

@@ -3,14 +3,14 @@ package types
 type AnswerInfo struct {
 	ID        string `json:"id"`
 	QID       string `json:"qid"`
-	Content   []byte `json:"content"`
+	Content   string `json:"content"`
 	Timestamp int64  `json:"timestamp"`
 }
 
 type AnswerAddRequest struct {
 	// question id
 	QID     string `json:"qid"`
-	Content []byte `json:"content"`
+	Content string `json:"content"`
 }
 
 type AnswerUpdateRequest struct {
