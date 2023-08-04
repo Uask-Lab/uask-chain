@@ -1,9 +1,5 @@
 package types
 
-import (
-	"github.com/yu-org/yu/common"
-)
-
 type QuestionInfo struct {
 	QuestionDoc
 }
@@ -31,10 +27,10 @@ type QuestionScheme struct {
 
 // QuestionDoc stores into search
 type QuestionDoc struct {
-	ID        string         `json:"id"`
-	Title     string         `json:"title"`
-	Content   string         `json:"content"`
-	Asker     common.Address `json:"asker"`
-	Tags      []string       `json:"tags,omitempty"`
-	Timestamp int64          `json:"timestamp"`
+	ID        string   `json:"id"`
+	Title     string   `json:"title"`
+	Content   string   `json:"content"`
+	Asker     string   `json:"asker"`
+	Tags      []string `json:"tags,omitempty"`
+	Timestamp int64    `json:"timestamp"`
 }

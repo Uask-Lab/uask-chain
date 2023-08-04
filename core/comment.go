@@ -164,6 +164,7 @@ func (c *Comment) GetComment(ctx *context.ReadContext) {
 		QID:       sch.QID,
 		AID:       sch.AID,
 		Content:   string(fileByt),
+		Commenter: sch.Commenter,
 		Timestamp: sch.Timestamp,
 	}
 	ctx.JsonOk(types.Ok(comment))
