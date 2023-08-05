@@ -7,7 +7,7 @@ require (
 	github.com/meilisearch/meilisearch-go v0.24.0
 	github.com/sirupsen/logrus v1.9.0
 	github.com/stretchr/testify v1.8.4
-	github.com/yu-org/yu v0.0.0-20230805084946-8be9d6168223
+	github.com/yu-org/yu v0.0.0-20230805090632-7d80f55486e5
 	gorm.io/driver/sqlite v1.1.4
 	gorm.io/gorm v1.21.4
 )
