@@ -8,7 +8,7 @@ import (
 	"github.com/yu-org/yu/core/keypair"
 	"github.com/yu-org/yu/example/client/callchain"
 	"os"
-	"time"
+	"strings"
 	"uask-chain/types"
 )
 
@@ -36,48 +36,41 @@ func main() {
 	//	panic(err)
 	//}
 
-	switch action {
-	case "ask":
+	strs := strings.Split(action, ".")
+	tripod, writing = strs[0], strs[1]
+
+	switch tripod {
+	case "question":
 		info := &types.QuestionAddRequest{
-			Title:     titleOrId,
-			Content:   []byte(content),
-			Tags:      nil,
-			Timestamp: time.Now().String(),
+			Title:   titleOrId,
+			Content: content,
+			Tags:    nil,
 		}
 		params, err = json.Marshal(info)
 		if err != nil {
 			fmt.Println("marshal ask err: ", err)
 			os.Exit(1)
 		}
-		tripod = "question"
-		writing = "AddQuestion"
 	case "answer":
 		info := &types.AnswerAddRequest{
-			QID:       titleOrId,
-			Content:   []byte(content),
-			Timestamp: time.Now().String(),
+			QID:     titleOrId,
+			Content: content,
 		}
 		params, err = json.Marshal(info)
 		if err != nil {
 			fmt.Println("marshal answer err: ", err)
 			os.Exit(1)
 		}
-		tripod = "answer"
-		writing = "AddAnswer"
 	case "comment":
 		info := &types.CommentAddRequest{
-			AID:       titleOrId,
-			CID:       titleOrId,
-			Content:   []byte(content),
-			Timestamp: time.Now().String(),
+			AID:     titleOrId,
+			Content: content,
 		}
 		params, err = json.Marshal(info)
 		if err != nil {
 			fmt.Println("marshal comment err: ", err)
 			os.Exit(1)
 		}
-		tripod = "comment"
-		writing = "AddComment"
 	}
 
 	callchain.CallChainByWriting(callchain.Http, priv, pub, &common.WrCall{
