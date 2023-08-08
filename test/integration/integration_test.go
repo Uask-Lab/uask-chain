@@ -101,7 +101,7 @@ func testAddQuestion(t *testing.T) {
 }
 
 func testListQuestions(t *testing.T) {
-	qs, err := readQuestion("ListQuestions", map[string]int{"pageSize": 2, "page": 1})
+	qs, err := readQuestion("ListQuestions", map[string]string{"pageSize": "2", "page": "1"})
 	assert.NoError(t, err)
 	assert.Equal(t, qs.([]any)[0].(map[string]any)["id"], qid2)
 	assert.Equal(t, qs.([]any)[1].(map[string]any)["id"], qid1)
@@ -216,38 +216,33 @@ func writeToUask(tripodName, wrName string, priv keypair.PrivKey, pub keypair.Pu
 	if err != nil {
 		return err
 	}
-	callchain.CallChainByWriting(callchain.Http, priv, pub, &common.WrCall{
-		TripodName:  tripodName,
-		WritingName: wrName,
-		Params:      string(byt),
+	callchain.CallChainByWriting(priv, pub, &common.WrCall{
+		TripodName: tripodName,
+		FuncName:   wrName,
+		Params:     string(byt),
 	})
 	return nil
 }
 
-func readQuestion(rdName string, params interface{}) (any, error) {
+func readQuestion(rdName string, params map[string]string) (any, error) {
 	return readFromUask("question", rdName, params)
 }
 
-func readAnswer(rdName string, params interface{}) (any, error) {
+func readAnswer(rdName string, params map[string]string) (any, error) {
 	return readFromUask("answer", rdName, params)
 }
 
-func readComment(rdName string, params interface{}) (any, error) {
+func readComment(rdName string, params map[string]string) (any, error) {
 	return readFromUask("comment", rdName, params)
 }
 
-func readFromUask(tripodName, rdName string, params interface{}) (any, error) {
-	byt, err := json.Marshal(params)
-	if err != nil {
-		return nil, err
-	}
-	bytes := callchain.CallChainByReading(callchain.Http, &common.RdCall{
-		TripodName:  tripodName,
-		ReadingName: rdName,
-		Params:      string(byt),
-	})
+func readFromUask(tripodName, rdName string, params map[string]string) (any, error) {
+	bytes := callchain.CallChainByReading(&common.RdCall{
+		TripodName: tripodName,
+		FuncName:   rdName,
+	}, params)
 	resp := new(types.Response)
-	err = json.Unmarshal(bytes, resp)
+	err := json.Unmarshal(bytes, resp)
 	if err != nil {
 		return nil, err
 	}
