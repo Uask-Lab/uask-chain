@@ -1,10 +1,12 @@
-package core
+package question
 
 import (
 	"encoding/json"
+	"github.com/sirupsen/logrus"
 	"github.com/yu-org/yu/core/context"
 	"github.com/yu-org/yu/core/tripod"
-	"uask-chain/db"
+	"gorm.io/gorm"
+	"uask-chain/core/question/orm"
 	"uask-chain/filestore"
 	"uask-chain/search"
 	"uask-chain/types"
@@ -14,12 +16,16 @@ type Question struct {
 	*tripod.Tripod
 	fileStore filestore.FileStore
 	sch       search.Search
-	db        *db.Database
+	db        *orm.Database
 }
 
-func NewQuestion(fileStore filestore.FileStore, sch search.Search, db *db.Database) *Question {
+func NewQuestion(fileStore filestore.FileStore, sch search.Search, db *gorm.DB) *Question {
+	database, err := orm.NewDB(db)
+	if err != nil {
+		logrus.Fatal("init question db failed: ", err)
+	}
 	tri := tripod.NewTripod()
-	q := &Question{Tripod: tri, fileStore: fileStore, sch: sch, db: db}
+	q := &Question{Tripod: tri, fileStore: fileStore, sch: sch, db: database}
 	q.SetWritings(q.AddQuestion, q.UpdateQuestion, q.DeleteQuestion)
 	q.SetReadings(q.ListQuestions, q.GetQuestion, q.SearchQuestion)
 	return q
@@ -88,7 +94,7 @@ func (q *Question) AddQuestion(ctx *context.WriteContext) error {
 	}
 
 	scheme := &types.QuestionScheme{
-		ID:        ctx.Txn.TxnHash.String(),
+		ID:        ctx.GetTxnHash().String(),
 		Title:     req.Title,
 		Asker:     asker.String(),
 		FileHash:  fileHash,
@@ -137,7 +143,7 @@ func (q *Question) UpdateQuestion(ctx *context.WriteContext) error {
 		return err
 	}
 
-	if !q.existQuestion(req.ID) {
+	if !q.ExistQuestion(req.ID) {
 		return types.ErrQuestionNotFound
 	}
 
@@ -229,7 +235,7 @@ func (q *Question) setQuestionState(scheme *types.QuestionScheme) error {
 	return nil
 }
 
-func (q *Question) existQuestion(id string) bool {
+func (q *Question) ExistQuestion(id string) bool {
 	return q.Exist([]byte(id))
 }
 

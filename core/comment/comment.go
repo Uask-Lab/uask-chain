@@ -1,10 +1,14 @@
-package core
+package comment
 
 import (
 	"encoding/json"
+	"github.com/sirupsen/logrus"
 	"github.com/yu-org/yu/core/context"
 	"github.com/yu-org/yu/core/tripod"
-	"uask-chain/db"
+	"gorm.io/gorm"
+	"uask-chain/core/answer"
+	"uask-chain/core/comment/orm"
+	"uask-chain/core/question"
 	"uask-chain/filestore"
 	"uask-chain/types"
 )
@@ -12,15 +16,19 @@ import (
 type Comment struct {
 	*tripod.Tripod
 	fileStore filestore.FileStore
-	db        *db.Database
+	db        *orm.Database
 
-	Question *Question `tripod:"question"`
-	Answer   *Answer   `tripod:"answer"`
+	Question *question.Question `tripod:"question"`
+	Answer   *answer.Answer     `tripod:"answer"`
 }
 
-func NewComment(fileStore filestore.FileStore, db *db.Database) *Comment {
+func NewComment(fileStore filestore.FileStore, db *gorm.DB) *Comment {
 	tri := tripod.NewTripod()
-	c := &Comment{Tripod: tri, fileStore: fileStore, db: db}
+	database, err := orm.NewDB(db)
+	if err != nil {
+		logrus.Fatal("init comment db failed: ", err)
+	}
+	c := &Comment{Tripod: tri, fileStore: fileStore, db: database}
 	c.SetWritings(c.AddComment, c.UpdateComment, c.DeleteComment)
 	c.SetReadings(c.GetComment)
 	return c
@@ -47,7 +55,7 @@ func (c *Comment) AddComment(ctx *context.WriteContext) error {
 	}
 
 	scheme := &types.CommentScheme{
-		ID:        ctx.Txn.TxnHash.String(),
+		ID:        ctx.GetTxnHash().String(),
 		QID:       req.QID,
 		AID:       req.AID,
 		FileHash:  fileHash,
@@ -188,12 +196,12 @@ func (c *Comment) ifReplyExist(questionID, answerID string) error {
 		return types.ErrNoneToReply
 	}
 	if answerID != "" {
-		if !c.Answer.existAnswer(answerID) {
+		if !c.Answer.ExistAnswer(answerID) {
 			return types.ErrAnswerNotFound
 		}
 	}
 	if questionID != "" {
-		if !c.Question.existQuestion(questionID) {
+		if !c.Question.ExistQuestion(questionID) {
 			return types.ErrQuestionNotFound
 		}
 	}

@@ -1,7 +1,6 @@
 package config
 
 import (
-	"uask-chain/db"
 	"uask-chain/filestore"
 	"uask-chain/search"
 )
@@ -9,5 +8,5 @@ import (
 type Config struct {
 	Files  *filestore.Config `toml:"files"`
 	Search *search.MeiliCfg  `toml:"search"`
-	DB     *db.Config        `toml:"db"`
+	DbPath string            `toml:"db_path"`
 }

@@ -1,10 +1,13 @@
-package core
+package answer
 
 import (
 	"encoding/json"
+	"github.com/sirupsen/logrus"
 	"github.com/yu-org/yu/core/context"
 	"github.com/yu-org/yu/core/tripod"
-	"uask-chain/db"
+	"gorm.io/gorm"
+	"uask-chain/core/answer/orm"
+	"uask-chain/core/question"
 	"uask-chain/filestore"
 	"uask-chain/types"
 )
@@ -12,14 +15,18 @@ import (
 type Answer struct {
 	*tripod.Tripod
 	fileStore filestore.FileStore
-	db        *db.Database
+	db        *orm.Database
 
-	Question *Question `tripod:"question"`
+	Question *question.Question `tripod:"question"`
 }
 
-func NewAnswer(fileStore filestore.FileStore, db *db.Database) *Answer {
+func NewAnswer(fileStore filestore.FileStore, db *gorm.DB) *Answer {
 	tri := tripod.NewTripod()
-	a := &Answer{Tripod: tri, fileStore: fileStore, db: db}
+	database, err := orm.NewDB(db)
+	if err != nil {
+		logrus.Fatal("init answer db failed: ", err)
+	}
+	a := &Answer{Tripod: tri, fileStore: fileStore, db: database}
 	a.SetWritings(a.AddAnswer, a.UpdateAnswer, a.DeleteAnswer)
 	a.SetReadings(a.GetAnswer)
 	return a
@@ -36,7 +43,7 @@ func (a *Answer) AddAnswer(ctx *context.WriteContext) error {
 	}
 
 	// check if question exists
-	if !a.Question.existQuestion(req.QID) {
+	if !a.Question.ExistQuestion(req.QID) {
 		return types.ErrQuestionNotFound
 	}
 
@@ -46,7 +53,7 @@ func (a *Answer) AddAnswer(ctx *context.WriteContext) error {
 	}
 
 	scheme := &types.AnswerScheme{
-		ID:        ctx.Txn.TxnHash.String(),
+		ID:        ctx.GetTxnHash().String(),
 		QID:       req.QID,
 		FileHash:  fileHash,
 		Answerer:  answerer.String(),
@@ -81,7 +88,7 @@ func (a *Answer) UpdateAnswer(ctx *context.WriteContext) error {
 		return err
 	}
 
-	if !a.existAnswer(req.ID) {
+	if !a.ExistAnswer(req.ID) {
 		return types.ErrAnswerNotFound
 	}
 
@@ -178,6 +185,6 @@ func (a *Answer) setAnswerState(scheme *types.AnswerScheme) error {
 	return nil
 }
 
-func (a *Answer) existAnswer(id string) bool {
+func (a *Answer) ExistAnswer(id string) bool {
 	return a.Exist([]byte(id))
 }
