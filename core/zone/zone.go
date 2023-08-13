@@ -7,6 +7,7 @@ import (
 	"github.com/yu-org/yu/common"
 	"github.com/yu-org/yu/core/context"
 	"github.com/yu-org/yu/core/tripod"
+	"gorm.io/gorm"
 	"uask-chain/types"
 )
 
@@ -18,11 +19,12 @@ var (
 type Zone struct {
 	*tripod.Tripod
 	Poa *poa.Poa `tripod:"poa"`
+	db  *gorm.DB
 }
 
-func NewZone() *Zone {
+func NewZone(db *gorm.DB) *Zone {
 	t := tripod.NewTripod()
-	zone := &Zone{Tripod: t}
+	zone := &Zone{Tripod: t, db: db}
 	zone.SetWritings(
 		zone.Apply,
 		zone.Revoke,

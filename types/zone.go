@@ -35,5 +35,4 @@ type Role struct {
 	Pubkey       keypair.PubKey
 	NickName     string
 	Introduction string
-	Email        string
 }

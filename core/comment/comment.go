@@ -54,7 +54,7 @@ func (c *Comment) AddComment(ctx *context.WriteContext) error {
 		return err
 	}
 
-	scheme := &types.CommentScheme{
+	scheme := &orm.CommentScheme{
 		ID:        ctx.GetTxnHash().String(),
 		QID:       req.QID,
 		AID:       req.AID,
@@ -113,7 +113,7 @@ func (c *Comment) UpdateComment(ctx *context.WriteContext) error {
 		return err
 	}
 
-	scheme := &types.CommentScheme{
+	scheme := &orm.CommentScheme{
 		ID:        req.ID,
 		AID:       req.AID,
 		FileHash:  fileHash,
@@ -178,7 +178,7 @@ func (c *Comment) GetComment(ctx *context.ReadContext) {
 	ctx.JsonOk(types.Ok(comment))
 }
 
-func (c *Comment) setCommentState(scheme *types.CommentScheme) error {
+func (c *Comment) setCommentState(scheme *orm.CommentScheme) error {
 	byt, err := json.Marshal(scheme)
 	if err != nil {
 		return err
