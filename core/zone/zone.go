@@ -32,6 +32,7 @@ func NewZone(db *gorm.DB) *Zone {
 		zone.AddManagers,
 		zone.DeleteManagers,
 		zone.ExamineZone,
+		zone.DeleteZone,
 	)
 	return zone
 }
@@ -92,7 +93,7 @@ func (z *Zone) ExamineZone(ctx *context.WriteContext) error {
 }
 
 func (z *Zone) TransferOwner(ctx *context.WriteContext) error {
-	zoneName := ctx.GetString("name")
+	zoneName := ctx.GetString("zone")
 	owner := ctx.GetCaller()
 	if !z.isOwner(owner, zoneName) {
 		return ErrPermissionDenied
@@ -101,7 +102,24 @@ func (z *Zone) TransferOwner(ctx *context.WriteContext) error {
 }
 
 func (z *Zone) AddManagers(ctx *context.WriteContext) error {
-	zoneName := ctx.GetString("name")
+	req := new(struct {
+		Zone     string        `json:"zone"`
+		Managers []*types.Role `json:"managers"`
+	})
+	err := ctx.BindJson(req)
+	if err != nil {
+		return err
+	}
+	owner := ctx.GetCaller()
+	if !z.isOwner(owner, req.Zone) {
+		return ErrPermissionDenied
+	}
+
+	return nil
+}
+
+func (z *Zone) DeleteManagers(ctx *context.WriteContext) error {
+	zoneName := ctx.GetString("zone")
 	owner := ctx.GetCaller()
 	if !z.isOwner(owner, zoneName) {
 		return ErrPermissionDenied
@@ -109,12 +127,13 @@ func (z *Zone) AddManagers(ctx *context.WriteContext) error {
 	return nil
 }
 
-func (z *Zone) DeleteManagers(ctx *context.WriteContext) error {
-	zoneName := ctx.GetString("name")
+func (z *Zone) DeleteZone(ctx *context.WriteContext) error {
+	zoneName := ctx.GetString("zone")
 	owner := ctx.GetCaller()
 	if !z.isOwner(owner, zoneName) {
 		return ErrPermissionDenied
 	}
+
 	return nil
 }
 
