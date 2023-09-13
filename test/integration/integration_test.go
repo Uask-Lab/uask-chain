@@ -1,10 +1,12 @@
 package integration
 
 import (
+	"crypto/ecdsa"
+	"crypto/rand"
 	"encoding/json"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/stretchr/testify/assert"
 	"github.com/yu-org/yu/common"
-	"github.com/yu-org/yu/core/keypair"
 	"github.com/yu-org/yu/core/result"
 	"github.com/yu-org/yu/example/client/callchain"
 	"os/exec"
@@ -23,9 +25,7 @@ func stopDockerCompose() {
 }
 
 var (
-	askPub, askPriv         = keypair.GenSrKeyWithSecret([]byte("asker"))
-	answerPub, answerPriv   = keypair.GenSrKeyWithSecret([]byte("answer"))
-	commentPub, commentPriv = keypair.GenSrKeyWithSecret([]byte("comment"))
+	askPriv, answerPriv, commentPriv *ecdsa.PrivateKey
 )
 
 var (
@@ -54,6 +54,14 @@ var (
 )
 
 func TestUask(t *testing.T) {
+	var err error
+	askPriv, err = ecdsa.GenerateKey(crypto.S256(), rand.Reader)
+	assert.NoError(t, err)
+	answerPriv, err = ecdsa.GenerateKey(crypto.S256(), rand.Reader)
+	assert.NoError(t, err)
+	commentPriv, err = ecdsa.GenerateKey(crypto.S256(), rand.Reader)
+	assert.NoError(t, err)
+
 	startDockerCompose(t)
 
 	time.Sleep(5 * time.Second)
@@ -200,23 +208,23 @@ func testDeleteComment(t *testing.T) {
 // helper funcs
 
 func writeQuestion(wrName string, params interface{}) error {
-	return writeToUask("question", wrName, askPriv, askPub, params)
+	return writeToUask("question", wrName, askPriv, params)
 }
 
 func writeAnswer(wrName string, params interface{}) error {
-	return writeToUask("answer", wrName, answerPriv, answerPub, params)
+	return writeToUask("answer", wrName, answerPriv, params)
 }
 
 func writeComment(wrName string, params interface{}) error {
-	return writeToUask("comment", wrName, commentPriv, commentPub, params)
+	return writeToUask("comment", wrName, commentPriv, params)
 }
 
-func writeToUask(tripodName, wrName string, priv keypair.PrivKey, pub keypair.PubKey, params interface{}) error {
+func writeToUask(tripodName, wrName string, priv *ecdsa.PrivateKey, params interface{}) error {
 	byt, err := json.Marshal(params)
 	if err != nil {
 		return err
 	}
-	callchain.CallChainByWriting(priv, pub, &common.WrCall{
+	callchain.CallChainByWriting(priv, &common.WrCall{
 		TripodName: tripodName,
 		FuncName:   wrName,
 		Params:     string(byt),
