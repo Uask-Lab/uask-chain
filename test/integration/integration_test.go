@@ -224,8 +224,7 @@ func writeToUask(tripodName, wrName string, priv *ecdsa.PrivateKey, params inter
 	if err != nil {
 		return err
 	}
-	privByt := crypto.FromECDSA(priv)
-	callchain.CallChainByWriting(common.ToHex(privByt), &common.WrCall{
+	callchain.CallChainByWriting(priv, &common.WrCall{
 		TripodName: tripodName,
 		FuncName:   wrName,
 		Params:     string(byt),
