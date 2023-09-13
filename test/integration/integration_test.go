@@ -1,8 +1,8 @@
 package integration
 
 import (
-	"bytes"
 	"crypto/ecdsa"
+	"crypto/rand"
 	"encoding/json"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/stretchr/testify/assert"
@@ -55,11 +55,11 @@ var (
 
 func TestUask(t *testing.T) {
 	var err error
-	askPriv, err = ecdsa.GenerateKey(crypto.S256(), bytes.NewReader([]byte("asker")))
+	askPriv, err = ecdsa.GenerateKey(crypto.S256(), rand.Reader)
 	assert.NoError(t, err)
-	answerPriv, err = ecdsa.GenerateKey(crypto.S256(), bytes.NewReader([]byte("answer")))
+	answerPriv, err = ecdsa.GenerateKey(crypto.S256(), rand.Reader)
 	assert.NoError(t, err)
-	commentPriv, err = ecdsa.GenerateKey(crypto.S256(), bytes.NewReader([]byte("comment")))
+	commentPriv, err = ecdsa.GenerateKey(crypto.S256(), rand.Reader)
 	assert.NoError(t, err)
 
 	startDockerCompose(t)
