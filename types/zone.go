@@ -1,9 +1,5 @@
 package types
 
-import (
-	"github.com/yu-org/yu/core/keypair"
-)
-
 type ZoneInfo struct {
 	// zone name
 	Name        string
@@ -13,17 +9,10 @@ type ZoneInfo struct {
 }
 
 type ZoneProposal struct {
-	ID      string    `json:"id"`
-	Operate int       `json:"operate"`
-	Info    *ZoneInfo `json:"info,omitempty"`
-	Status  int       `json:"status"`
+	ID     string    `json:"id"`
+	Info   *ZoneInfo `json:"info,omitempty"`
+	Status int       `json:"status"`
 }
-
-const (
-	AddZone = iota + 1
-	UpdateZone
-	DeleteZone
-)
 
 const (
 	Pending = iota
@@ -32,8 +21,7 @@ const (
 )
 
 type Role struct {
-	Pubkey       keypair.PubKey
+	Pubkey       string
 	NickName     string
 	Introduction string
-	Email        string
 }

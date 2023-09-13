@@ -93,7 +93,7 @@ func (q *Question) AddQuestion(ctx *context.WriteContext) error {
 		return err
 	}
 
-	scheme := &types.QuestionScheme{
+	scheme := &orm.QuestionScheme{
 		ID:        ctx.GetTxnHash().String(),
 		Title:     req.Title,
 		Asker:     asker.String(),
@@ -165,7 +165,7 @@ func (q *Question) UpdateQuestion(ctx *context.WriteContext) error {
 		return err
 	}
 
-	scheme := &types.QuestionScheme{
+	scheme := &orm.QuestionScheme{
 		ID:        req.ID,
 		Title:     req.Title,
 		FileHash:  fileHash,
@@ -226,7 +226,7 @@ func (q *Question) DeleteQuestion(ctx *context.WriteContext) error {
 	return ctx.EmitJsonEvent(map[string]string{"writing": "delete_question", "id": id, "status": "success"})
 }
 
-func (q *Question) setQuestionState(scheme *types.QuestionScheme) error {
+func (q *Question) setQuestionState(scheme *orm.QuestionScheme) error {
 	byt, err := json.Marshal(scheme)
 	if err != nil {
 		return err
@@ -239,7 +239,7 @@ func (q *Question) ExistQuestion(id string) bool {
 	return q.Exist([]byte(id))
 }
 
-func (q *Question) scheme2Info(sch *types.QuestionScheme) (*types.QuestionInfo, error) {
+func (q *Question) scheme2Info(sch *orm.QuestionScheme) (*types.QuestionInfo, error) {
 	fileByt, err := q.fileStore.Get(sch.FileHash)
 	if err != nil {
 		return nil, err

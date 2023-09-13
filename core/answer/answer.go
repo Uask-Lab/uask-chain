@@ -52,7 +52,7 @@ func (a *Answer) AddAnswer(ctx *context.WriteContext) error {
 		return err
 	}
 
-	scheme := &types.AnswerScheme{
+	scheme := &orm.AnswerScheme{
 		ID:        ctx.GetTxnHash().String(),
 		QID:       req.QID,
 		FileHash:  fileHash,
@@ -110,7 +110,7 @@ func (a *Answer) UpdateAnswer(ctx *context.WriteContext) error {
 		return err
 	}
 
-	scheme := &types.AnswerScheme{
+	scheme := &orm.AnswerScheme{
 		ID:        req.ID,
 		QID:       req.QID,
 		FileHash:  fileHash,
@@ -176,7 +176,7 @@ func (a *Answer) DeleteAnswer(ctx *context.WriteContext) error {
 	return ctx.EmitJsonEvent(map[string]string{"writing": "delete_answer", "id": id, "status": "success"})
 }
 
-func (a *Answer) setAnswerState(scheme *types.AnswerScheme) error {
+func (a *Answer) setAnswerState(scheme *orm.AnswerScheme) error {
 	byt, err := json.Marshal(scheme)
 	if err != nil {
 		return err
