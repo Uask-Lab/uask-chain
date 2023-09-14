@@ -4,10 +4,11 @@ go 1.19
 
 require (
 	github.com/common-nighthawk/go-figure v0.0.0-20210622060536-734e95fb86be
+	github.com/ethereum/go-ethereum v1.10.8
 	github.com/meilisearch/meilisearch-go v0.24.0
 	github.com/sirupsen/logrus v1.9.0
 	github.com/stretchr/testify v1.8.4
-	github.com/yu-org/yu v0.0.0-20230913082116-5a03af58b116
+	github.com/yu-org/yu v0.0.0-20230914040506-d8a60d836c4d
 	gorm.io/driver/sqlite v1.1.4
 	gorm.io/gorm v1.21.4
 )
@@ -32,7 +33,6 @@ require (
 	github.com/cosmos/go-bip39 v0.0.0-20180819234021-555e2067c45d // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/davidlazar/go-crypto v0.0.0-20170701192655-dcfb0a7ac018 // indirect
-	github.com/ethereum/go-ethereum v1.10.8 // indirect
 	github.com/flynn/noise v0.0.0-20180327030543-2492fe189ae6 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.2 // indirect
