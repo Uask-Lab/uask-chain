@@ -34,7 +34,11 @@ func (a *Answer) UpVote(ctx *context.WriteContext) error {
 		return err
 	}
 
-	return a.user.IncreaseReputation(upVoter, UpVoteAnswerReputation)
+	err = a.user.IncreaseReputation(upVoter, UpVoteAnswerReputation)
+	if err != nil {
+		return err
+	}
+	return ctx.EmitJsonEvent(map[string]string{"status": "success"})
 }
 
 func (a *Answer) DownVote(ctx *context.WriteContext) error {
@@ -62,7 +66,11 @@ func (a *Answer) DownVote(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	return a.user.ReduceReputation(common.HexToAddress(as.Answerer), DownVoteAnswerReputation)
+	err = a.user.ReduceReputation(common.HexToAddress(as.Answerer), DownVoteAnswerReputation)
+	if err != nil {
+		return err
+	}
+	return ctx.EmitJsonEvent(map[string]string{"status": "success"})
 }
 
 func (a *Answer) PickUp(ctx *context.WriteContext) error {
@@ -87,7 +95,11 @@ func (a *Answer) PickUp(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	return a.user.IncreaseReputation(asker, PickUpAnswerReputation/2)
+	err = a.user.IncreaseReputation(asker, PickUpAnswerReputation/2)
+	if err != nil {
+		return err
+	}
+	return ctx.EmitJsonEvent(map[string]string{"status": "success"})
 }
 
 func (a *Answer) Drop(ctx *context.WriteContext) error {
@@ -112,5 +124,9 @@ func (a *Answer) Drop(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	return a.user.ReduceReputation(asker, PickUpAnswerReputation/2)
+	err = a.user.ReduceReputation(asker, PickUpAnswerReputation/2)
+	if err != nil {
+		return err
+	}
+	return ctx.EmitJsonEvent(map[string]string{"status": "success"})
 }

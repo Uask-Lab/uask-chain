@@ -32,7 +32,11 @@ func (q *Question) UpVote(ctx *context.WriteContext) error {
 		return err
 	}
 
-	return q.user.IncreaseReputation(upVoter, UpVoteQuestionReputation)
+	err = q.user.IncreaseReputation(upVoter, UpVoteQuestionReputation)
+	if err != nil {
+		return err
+	}
+	return ctx.EmitJsonEvent(map[string]string{"status": "success"})
 }
 
 func (q *Question) DownVote(ctx *context.WriteContext) error {
@@ -59,5 +63,9 @@ func (q *Question) DownVote(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	return q.user.ReduceReputation(common.HexToAddress(qs.Asker), DownVoteQuestionReputation)
+	err = q.user.ReduceReputation(common.HexToAddress(qs.Asker), DownVoteQuestionReputation)
+	if err != nil {
+		return err
+	}
+	return ctx.EmitJsonEvent(map[string]string{"status": "success"})
 }
