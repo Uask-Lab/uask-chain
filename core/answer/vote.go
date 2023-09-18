@@ -58,7 +58,11 @@ func (a *Answer) DownVote(ctx *context.WriteContext) error {
 		return err
 	}
 
-	return a.user.ReduceReputation(downVoter, DownVoteAnswerReputation)
+	err = a.user.ReduceReputation(downVoter, DownVoteAnswerReputation/2)
+	if err != nil {
+		return err
+	}
+	return a.user.ReduceReputation(common.HexToAddress(as.Answerer), DownVoteAnswerReputation)
 }
 
 func (a *Answer) PickUp(ctx *context.WriteContext) error {

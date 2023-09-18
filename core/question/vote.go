@@ -1,6 +1,7 @@
 package question
 
 import (
+	"github.com/yu-org/yu/common"
 	"github.com/yu-org/yu/core/context"
 	"uask-chain/types"
 )
@@ -54,5 +55,9 @@ func (q *Question) DownVote(ctx *context.WriteContext) error {
 		return err
 	}
 
-	return q.user.IncreaseReputation(downVoter, DownVoteQuestionReputation)
+	err = q.user.ReduceReputation(downVoter, DownVoteQuestionReputation/2)
+	if err != nil {
+		return err
+	}
+	return q.user.ReduceReputation(common.HexToAddress(qs.Asker), DownVoteQuestionReputation)
 }
