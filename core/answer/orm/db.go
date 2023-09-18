@@ -50,3 +50,23 @@ func (db *Database) DeleteAnswer(id string) error {
 		return tx.Where(&orm.CommentScheme{AID: id}).Delete(new(orm.CommentScheme)).Error
 	})
 }
+
+func (db *Database) UpVote(id string) error {
+	return db.Model(&AnswerScheme{ID: id}).
+		UpdateColumn("up_votes", gorm.Expr("up_votes + ?", 1)).Error
+}
+
+func (db *Database) DownVote(id string) error {
+	return db.Model(&AnswerScheme{ID: id}).
+		UpdateColumn("down_votes", gorm.Expr("down_votes + ?", 1)).Error
+}
+
+func (db *Database) PickUp(id string) error {
+	return db.Model(&AnswerScheme{ID: id}).
+		Update("is_picked_up", true).Error
+}
+
+func (db *Database) Drop(id string) error {
+	return db.Model(&AnswerScheme{ID: id}).
+		Update("is_picked_up", false).Error
+}

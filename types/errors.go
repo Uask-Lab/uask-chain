@@ -7,12 +7,10 @@ var (
 	ErrAnswerNotFound   = errors.New("answer not found")
 	ErrCommentNotFound  = errors.New("comment not found")
 
-	ErrNoPermission = errors.New("no permission")
+	ErrNoPermission       = errors.New("no permission")
+	ErrCannotVoteYourself = errors.New("you cannot vote yourself")
 
 	ErrNoneToReply = errors.New("none to reply")
 
-	ErrRewardNotEnough = errors.New("reward not enough")
-	ErrRewardIllegal   = errors.New("reward is illegal")
-
-	ErrFileNotfound = errors.New("file-content not found")
+	ErrReputationValueInsufficient = errors.New("reputation value insufficient")
 )

@@ -7,6 +7,7 @@ import (
 	"github.com/yu-org/yu/core/tripod"
 	"gorm.io/gorm"
 	"uask-chain/core/question/orm"
+	"uask-chain/core/user"
 	"uask-chain/filestore"
 	"uask-chain/search"
 	"uask-chain/types"
@@ -17,6 +18,8 @@ type Question struct {
 	fileStore filestore.FileStore
 	sch       search.Search
 	db        *orm.Database
+
+	user *user.User `tripod:"user"`
 }
 
 func NewQuestion(fileStore filestore.FileStore, sch search.Search, db *gorm.DB) *Question {
@@ -26,7 +29,13 @@ func NewQuestion(fileStore filestore.FileStore, sch search.Search, db *gorm.DB) 
 	}
 	tri := tripod.NewTripod()
 	q := &Question{Tripod: tri, fileStore: fileStore, sch: sch, db: database}
-	q.SetWritings(q.AddQuestion, q.UpdateQuestion, q.DeleteQuestion)
+	q.SetWritings(
+		q.AddQuestion,
+		q.UpdateQuestion,
+		q.DeleteQuestion,
+		q.UpVote,
+		q.DownVote,
+	)
 	q.SetReadings(q.ListQuestions, q.GetQuestion, q.SearchQuestion)
 	return q
 }
@@ -237,6 +246,14 @@ func (q *Question) setQuestionState(scheme *orm.QuestionScheme) error {
 
 func (q *Question) ExistQuestion(id string) bool {
 	return q.Exist([]byte(id))
+}
+
+func (q *Question) GetQ(id string) (*types.QuestionInfo, error) {
+	qs, err := q.db.GetQuestion(id)
+	if err != nil {
+		return nil, err
+	}
+	return q.scheme2Info(qs)
 }
 
 func (q *Question) scheme2Info(sch *orm.QuestionScheme) (*types.QuestionInfo, error) {

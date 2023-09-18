@@ -27,7 +27,7 @@ func (db *Database) UpdateQuestion(q *QuestionScheme) error {
 
 func (db *Database) GetQuestion(id string) (*QuestionScheme, error) {
 	question := new(QuestionScheme)
-	err := db.Model(&QuestionScheme{ID: id}).Limit(1).Find(question).Error
+	err := db.Model(&QuestionScheme{ID: id}).First(question).Error
 	if err == gorm.ErrRecordNotFound {
 		return nil, types.ErrQuestionNotFound
 	}
@@ -70,4 +70,14 @@ func (db *Database) DeleteQuestion(id string) error {
 		}
 		return tx.Where(&aorm.AnswerScheme{QID: id}).Delete(new(aorm.AnswerScheme)).Error
 	})
+}
+
+func (db *Database) UpVote(id string) error {
+	return db.Model(&QuestionScheme{ID: id}).
+		UpdateColumn("up_votes", gorm.Expr("up_votes + ?", 1)).Error
+}
+
+func (db *Database) DownVote(id string) error {
+	return db.Model(&QuestionScheme{ID: id}).
+		UpdateColumn("down_votes", gorm.Expr("down_votes + ?", 1)).Error
 }
