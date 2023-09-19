@@ -14,13 +14,20 @@ type User struct {
 	db *orm.Database
 }
 
-func NewUser(db *gorm.DB) *User {
+func NewUser(db *gorm.DB, whiteList map[string]uint64) *User {
 	database, err := orm.NewDB(db)
 	if err != nil {
 		logrus.Fatal("init user db failed: ", err)
 	}
 	tri := tripod.NewTripod()
 	user := &User{tri, database}
+	for addrStr, reputation := range whiteList {
+		addr := common.HexToAddress(addrStr)
+		err = user.IncreaseReputation(addr, reputation)
+		if err != nil {
+			logrus.Fatal("load white list error: ", err)
+		}
+	}
 	return user
 }
 

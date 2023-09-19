@@ -42,7 +42,7 @@ func main() {
 	startup.InitConfigFromPath("./cfg/yu.toml")
 	startup.DefaultStartup(
 		poa.NewPoa(poaCfg),
-		user.NewUser(database),
+		user.NewUser(database, uaskCfg.WhiteList),
 		question.NewQuestion(localStore, meili, database),
 		answer.NewAnswer(localStore, database),
 		comment.NewComment(localStore, database),
