@@ -12,6 +12,7 @@ import (
 	"uask-chain/core/answer"
 	"uask-chain/core/comment"
 	"uask-chain/core/question"
+	"uask-chain/core/user"
 	"uask-chain/filestore"
 	"uask-chain/search"
 )
@@ -41,6 +42,7 @@ func main() {
 	startup.InitConfigFromPath("./cfg/yu.toml")
 	startup.DefaultStartup(
 		poa.NewPoa(poaCfg),
+		user.NewUser(database),
 		question.NewQuestion(localStore, meili, database),
 		answer.NewAnswer(localStore, database),
 		comment.NewComment(localStore, database),
