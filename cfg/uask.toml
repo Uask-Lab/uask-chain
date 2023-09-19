@@ -9,4 +9,4 @@ index = "uask"
 primary_key = "id"
 
 [white_list]
-aaaa = 100
+'0x4DE57b4281E8D9CE4F022d4452dD78ecF3a7392C' = 100
