@@ -3,6 +3,7 @@ package user
 import (
 	"github.com/sirupsen/logrus"
 	"github.com/yu-org/yu/common"
+	"github.com/yu-org/yu/core/context"
 	"github.com/yu-org/yu/core/tripod"
 	"gorm.io/gorm"
 	"uask-chain/core/user/orm"
@@ -21,6 +22,9 @@ func NewUser(db *gorm.DB, whiteList map[string]uint64) *User {
 	}
 	tri := tripod.NewTripod()
 	user := &User{tri, database}
+
+	user.SetReadings(user.GetUser)
+
 	for addrStr, reputation := range whiteList {
 		addr := common.HexToAddress(addrStr)
 		err = user.IncreaseReputation(addr, reputation)
@@ -29,6 +33,16 @@ func NewUser(db *gorm.DB, whiteList map[string]uint64) *User {
 		}
 	}
 	return user
+}
+
+func (u *User) GetUser(ctx *context.ReadContext) {
+	user := ctx.GetString("user")
+	userSch, err := u.db.GetUser(common.HexToAddress(user))
+	if err != nil {
+		ctx.JsonOk(types.Error(err))
+		return
+	}
+	ctx.JsonOk(types.Ok(schemeToUser(userSch)))
 }
 
 const DefaultReputation = 1
@@ -57,4 +71,13 @@ func checkReputation(have int64, need uint64) error {
 		return nil
 	}
 	return types.ErrReputationValueInsufficient
+}
+
+func schemeToUser(sch *orm.UserScheme) *types.UserInfo {
+	return &types.UserInfo{
+		Addr:            common.HexToAddress(sch.Addr),
+		NickName:        sch.NickName,
+		ContactMe:       sch.ContactMe,
+		ReputationValue: sch.ReputationValue,
+	}
 }
