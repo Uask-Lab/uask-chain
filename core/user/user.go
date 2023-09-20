@@ -23,6 +23,7 @@ func NewUser(db *gorm.DB, whiteList map[string]uint64) *User {
 	tri := tripod.NewTripod()
 	user := &User{tri, database}
 
+	user.SetWritings(user.RegisterUser)
 	user.SetReadings(user.GetUser)
 
 	for addrStr, reputation := range whiteList {
@@ -33,6 +34,19 @@ func NewUser(db *gorm.DB, whiteList map[string]uint64) *User {
 		}
 	}
 	return user
+}
+
+func (u *User) RegisterUser(ctx *context.WriteContext) error {
+	var req types.UserRegisterRequest
+	err := ctx.BindJson(&req)
+	if err != nil {
+		return err
+	}
+	err = u.db.SetUser(req.Addr, req.NickName, req.ContactMe)
+	if err != nil {
+		return err
+	}
+	return ctx.EmitJsonEvent(map[string]string{"register_user": req.Addr.String()})
 }
 
 func (u *User) GetUser(ctx *context.ReadContext) {

@@ -8,3 +8,9 @@ type UserInfo struct {
 	ContactMe       string         `json:"contact_me"`
 	ReputationValue int64          `json:"reputation_value"`
 }
+
+type UserRegisterRequest struct {
+	Addr      common.Address `json:"addr"`
+	NickName  string         `json:"nick_name"`
+	ContactMe string         `json:"contact_me"`
+}
