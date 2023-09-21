@@ -10,7 +10,7 @@ type UserInfo struct {
 }
 
 type UserRegisterRequest struct {
-	Addr      common.Address `json:"addr"`
-	NickName  string         `json:"nick_name"`
-	ContactMe string         `json:"contact_me"`
+	Addr      string `json:"addr"`
+	NickName  string `json:"nick_name"`
+	ContactMe string `json:"contact_me"`
 }

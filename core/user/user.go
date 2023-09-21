@@ -42,11 +42,11 @@ func (u *User) RegisterUser(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	err = u.db.SetUser(req.Addr, req.NickName, req.ContactMe)
+	err = u.db.SetUser(common.HexToAddress(req.Addr), req.NickName, req.ContactMe)
 	if err != nil {
 		return err
 	}
-	return ctx.EmitJsonEvent(map[string]string{"register_user": req.Addr.String()})
+	return ctx.EmitJsonEvent(map[string]string{"register_user": req.Addr})
 }
 
 func (u *User) GetUser(ctx *context.ReadContext) {
