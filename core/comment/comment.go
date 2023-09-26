@@ -46,6 +46,10 @@ func (c *Comment) AddComment(ctx *context.WriteContext) error {
 		return err
 	}
 
+	if len(req.Content) > 40 {
+		return types.ErrCommentTooLong
+	}
+
 	err = c.user.CheckReputation(commenter, types.AddCommentReputationNeed)
 	if err != nil {
 		return err

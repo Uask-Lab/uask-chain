@@ -5,18 +5,18 @@ const DefaultReputation = 1
 
 // question
 const (
-	AddQuestionReputationNeed = DefaultReputation
+	AddQuestionReputationNeed  = DefaultReputation
+	VoteQuestionReputationNeed = 3
 
-	VoteQuestionReputationNeed       = 3
 	UpVoteQuestionReputationIncrease = 2
 	DownVoteQuestionReputationReduce = 2
 )
 
 // answer
 const (
-	AddAnswerReputationNeed = 2
+	AddAnswerReputationNeed  = 2
+	VoteAnswerReputationNeed = 5
 
-	VoteAnswerReputationNeed       = 5
 	PickUpAnswerReputationIncrease = 2
 	UpVoteAnswerReputationIncrease = 2
 	DownVoteAnswerReputationReduce = 2
@@ -24,5 +24,9 @@ const (
 
 // comment
 const (
-	AddCommentReputationNeed = 1
+	AddCommentReputationNeed  = 1
+	VoteCommentReputationNeed = 1
+
+	UpVoteCommentReputationIncrease = 2
+	DownVoteCommentReputationReduce = 2
 )
