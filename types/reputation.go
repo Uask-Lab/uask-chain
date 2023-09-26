@@ -24,9 +24,5 @@ const (
 
 // comment
 const (
-	AddCommentReputationNeed  = 1
-	VoteCommentReputationNeed = 1
-
-	UpVoteCommentReputationIncrease = 2
-	DownVoteCommentReputationReduce = 2
+	AddCommentReputationNeed = 2
 )
