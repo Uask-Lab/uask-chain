@@ -6,16 +6,9 @@ import (
 	"uask-chain/types"
 )
 
-const (
-	VoteAnswerReputationNeed = 5
-	PickUpAnswerReputation   = 2
-	UpVoteAnswerReputation   = 2
-	DownVoteAnswerReputation = 2
-)
-
 func (a *Answer) UpVote(ctx *context.WriteContext) error {
 	upVoter := ctx.GetCaller()
-	err := a.user.CheckReputation(upVoter, VoteAnswerReputationNeed)
+	err := a.user.CheckReputation(upVoter, types.VoteAnswerReputationNeed)
 	if err != nil {
 		return err
 	}
@@ -34,7 +27,7 @@ func (a *Answer) UpVote(ctx *context.WriteContext) error {
 		return err
 	}
 
-	err = a.user.IncreaseReputation(upVoter, UpVoteAnswerReputation)
+	err = a.user.IncreaseReputation(upVoter, types.UpVoteAnswerReputationIncrease)
 	if err != nil {
 		return err
 	}
@@ -43,7 +36,7 @@ func (a *Answer) UpVote(ctx *context.WriteContext) error {
 
 func (a *Answer) DownVote(ctx *context.WriteContext) error {
 	downVoter := ctx.GetCaller()
-	err := a.user.CheckReputation(downVoter, VoteAnswerReputationNeed)
+	err := a.user.CheckReputation(downVoter, types.VoteAnswerReputationNeed)
 	if err != nil {
 		return err
 	}
@@ -62,11 +55,11 @@ func (a *Answer) DownVote(ctx *context.WriteContext) error {
 		return err
 	}
 
-	err = a.user.ReduceReputation(downVoter, DownVoteAnswerReputation/2)
+	err = a.user.ReduceReputation(downVoter, types.DownVoteAnswerReputationReduce/2)
 	if err != nil {
 		return err
 	}
-	err = a.user.ReduceReputation(common.HexToAddress(as.Answerer), DownVoteAnswerReputation)
+	err = a.user.ReduceReputation(common.HexToAddress(as.Answerer), types.DownVoteAnswerReputationReduce)
 	if err != nil {
 		return err
 	}
@@ -91,11 +84,11 @@ func (a *Answer) PickUp(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	err = a.user.IncreaseReputation(common.HexToAddress(as.Answerer), PickUpAnswerReputation)
+	err = a.user.IncreaseReputation(common.HexToAddress(as.Answerer), types.PickUpAnswerReputationIncrease)
 	if err != nil {
 		return err
 	}
-	err = a.user.IncreaseReputation(asker, PickUpAnswerReputation/2)
+	err = a.user.IncreaseReputation(asker, types.PickUpAnswerReputationIncrease/2)
 	if err != nil {
 		return err
 	}
@@ -120,11 +113,11 @@ func (a *Answer) Drop(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	err = a.user.ReduceReputation(common.HexToAddress(as.Answerer), PickUpAnswerReputation)
+	err = a.user.ReduceReputation(common.HexToAddress(as.Answerer), types.PickUpAnswerReputationIncrease)
 	if err != nil {
 		return err
 	}
-	err = a.user.ReduceReputation(asker, PickUpAnswerReputation/2)
+	err = a.user.ReduceReputation(asker, types.PickUpAnswerReputationIncrease/2)
 	if err != nil {
 		return err
 	}

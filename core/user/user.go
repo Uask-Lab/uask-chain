@@ -59,15 +59,13 @@ func (u *User) GetUser(ctx *context.ReadContext) {
 	ctx.JsonOk(types.Ok(schemeToUser(userSch)))
 }
 
-const DefaultReputation = 1
-
 func (u *User) CheckReputation(addr common.Address, need uint64) error {
 	user, err := u.db.GetUser(addr)
 	if err != nil {
 		return err
 	}
 	if user == nil {
-		return checkReputation(DefaultReputation, need)
+		return checkReputation(types.DefaultReputation, need)
 	}
 	return checkReputation(user.ReputationValue, need)
 }

@@ -108,6 +108,14 @@ func testAddQuestion(t *testing.T) {
 	qid2 = getIdfromEvent(t, resultCh)
 }
 
+func testUpVoteQuestion(t *testing.T) {
+	assert.NoError(t, writeQuestion("UpVote", map[string]string{"id": qid1}))
+}
+
+func testDownVoteQuestion(t *testing.T) {
+	assert.NoError(t, writeQuestion("DownVote", map[string]string{"id": qid2}))
+}
+
 func testListQuestions(t *testing.T) {
 	qs, err := readQuestion("ListQuestions", map[string]string{"pageSize": "2", "page": "1"})
 	assert.NoError(t, err)
@@ -139,6 +147,22 @@ func testAddAnswer(t *testing.T) {
 	}))
 
 	aid = getIdfromEvent(t, resultCh)
+}
+
+func testUpVoteAnswer(t *testing.T) {
+	assert.NoError(t, writeAnswer("UpVote", map[string]string{"id": aid}))
+}
+
+func testDownVoteAnswer(t *testing.T) {
+	assert.NoError(t, writeAnswer("DownVote", map[string]string{"id": aid}))
+}
+
+func testPickUp(t *testing.T) {
+	assert.NoError(t, writeToUask("answer", "PickUp", askPriv, map[string]string{"id": aid}))
+}
+
+func testDrop(t *testing.T) {
+	assert.NoError(t, writeToUask("answer", "Drop", askPriv, map[string]string{"id": aid}))
 }
 
 func testUpdateAnswer(t *testing.T) {
@@ -242,6 +266,10 @@ func readAnswer(rdName string, params map[string]string) (any, error) {
 
 func readComment(rdName string, params map[string]string) (any, error) {
 	return readFromUask("comment", rdName, params)
+}
+
+func readUser(rdName string, params map[string]string) (any, error) {
+	return readFromUask("user", rdName, params)
 }
 
 func readFromUask(tripodName, rdName string, params map[string]string) (any, error) {

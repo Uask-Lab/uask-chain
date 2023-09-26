@@ -6,15 +6,9 @@ import (
 	"uask-chain/types"
 )
 
-const (
-	VoteQuestionReputationNeed = 3
-	UpVoteQuestionReputation   = 2
-	DownVoteQuestionReputation = 2
-)
-
 func (q *Question) UpVote(ctx *context.WriteContext) error {
 	upVoter := ctx.GetCaller()
-	err := q.user.CheckReputation(upVoter, VoteQuestionReputationNeed)
+	err := q.user.CheckReputation(upVoter, types.VoteQuestionReputationNeed)
 	if err != nil {
 		return err
 	}
@@ -32,7 +26,7 @@ func (q *Question) UpVote(ctx *context.WriteContext) error {
 		return err
 	}
 
-	err = q.user.IncreaseReputation(upVoter, UpVoteQuestionReputation)
+	err = q.user.IncreaseReputation(upVoter, types.UpVoteQuestionReputationIncrease)
 	if err != nil {
 		return err
 	}
@@ -41,7 +35,7 @@ func (q *Question) UpVote(ctx *context.WriteContext) error {
 
 func (q *Question) DownVote(ctx *context.WriteContext) error {
 	downVoter := ctx.GetCaller()
-	err := q.user.CheckReputation(downVoter, VoteQuestionReputationNeed)
+	err := q.user.CheckReputation(downVoter, types.VoteQuestionReputationNeed)
 	if err != nil {
 		return err
 	}
@@ -59,11 +53,11 @@ func (q *Question) DownVote(ctx *context.WriteContext) error {
 		return err
 	}
 
-	err = q.user.ReduceReputation(downVoter, DownVoteQuestionReputation/2)
+	err = q.user.ReduceReputation(downVoter, types.DownVoteQuestionReputationReduce/2)
 	if err != nil {
 		return err
 	}
-	err = q.user.ReduceReputation(common.HexToAddress(qs.Asker), DownVoteQuestionReputation)
+	err = q.user.ReduceReputation(common.HexToAddress(qs.Asker), types.DownVoteQuestionReputationReduce)
 	if err != nil {
 		return err
 	}
