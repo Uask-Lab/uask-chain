@@ -52,6 +52,11 @@ func (a *Answer) AddAnswer(ctx *context.WriteContext) error {
 		return err
 	}
 
+	err = a.user.CheckReputation(answerer, types.AddAnswerReputationNeed)
+	if err != nil {
+		return err
+	}
+
 	// check if question exists
 	if !a.Question.ExistQuestion(req.QID) {
 		return types.ErrQuestionNotFound

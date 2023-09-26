@@ -97,6 +97,11 @@ func (q *Question) AddQuestion(ctx *context.WriteContext) error {
 		return err
 	}
 
+	err = q.user.CheckReputation(asker, types.AddQuestionReputationNeed)
+	if err != nil {
+		return err
+	}
+
 	fileHash, err := q.fileStore.Put([]byte(req.Content))
 	if err != nil {
 		return err

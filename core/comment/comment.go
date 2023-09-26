@@ -9,6 +9,7 @@ import (
 	"uask-chain/core/answer"
 	"uask-chain/core/comment/orm"
 	"uask-chain/core/question"
+	"uask-chain/core/user"
 	"uask-chain/filestore"
 	"uask-chain/types"
 )
@@ -20,6 +21,7 @@ type Comment struct {
 
 	Question *question.Question `tripod:"question"`
 	Answer   *answer.Answer     `tripod:"answer"`
+	user     *user.User         `tripod:"user"`
 }
 
 func NewComment(fileStore filestore.FileStore, db *gorm.DB) *Comment {
@@ -40,6 +42,11 @@ func (c *Comment) AddComment(ctx *context.WriteContext) error {
 	commenter := ctx.GetCaller()
 	req := &types.CommentAddRequest{}
 	err := ctx.BindJson(req)
+	if err != nil {
+		return err
+	}
+
+	err = c.user.CheckReputation(commenter, types.AddCommentReputationNeed)
 	if err != nil {
 		return err
 	}
