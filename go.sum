@@ -1074,6 +1074,8 @@ github.com/xordataexchange/crypt v0.0.3-0.20170626215501-b2862e3d0a77/go.mod h1:
 github.com/yalp/jsonpath v0.0.0-20180802001716-5cc68e5049a0/go.mod h1:/LWChgwKmvncFJFHJ7Gvn9wZArjbV5/FppcK2fKk/tI=
 github.com/yu-org/yu v0.0.0-20230914040506-d8a60d836c4d h1:fsO5MiOeufD6oC2IjyWMqOxF9ONm/lhlxqqhD5U67oY=
 github.com/yu-org/yu v0.0.0-20230914040506-d8a60d836c4d/go.mod h1:breQEzTiQiq/ysmKZydzm4bp8eoS+23SHQ/sfVi6f1E=
+github.com/yu-org/yu v0.0.0-20230927060223-1daa571165dc h1:lVg8R5TIa7jd2Mi7PJjUoNWfF/5GL1ECMkVm0R0ftrM=
+github.com/yu-org/yu v0.0.0-20230927060223-1daa571165dc/go.mod h1:breQEzTiQiq/ysmKZydzm4bp8eoS+23SHQ/sfVi6f1E=
 github.com/yudai/gojsondiff v1.0.0/go.mod h1:AY32+k2cwILAkW1fbgxQ5mUmMiZFgLIV+FBNExI05xg=
 github.com/yudai/golcs v0.0.0-20170316035057-ecda9a501e82/go.mod h1:lgjkn3NuSvDfVJdfcVVdX+jpBxNmX4rDAzaS45IcYoM=
 github.com/yudai/pp v2.0.1+incompatible/go.mod h1:PuxR/8QJ7cyCkFp/aUDS+JY727OFEZkTdatxwunjIkc=
