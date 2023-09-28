@@ -2,7 +2,6 @@ package integration
 
 import (
 	"crypto/ecdsa"
-	"crypto/rand"
 	"encoding/json"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/stretchr/testify/assert"
@@ -55,12 +54,17 @@ var (
 
 func TestUask(t *testing.T) {
 	var err error
-	askPriv, err = ecdsa.GenerateKey(crypto.S256(), rand.Reader)
+	askPriv, err = crypto.HexToECDSA("80d7c5951de1ce731f90a8ee4e9221fa5075d41f199de56b4ab044089bd748af")
 	assert.NoError(t, err)
-	answerPriv, err = ecdsa.GenerateKey(crypto.S256(), rand.Reader)
+	t.Logf("asker address: %x", crypto.PubkeyToAddress(askPriv.PublicKey))
+
+	answerPriv, err = crypto.HexToECDSA("287d070e3c8df886998cdc76bf3a1cc6e171717f8b3546b9266e40fe3a8359c3")
 	assert.NoError(t, err)
-	commentPriv, err = ecdsa.GenerateKey(crypto.S256(), rand.Reader)
+	t.Logf("answerer address: %x", crypto.PubkeyToAddress(answerPriv.PublicKey))
+
+	commentPriv, err = crypto.HexToECDSA("2e16b4cc95fb40caa5295180b8dce8a72cc17ff1adb357a37b841eb6eac032c8")
 	assert.NoError(t, err)
+	t.Logf("commenter address: %x", crypto.PubkeyToAddress(commentPriv.PublicKey))
 
 	startDockerCompose(t)
 
@@ -83,6 +87,13 @@ func TestUask(t *testing.T) {
 	t.Run("AddComment", testAddComment)
 	t.Run("UpdateComment", testUpdateComment)
 	t.Run("GetComment", testGetComment)
+
+	t.Run("testUpVoteQuestion", testUpVoteQuestion)
+	t.Run("testDownVoteQuestion", testDownVoteQuestion)
+	t.Run("testUpVoteAnswer", testUpVoteAnswer)
+	t.Run("testDownVoteAnswer", testDownVoteAnswer)
+	t.Run("testPickUp", testPickUp)
+	t.Run("testDrop", testDrop)
 
 	t.Run("DeleteQuestion", testDeleteQuestion)
 	t.Run("DeleteAnswer", testDeleteAnswer)
