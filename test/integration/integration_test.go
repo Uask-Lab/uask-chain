@@ -121,11 +121,11 @@ func testAddQuestion(t *testing.T) {
 }
 
 func testUpVoteQuestion(t *testing.T) {
-	assert.NoError(t, writeQuestion("UpVote", map[string]string{"id": qid1}))
+	assert.NoError(t, voteQuestion("UpVote", map[string]string{"id": qid1}))
 }
 
 func testDownVoteQuestion(t *testing.T) {
-	assert.NoError(t, writeQuestion("DownVote", map[string]string{"id": qid2}))
+	assert.NoError(t, voteQuestion("DownVote", map[string]string{"id": qid2}))
 }
 
 func testListQuestions(t *testing.T) {
@@ -162,11 +162,11 @@ func testAddAnswer(t *testing.T) {
 }
 
 func testUpVoteAnswer(t *testing.T) {
-	assert.NoError(t, writeAnswer("UpVote", map[string]string{"id": aid}))
+	assert.NoError(t, voteAnswer("UpVote", map[string]string{"id": aid}))
 }
 
 func testDownVoteAnswer(t *testing.T) {
-	assert.NoError(t, writeAnswer("DownVote", map[string]string{"id": aid}))
+	assert.NoError(t, voteAnswer("DownVote", map[string]string{"id": aid}))
 }
 
 func testPickUp(t *testing.T) {
@@ -247,8 +247,16 @@ func writeQuestion(wrName string, params interface{}) error {
 	return writeToUask("question", wrName, askPriv, params)
 }
 
+func voteQuestion(wrName string, params any) error {
+	return writeToUask("question", wrName, commentPriv, params)
+}
+
 func writeAnswer(wrName string, params interface{}) error {
 	return writeToUask("answer", wrName, answerPriv, params)
+}
+
+func voteAnswer(wrName string, params any) error {
+	return writeToUask("answer", wrName, commentPriv, params)
 }
 
 func writeComment(wrName string, params interface{}) error {
