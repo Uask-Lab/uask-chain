@@ -18,8 +18,11 @@ func NewDB(db *gorm.DB) (*Database, error) {
 
 func (db *Database) GetUser(addr common.Address) (*UserScheme, error) {
 	var user UserScheme
-	err := db.Model(&UserScheme{Addr: addr.String()}).Find(&user).Error
+	err := db.Model(&UserScheme{Addr: addr.String()}).First(&user).Error
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
 		return nil, err
 	}
 	return &user, err

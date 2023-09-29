@@ -32,6 +32,7 @@ func NewUser(db *gorm.DB, whiteList map[string]uint64) *User {
 		if err != nil {
 			logrus.Fatal("load white list error: ", err)
 		}
+		logrus.Debugf("set white list %s reputation %d", addrStr, reputation)
 	}
 	return user
 }
