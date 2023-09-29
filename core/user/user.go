@@ -83,7 +83,7 @@ func checkReputation(have int64, need uint64) error {
 	if have >= int64(need) {
 		return nil
 	}
-	return types.ErrReputationValueInsufficient
+	return types.ReputationValueInsufficientErr(have)
 }
 
 func schemeToUser(sch *orm.UserScheme) *types.UserInfo {
