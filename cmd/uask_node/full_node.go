@@ -6,7 +6,7 @@ import (
 	"github.com/yu-org/yu/apps/poa"
 	ycfg "github.com/yu-org/yu/config"
 	"github.com/yu-org/yu/core/startup"
-	"gorm.io/driver/sqlite"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"uask-chain/config"
 	"uask-chain/core/answer"
@@ -29,7 +29,7 @@ func main() {
 	if err != nil {
 		logrus.Fatal(err)
 	}
-	database, err := gorm.Open(sqlite.Open(uaskCfg.DbPath), &gorm.Config{CreateBatchSize: 50000})
+	database, err := gorm.Open(postgres.Open(uaskCfg.DSN), &gorm.Config{CreateBatchSize: 50000})
 	if err != nil {
 		logrus.Fatal(err)
 	}

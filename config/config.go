@@ -8,6 +8,6 @@ import (
 type Config struct {
 	Files     *filestore.Config `toml:"files"`
 	Search    *search.MeiliCfg  `toml:"search"`
-	DbPath    string            `toml:"db_path"`
+	DSN       string            `toml:"dsn"`
 	WhiteList map[string]uint64 `toml:"white_list"`
 }

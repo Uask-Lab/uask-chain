@@ -6,7 +6,6 @@ services:
     restart: unless-stopped
     volumes:
       - ./uask:/uask
-      - ./uask/db:/uask/db
       - ./cfg/yu.toml:/cfg/yu.toml:ro
       - ./cfg/uask.toml:/cfg/uask.toml:ro
       - ./cfg/poa.toml:/cfg/poa.toml:ro
@@ -15,7 +14,21 @@ services:
       - "8999:8999"
     depends_on:
       - meili
+      - pg
 #     - ipfs
+
+  pg:
+    container_name: pg
+    image: postgres:12-alpine
+    restart: unless-stopped
+    volumes:
+      - ./uask/db:/uask/db
+    ports:
+      -  "5432:5432"
+    environment:
+      POSTGRES_USER: uask
+      POSTGRES_PASSWORD: pwd
+      POSTGRES_DB: uask
 
   meili:
     container_name: meili

@@ -1,4 +1,4 @@
-db_path = "uask/db/scheme"
+dsn = "postgres://uask:pwd@pg/uask?sslmode=disable"
 
 [files]
 dir = "uask/files"

@@ -5,6 +5,7 @@ build:
 
 pull_images:
 	docker pull getmeili/meilisearch:v1.2
+	docker pull postgres:12-alpine
 	# docker pull ipfs/go-ipfs:latest
 
 docker_build:
