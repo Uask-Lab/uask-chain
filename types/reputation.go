@@ -14,7 +14,7 @@ const (
 
 // answer
 const (
-	AddAnswerReputationNeed  = 2
+	AddAnswerReputationNeed  = DefaultReputation
 	VoteAnswerReputationNeed = 5
 
 	PickUpAnswerReputationIncrease = 2
