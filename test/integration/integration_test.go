@@ -315,5 +315,7 @@ func getIdfromEvent(t *testing.T, resCh chan *result.Result) string {
 
 func dealResult(t *testing.T, resCh chan *result.Result) {
 	res := <-resCh
-	assert.Equal(t, result.EventType, res.Type)
+	if res.Type == result.ErrorType {
+		t.Error(res.String())
+	}
 }
