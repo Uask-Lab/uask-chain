@@ -8,5 +8,5 @@ type UserScheme struct {
 }
 
 func (UserScheme) TableName() string {
-	return "user"
+	return "users"
 }
