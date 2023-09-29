@@ -317,6 +317,7 @@ func dealResult(t *testing.T, resCh chan *result.Result) {
 	res := <-resCh
 	if res.Type == result.ErrorType {
 		t.Error(res.String())
+	} else {
+		t.Log(res.String())
 	}
-	t.Log(res.String())
 }
