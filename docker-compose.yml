@@ -6,6 +6,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./uask:/uask
+#      - ./uask/db:/uask/db
       - ./cfg/yu.toml:/cfg/yu.toml:ro
       - ./cfg/uask.toml:/cfg/uask.toml:ro
       - ./cfg/poa.toml:/cfg/poa.toml:ro
