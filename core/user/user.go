@@ -28,7 +28,7 @@ func NewUser(db *gorm.DB, whiteList map[string]uint64) *User {
 
 	for addrStr, reputation := range whiteList {
 		addr := common.HexToAddress(addrStr)
-		err = user.IncreaseReputation(addr, reputation)
+		err = user.db.SetUserReputation(addr, reputation)
 		if err != nil {
 			logrus.Fatal("load white list error: ", err)
 		}
