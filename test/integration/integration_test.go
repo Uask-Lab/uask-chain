@@ -88,12 +88,13 @@ func TestUask(t *testing.T) {
 	t.Run("UpdateComment", testUpdateComment)
 	t.Run("GetComment", testGetComment)
 
+	t.Run("testPickUp", testPickUp)
+	t.Run("testDrop", testDrop)
+
 	t.Run("testUpVoteQuestion", testUpVoteQuestion)
 	t.Run("testDownVoteQuestion", testDownVoteQuestion)
 	t.Run("testUpVoteAnswer", testUpVoteAnswer)
 	t.Run("testDownVoteAnswer", testDownVoteAnswer)
-	t.Run("testPickUp", testPickUp)
-	t.Run("testDrop", testDrop)
 
 	t.Run("DeleteQuestion", testDeleteQuestion)
 	t.Run("DeleteAnswer", testDeleteAnswer)
