@@ -8,6 +8,7 @@ import (
 	"github.com/yu-org/yu/core/startup"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"uask-chain/config"
 	"uask-chain/core/answer"
 	"uask-chain/core/comment"
@@ -29,7 +30,10 @@ func main() {
 	if err != nil {
 		logrus.Fatal(err)
 	}
-	database, err := gorm.Open(postgres.Open(uaskCfg.DSN), &gorm.Config{CreateBatchSize: 50000})
+	database, err := gorm.Open(
+		postgres.Open(uaskCfg.DSN),
+		&gorm.Config{CreateBatchSize: 50000, Logger: logger.Default.LogMode(logger.Info)},
+	)
 	if err != nil {
 		logrus.Fatal(err)
 	}

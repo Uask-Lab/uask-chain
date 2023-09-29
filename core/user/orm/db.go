@@ -33,7 +33,7 @@ func (db *Database) SetUser(addr common.Address, nickName, contactMe string) err
 }
 
 func (db *Database) SetUserReputation(addr common.Address, value uint64) error {
-	return db.Create(&UserScheme{Addr: addr.String(), ReputationValue: int64(value)}).Error
+	return db.Debug().Create(&UserScheme{Addr: addr.String(), ReputationValue: int64(value)}).Error
 }
 
 func (db *Database) SetUserIfNotExist(addr common.Address) error {

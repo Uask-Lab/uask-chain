@@ -22,7 +22,7 @@ services:
     image: postgres:12-alpine
     restart: unless-stopped
     volumes:
-      - ./uask/db:/uask/db
+      - ./uask/db:/var/lib/postgresql/data
     ports:
       -  "5432:5432"
     environment:
