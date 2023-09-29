@@ -318,4 +318,5 @@ func dealResult(t *testing.T, resCh chan *result.Result) {
 	if res.Type == result.ErrorType {
 		t.Error(res.String())
 	}
+	t.Log(res.String())
 }
