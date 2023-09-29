@@ -77,7 +77,7 @@ func (a *Answer) PickUp(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	if qs.Asker == asker.String() {
+	if qs.Asker != asker.String() {
 		return types.ErrNoPermission
 	}
 	err = a.db.PickUp(aid)
