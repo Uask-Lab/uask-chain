@@ -19,3 +19,4 @@ clean:
 
 reset:
 	@rm -rf ./uask ./meili
+	docker-compose rm
