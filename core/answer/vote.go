@@ -106,7 +106,7 @@ func (a *Answer) Drop(ctx *context.WriteContext) error {
 	if err != nil {
 		return err
 	}
-	if qs.Asker == asker.String() {
+	if qs.Asker != asker.String() {
 		return types.ErrNoPermission
 	}
 	err = a.db.Drop(aid)
