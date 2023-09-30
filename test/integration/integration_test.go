@@ -100,6 +100,8 @@ func TestUask(t *testing.T) {
 	t.Run("DeleteAnswer", testDeleteAnswer)
 	t.Run("DeleteComment", testDeleteComment)
 
+	time.Sleep(5 * time.Second)
+
 	//sub.CloseSub()
 	//stopDockerCompose()
 }

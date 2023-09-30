@@ -11,6 +11,9 @@ pull_images:
 docker_build:
 	docker build -t uask:0.1 .
 
+login_db:
+	psql postgres://uask:pwd@localhost:5432/uask
+
 run:
 	./build/bin/uask_node
 

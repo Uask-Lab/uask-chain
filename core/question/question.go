@@ -253,12 +253,8 @@ func (q *Question) ExistQuestion(id string) bool {
 	return q.Exist([]byte(id))
 }
 
-func (q *Question) GetQ(id string) (*types.QuestionInfo, error) {
-	qs, err := q.db.GetQuestion(id)
-	if err != nil {
-		return nil, err
-	}
-	return q.scheme2Info(qs)
+func (q *Question) GetQ(id string) (*orm.QuestionScheme, error) {
+	return q.db.GetQuestion(id)
 }
 
 func (q *Question) scheme2Info(sch *orm.QuestionScheme) (*types.QuestionInfo, error) {
