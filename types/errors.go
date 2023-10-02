@@ -10,7 +10,8 @@ var (
 	ErrAnswerNotFound   = errors.New("answer not found")
 	ErrCommentNotFound  = errors.New("comment not found")
 
-	ErrCommentTooLong = errors.New("comment too long")
+	ErrQuestionTitleTooLong = errors.New("question title too long")
+	ErrCommentTooLong       = errors.New("comment too long")
 
 	ErrNoPermission       = errors.New("no permission")
 	ErrCannotVoteYourself = errors.New("you cannot vote yourself")

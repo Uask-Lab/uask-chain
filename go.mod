@@ -9,7 +9,7 @@ require (
 	github.com/sirupsen/logrus v1.9.0
 	github.com/stretchr/testify v1.8.4
 	github.com/yu-org/yu v0.0.0-20230927060223-1daa571165dc
-	gorm.io/driver/sqlite v1.1.4
+	gorm.io/driver/postgres v1.0.8
 	gorm.io/gorm v1.21.4
 )
 
@@ -173,5 +173,5 @@ require (
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/driver/mysql v1.0.5 // indirect
-	gorm.io/driver/postgres v1.0.8 // indirect
+	gorm.io/driver/sqlite v1.1.4 // indirect
 )

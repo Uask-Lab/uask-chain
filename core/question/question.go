@@ -102,6 +102,10 @@ func (q *Question) AddQuestion(ctx *context.WriteContext) error {
 		return err
 	}
 
+	if len(req.Title) > 60 {
+		return types.ErrQuestionTitleTooLong
+	}
+
 	fileHash, err := q.fileStore.Put([]byte(req.Content))
 	if err != nil {
 		return err
