@@ -11,9 +11,12 @@ pull_images:
 docker_build:
 	docker build -t uask:0.1 .
 
-up:
-	docker-compose pull
-	docker-compose up --build
+up: docker_build
+	docker-compose pull pg meili
+	docker-compose up
+
+stop:
+	docker-compose stop
 
 login_db:
 	psql postgres://uask:pwd@localhost:5432/uask
