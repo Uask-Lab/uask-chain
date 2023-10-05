@@ -6,12 +6,13 @@ import (
 	"github.com/yu-org/yu/apps/poa"
 	ycfg "github.com/yu-org/yu/config"
 	"github.com/yu-org/yu/core/startup"
-	"gorm.io/driver/sqlite"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"uask-chain/config"
 	"uask-chain/core/answer"
 	"uask-chain/core/comment"
 	"uask-chain/core/question"
+	"uask-chain/core/user"
 	"uask-chain/filestore"
 	"uask-chain/search"
 )
@@ -28,7 +29,13 @@ func main() {
 	if err != nil {
 		logrus.Fatal(err)
 	}
-	database, err := gorm.Open(sqlite.Open(uaskCfg.DbPath), &gorm.Config{CreateBatchSize: 50000})
+	database, err := gorm.Open(
+		postgres.Open(uaskCfg.DSN),
+		&gorm.Config{
+			CreateBatchSize: 50000,
+			// Logger: logger.Default.LogMode(logger.Info),
+		},
+	)
 	if err != nil {
 		logrus.Fatal(err)
 	}
@@ -41,6 +48,7 @@ func main() {
 	startup.InitConfigFromPath("./cfg/yu.toml")
 	startup.DefaultStartup(
 		poa.NewPoa(poaCfg),
+		user.NewUser(database, uaskCfg.WhiteList),
 		question.NewQuestion(localStore, meili, database),
 		answer.NewAnswer(localStore, database),
 		comment.NewComment(localStore, database),

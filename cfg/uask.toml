@@ -1,4 +1,4 @@
-db_path = "uask/db/scheme"
+dsn = "postgres://uask:pwd@pg/uask?sslmode=disable"
 
 [files]
 dir = "uask/files"
@@ -7,3 +7,11 @@ dir = "uask/files"
 host = "http://meili:7700" #this host is for docker
 index = "uask"
 primary_key = "id"
+
+[white_list]
+'0x4DE57b4281E8D9CE4F022d4452dD78ecF3a7392C' = 10000
+'0x095be5C3AFCD0A936CE29F7C090865b300e0dE65' = 10000
+# test address
+'694fc2d27636d66688d11ce8932d50b8e1b4c0e9' = 10
+'d20b5dee9c4caf96cef7f15c6adccece7cf3e860' = 10
+'2ba1309a9211c64a1761e6e4e1d9ba7da38a4c2c' = 10

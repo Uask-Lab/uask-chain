@@ -9,6 +9,7 @@ import (
 	"uask-chain/core/answer"
 	"uask-chain/core/comment/orm"
 	"uask-chain/core/question"
+	"uask-chain/core/user"
 	"uask-chain/filestore"
 	"uask-chain/types"
 )
@@ -20,6 +21,7 @@ type Comment struct {
 
 	Question *question.Question `tripod:"question"`
 	Answer   *answer.Answer     `tripod:"answer"`
+	user     *user.User         `tripod:"user"`
 }
 
 func NewComment(fileStore filestore.FileStore, db *gorm.DB) *Comment {
@@ -44,12 +46,16 @@ func (c *Comment) AddComment(ctx *context.WriteContext) error {
 		return err
 	}
 
-	err = c.ifReplyExist(req.QID, req.AID)
+	if len(req.Content) > 40 {
+		return types.ErrCommentTooLong
+	}
+
+	err = c.user.CheckReputation(commenter, types.AddCommentReputationNeed)
 	if err != nil {
 		return err
 	}
 
-	fileHash, err := c.fileStore.Put([]byte(req.Content))
+	err = c.ifReplyExist(req.QID, req.AID)
 	if err != nil {
 		return err
 	}
@@ -58,7 +64,7 @@ func (c *Comment) AddComment(ctx *context.WriteContext) error {
 		ID:        ctx.GetTxnHash().String(),
 		QID:       req.QID,
 		AID:       req.AID,
-		FileHash:  fileHash,
+		Content:   req.Content,
 		Commenter: commenter.String(),
 		Timestamp: int64(ctx.GetTimestamp()),
 	}
@@ -103,20 +109,10 @@ func (c *Comment) UpdateComment(ctx *context.WriteContext) error {
 		return err
 	}
 
-	// remove old answer and store new one.
-	err = c.fileStore.Remove(comment.FileHash)
-	if err != nil {
-		return err
-	}
-	fileHash, err := c.fileStore.Put([]byte(req.Content))
-	if err != nil {
-		return err
-	}
-
 	scheme := &orm.CommentScheme{
 		ID:        req.ID,
 		AID:       req.AID,
-		FileHash:  fileHash,
+		Content:   req.Content,
 		Commenter: commenter.String(),
 		Timestamp: int64(ctx.GetTimestamp()),
 	}
@@ -162,16 +158,11 @@ func (c *Comment) GetComment(ctx *context.ReadContext) {
 		ctx.JsonOk(types.Error(err))
 		return
 	}
-	fileByt, err := c.fileStore.Get(sch.FileHash)
-	if err != nil {
-		ctx.JsonOk(types.Error(err))
-		return
-	}
 	comment := &types.CommentInfo{
 		ID:        sch.ID,
 		QID:       sch.QID,
 		AID:       sch.AID,
-		Content:   string(fileByt),
+		Content:   sch.Content,
 		Commenter: sch.Commenter,
 		Timestamp: sch.Timestamp,
 	}

@@ -2,7 +2,6 @@ package integration
 
 import (
 	"crypto/ecdsa"
-	"crypto/rand"
 	"encoding/json"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/stretchr/testify/assert"
@@ -55,12 +54,17 @@ var (
 
 func TestUask(t *testing.T) {
 	var err error
-	askPriv, err = ecdsa.GenerateKey(crypto.S256(), rand.Reader)
+	askPriv, err = crypto.HexToECDSA("80d7c5951de1ce731f90a8ee4e9221fa5075d41f199de56b4ab044089bd748af")
 	assert.NoError(t, err)
-	answerPriv, err = ecdsa.GenerateKey(crypto.S256(), rand.Reader)
+	t.Logf("asker address: %x", crypto.PubkeyToAddress(askPriv.PublicKey))
+
+	answerPriv, err = crypto.HexToECDSA("287d070e3c8df886998cdc76bf3a1cc6e171717f8b3546b9266e40fe3a8359c3")
 	assert.NoError(t, err)
-	commentPriv, err = ecdsa.GenerateKey(crypto.S256(), rand.Reader)
+	t.Logf("answerer address: %x", crypto.PubkeyToAddress(answerPriv.PublicKey))
+
+	commentPriv, err = crypto.HexToECDSA("2e16b4cc95fb40caa5295180b8dce8a72cc17ff1adb357a37b841eb6eac032c8")
 	assert.NoError(t, err)
+	t.Logf("commenter address: %x", crypto.PubkeyToAddress(commentPriv.PublicKey))
 
 	startDockerCompose(t)
 
@@ -84,9 +88,19 @@ func TestUask(t *testing.T) {
 	t.Run("UpdateComment", testUpdateComment)
 	t.Run("GetComment", testGetComment)
 
+	t.Run("testPickUp", testPickUp)
+	t.Run("testDrop", testDrop)
+
+	t.Run("testUpVoteQuestion", testUpVoteQuestion)
+	t.Run("testDownVoteQuestion", testDownVoteQuestion)
+	t.Run("testUpVoteAnswer", testUpVoteAnswer)
+	t.Run("testDownVoteAnswer", testDownVoteAnswer)
+
 	t.Run("DeleteQuestion", testDeleteQuestion)
 	t.Run("DeleteAnswer", testDeleteAnswer)
 	t.Run("DeleteComment", testDeleteComment)
+
+	time.Sleep(5 * time.Second)
 
 	//sub.CloseSub()
 	//stopDockerCompose()
@@ -106,6 +120,14 @@ func testAddQuestion(t *testing.T) {
 	}))
 
 	qid2 = getIdfromEvent(t, resultCh)
+}
+
+func testUpVoteQuestion(t *testing.T) {
+	assert.NoError(t, voteQuestion("UpVote", map[string]string{"id": qid1}))
+}
+
+func testDownVoteQuestion(t *testing.T) {
+	assert.NoError(t, voteQuestion("DownVote", map[string]string{"id": qid2}))
 }
 
 func testListQuestions(t *testing.T) {
@@ -139,6 +161,22 @@ func testAddAnswer(t *testing.T) {
 	}))
 
 	aid = getIdfromEvent(t, resultCh)
+}
+
+func testUpVoteAnswer(t *testing.T) {
+	assert.NoError(t, voteAnswer("UpVote", map[string]string{"id": aid}))
+}
+
+func testDownVoteAnswer(t *testing.T) {
+	assert.NoError(t, voteAnswer("DownVote", map[string]string{"id": aid}))
+}
+
+func testPickUp(t *testing.T) {
+	assert.NoError(t, writeToUask("answer", "PickUp", askPriv, map[string]string{"id": aid}))
+}
+
+func testDrop(t *testing.T) {
+	assert.NoError(t, writeToUask("answer", "Drop", askPriv, map[string]string{"id": aid}))
 }
 
 func testUpdateAnswer(t *testing.T) {
@@ -211,8 +249,16 @@ func writeQuestion(wrName string, params interface{}) error {
 	return writeToUask("question", wrName, askPriv, params)
 }
 
+func voteQuestion(wrName string, params any) error {
+	return writeToUask("question", wrName, commentPriv, params)
+}
+
 func writeAnswer(wrName string, params interface{}) error {
 	return writeToUask("answer", wrName, answerPriv, params)
+}
+
+func voteAnswer(wrName string, params any) error {
+	return writeToUask("answer", wrName, commentPriv, params)
 }
 
 func writeComment(wrName string, params interface{}) error {
@@ -244,6 +290,10 @@ func readComment(rdName string, params map[string]string) (any, error) {
 	return readFromUask("comment", rdName, params)
 }
 
+func readUser(rdName string, params map[string]string) (any, error) {
+	return readFromUask("user", rdName, params)
+}
+
 func readFromUask(tripodName, rdName string, params map[string]string) (any, error) {
 	bytes := callchain.CallChainByReading(&common.RdCall{
 		TripodName: tripodName,
@@ -267,5 +317,9 @@ func getIdfromEvent(t *testing.T, resCh chan *result.Result) string {
 
 func dealResult(t *testing.T, resCh chan *result.Result) {
 	res := <-resCh
-	assert.Equal(t, result.EventType, res.Type)
+	if res.Type == result.ErrorType {
+		t.Error(res.String())
+	} else {
+		t.Log(res.String())
+	}
 }

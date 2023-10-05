@@ -8,6 +8,7 @@ import (
 	"gorm.io/gorm"
 	"uask-chain/core/answer/orm"
 	"uask-chain/core/question"
+	"uask-chain/core/user"
 	"uask-chain/filestore"
 	"uask-chain/types"
 )
@@ -18,6 +19,7 @@ type Answer struct {
 	db        *orm.Database
 
 	Question *question.Question `tripod:"question"`
+	user     *user.User         `tripod:"user"`
 }
 
 func NewAnswer(fileStore filestore.FileStore, db *gorm.DB) *Answer {
@@ -27,7 +29,15 @@ func NewAnswer(fileStore filestore.FileStore, db *gorm.DB) *Answer {
 		logrus.Fatal("init answer db failed: ", err)
 	}
 	a := &Answer{Tripod: tri, fileStore: fileStore, db: database}
-	a.SetWritings(a.AddAnswer, a.UpdateAnswer, a.DeleteAnswer)
+	a.SetWritings(
+		a.AddAnswer,
+		a.UpdateAnswer,
+		a.DeleteAnswer,
+		a.UpVote,
+		a.DownVote,
+		a.PickUp,
+		a.Drop,
+	)
 	a.SetReadings(a.GetAnswer)
 	return a
 }
@@ -38,6 +48,11 @@ func (a *Answer) AddAnswer(ctx *context.WriteContext) error {
 	answerer := ctx.GetCaller()
 	req := &types.AnswerAddRequest{}
 	err := ctx.BindJson(req)
+	if err != nil {
+		return err
+	}
+
+	err = a.user.CheckReputation(answerer, types.AddAnswerReputationNeed)
 	if err != nil {
 		return err
 	}
